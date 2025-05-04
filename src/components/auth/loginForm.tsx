@@ -18,6 +18,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import Link from "next/link";
 
 const formSchema = z.object({
     username: z.string().min(1, "Username harus diisi"),
@@ -132,9 +133,9 @@ export default function LoginForm() {
 
                     <p className="text-center mt-6 text-muted-foreground font-medium">
                         Don't have an account?{" "}
-                        <a href="#" className="font-bold text-foreground">
+                        <Link href="/signup" className="font-bold text-foreground" >
                             Sign Up
-                        </a>
+                        </Link>
                     </p>
                 </div>
             </div>
