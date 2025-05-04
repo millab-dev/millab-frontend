@@ -357,7 +357,7 @@ export default function SignupForm() {
                     <p className="text-center mt-6 text-muted-foreground font-medium">
                         Already have an account?{" "}
                         <Link
-                            href="/login"
+                            href="/signin"
                             className="font-bold text-foreground"
                         >
                             Sign In
