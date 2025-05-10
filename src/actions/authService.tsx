@@ -147,3 +147,78 @@ export async function loginUser(
         };
     }
 }
+
+// Interface untuk respons getCurrentUser
+interface GetCurrentUserResponse {
+    success: boolean;
+    message: string;
+    data?: {
+        id: string;
+        name: string;
+        email: string;
+        username: string;
+        gender: "Male" | "Female";
+        birthplace: string;
+        birthdate: string;
+        socializationLocation: string;
+        phoneNumber?: string;
+    };
+    error?: string;
+}
+
+// Fungsi untuk mendapatkan data user yang sedang login
+export async function getCurrentUser(headers?: Headers): Promise<GetCurrentUserResponse> {
+    try {
+        // Prepare headers
+        const requestHeaders: HeadersInit = {
+            "Content-Type": "application/json",
+        };
+
+        // If headers are provided (from middleware), use them
+        if (headers) {
+            // Copy all headers from the incoming request
+            headers.forEach((value, key) => {
+                requestHeaders[key] = value;
+            });
+        }
+
+        // Kirim request ke API
+        const response = await fetch(
+            `${
+                process.env.NEXT_PUBLIC_API_URL || "localhost:8080"
+            }/api/v1/auth/me`,
+            {
+                method: "GET",
+                headers: requestHeaders,
+                cache: "no-store",
+            }
+        );
+
+        // Parse response
+        const data = await response.json();
+
+        // Jika respons tidak sukses
+        if (!response.ok) {
+            return {
+                success: false,
+                message: data.message || "Failed to get current user",
+                error: data.error || "Unknown error occurred",
+            };
+        }
+
+        // Jika respons sukses
+        return {
+            success: true,
+            message: data.message || "Successfully retrieved current user",
+            data: data.data,
+        };
+    } catch (error) {
+        // Error lainnya
+        console.error("Get current user error:", error);
+        return {
+            success: false,
+            message: "Failed to get current user",
+            error: error instanceof Error ? error.message : "Unknown error",
+        };
+    }
+}
