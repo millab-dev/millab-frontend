@@ -136,7 +136,7 @@ export default function SignupForm() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center font-jakarta my-8">
+        <div className="flex min-h-screen items-center justify-center font-jakarta my-8 mx-5 sm:mx-0">
             <div className="w-full max-w-md">
                 <div className="flex items-center justify-center gap-2 mb-8">
                     <Image
