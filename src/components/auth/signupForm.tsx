@@ -8,12 +8,15 @@ import { z } from "zod";
 import { useState } from "react";
 import { Eye, EyeOff, CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
+import { registerUser } from "@/actions/authService";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,7 +42,7 @@ const formSchema = z.object({
     name: z.string().min(1, "Name is required"),
     username: z.string().min(1, "Username is required"),
     password: z.string().min(1, "Password is required"),
-    gender: z.enum(["female", "male"], {
+    gender: z.enum(["Female", "Male"], {
         required_error: "Please select a gender",
     }),
     birthplace: z.string().min(1, "Birthplace is required"),
@@ -53,6 +56,17 @@ const formSchema = z.object({
 
 export default function SignupForm() {
     const [showPassword, setShowPassword] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const router = useRouter();
+
+    // Definisikan sekolah statis jika tidak mengambil dari API
+    const schools = [
+        { id: "school1", name: "School 1" },
+        { id: "school2", name: "School 2" },
+        { id: "school3", name: "School 3" },
+        { id: "school4", name: "SMA Negeri 1 Jakarta" },
+        { id: "school5", name: "SMA Negeri 3 Solo" },
+    ];
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -60,7 +74,7 @@ export default function SignupForm() {
             name: "",
             username: "",
             password: "",
-            gender: "female",
+            gender: "Female",
             birthplace: "",
             socialization: "",
             email: "",
@@ -68,8 +82,57 @@ export default function SignupForm() {
         },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        try {
+            setIsSubmitting(true);
+            
+            // Tampilkan loading toast
+            const loadingToast = toast.loading("Creating your account...");
+            
+            // Mapping data form ke format API
+            const registerData = {
+                name: values.name,
+                username: values.username,
+                email: values.email,
+                password: values.password,
+                gender: values.gender,
+                birthplace: values.birthplace,
+                birthdate: values.birthdate,
+                socializationLocation: values.socialization,
+                phoneNumber: values.phone || ""
+            };
+            
+            // Panggil service register
+            const result = await registerUser(registerData);
+            
+            // Dismiss loading toast
+            toast.dismiss(loadingToast);
+            
+            if (result.success) {
+                // Pendaftaran berhasil
+                toast.success("Registration successful", {
+                    description: "Your account has been created. Redirecting to login...",
+                    duration: 3000,
+                });
+                
+                // Redirect ke halaman login setelah 1.5 detik
+                setTimeout(() => {
+                    router.push("/signin");
+                }, 1500);
+            } else {
+                // Pendaftaran gagal
+                toast.error("Registration failed", {
+                    description: result.error || "Something went wrong. Please try again.",
+                });
+            }
+        } catch (error) {
+
+            toast.error("Error during registration", {
+                description: error instanceof Error ? error.message : "Unknown error occurred",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
@@ -188,19 +251,19 @@ export default function SignupForm() {
                                             >
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem
-                                                        value="female"
-                                                        id="female"
+                                                        value="Female"
+                                                        id="Female"
                                                     />
-                                                    <label htmlFor="female">
+                                                    <label htmlFor="Female">
                                                         Female
                                                     </label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem
-                                                        value="male"
-                                                        id="male"
+                                                        value="Male"
+                                                        id="Male"
                                                     />
-                                                    <label htmlFor="male">
+                                                    <label htmlFor="Male">
                                                         Male
                                                     </label>
                                                 </div>
@@ -297,15 +360,11 @@ export default function SignupForm() {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="school1">
-                                                    School 1
-                                                </SelectItem>
-                                                <SelectItem value="school2">
-                                                    School 2
-                                                </SelectItem>
-                                                <SelectItem value="school3">
-                                                    School 3
-                                                </SelectItem>
+                                                {schools.map((school) => (
+                                                    <SelectItem key={school.id} value={school.id}>
+                                                        {school.name}
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />
@@ -348,8 +407,12 @@ export default function SignupForm() {
                                 )}
                             />
 
-                            <Button type="submit" className="w-full py-5 mt-4">
-                                Sign Up
+                            <Button 
+                                type="submit" 
+                                className="w-full py-5 mt-4" 
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? "Creating Account..." : "Sign Up"}
                             </Button>
                         </form>
                     </Form>
