@@ -16,7 +16,6 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { registerUser } from "@/actions/authService";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,10 +84,10 @@ export default function SignupForm() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
             setIsSubmitting(true);
-            
+
             // Tampilkan loading toast
             const loadingToast = toast.loading("Creating your account...");
-            
+
             // Mapping data form ke format API
             const registerData = {
                 name: values.name,
@@ -97,24 +96,40 @@ export default function SignupForm() {
                 password: values.password,
                 gender: values.gender,
                 birthplace: values.birthplace,
-                birthdate: values.birthdate,
+                birthdate: values.birthdate.toISOString().split("T")[0], // Format YYYY-MM-DD
                 socializationLocation: values.socialization,
-                phoneNumber: values.phone || ""
+                phoneNumber: values.phone || "",
             };
-            
-            // Panggil service register
-            const result = await registerUser(registerData);
-            
+
+            // Direct fetch to API
+            const response = await fetch(
+                `${
+                    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+                }/api/v1/auth/register`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(registerData),
+                    credentials: "include",
+                    cache: "no-store",
+                }
+            );
+
+            const data = await response.json();
+
             // Dismiss loading toast
             toast.dismiss(loadingToast);
-            
-            if (result.success) {
+
+            if (data.success) {
                 // Pendaftaran berhasil
                 toast.success("Registration successful", {
-                    description: "Your account has been created. Redirecting to login...",
+                    description:
+                        "Your account has been created. Redirecting to login...",
                     duration: 3000,
                 });
-                
+
                 // Redirect ke halaman login setelah 1.5 detik
                 setTimeout(() => {
                     router.push("/signin");
@@ -122,13 +137,16 @@ export default function SignupForm() {
             } else {
                 // Pendaftaran gagal
                 toast.error("Registration failed", {
-                    description: result.error || "Something went wrong. Please try again.",
+                    description:
+                        data.error || "Something went wrong. Please try again.",
                 });
             }
         } catch (error) {
-
             toast.error("Error during registration", {
-                description: error instanceof Error ? error.message : "Unknown error occurred",
+                description:
+                    error instanceof Error
+                        ? error.message
+                        : "Unknown error occurred",
             });
         } finally {
             setIsSubmitting(false);
@@ -361,7 +379,10 @@ export default function SignupForm() {
                                             </FormControl>
                                             <SelectContent>
                                                 {schools.map((school) => (
-                                                    <SelectItem key={school.id} value={school.id}>
+                                                    <SelectItem
+                                                        key={school.id}
+                                                        value={school.id}
+                                                    >
                                                         {school.name}
                                                     </SelectItem>
                                                 ))}
@@ -407,12 +428,14 @@ export default function SignupForm() {
                                 )}
                             />
 
-                            <Button 
-                                type="submit" 
-                                className="w-full py-5 mt-4" 
+                            <Button
+                                type="submit"
+                                className="w-full py-5 mt-4"
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting ? "Creating Account..." : "Sign Up"}
+                                {isSubmitting
+                                    ? "Creating Account..."
+                                    : "Sign Up"}
                             </Button>
                         </form>
                     </Form>

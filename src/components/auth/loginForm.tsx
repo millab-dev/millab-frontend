@@ -21,7 +21,6 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import Link from "next/link";
-import { loginUser } from "@/actions/authService";
 
 const formSchema = z.object({
     email: z.string().email("Email tidak valid"),
@@ -44,15 +43,26 @@ export default function LoginForm() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
             setIsLoading(true);
-            const response = await loginUser(values);
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/auth/login`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(values),
+                    credentials: "include",
+                    cache: "no-store",
+                }
+            );
 
-            if (response.success) {
+            const data = await response.json();
+
+            if (data.success) {
                 toast.success("Login berhasil!");
-
-
                 router.push("/");
             } else {
-                toast.error(response.error || "Login gagal");
+                toast.error(data.error || "Login gagal");
             }
         } catch (error) {
             toast.error("Terjadi kesalahan saat login");
