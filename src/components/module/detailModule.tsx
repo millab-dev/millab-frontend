@@ -90,75 +90,48 @@ export default function DetailModule() {
                     </div>
                 </div>
                 <h2 className="text-xl font-bold text-primary mt-32 mb-6">Materi</h2>
-                <div className="flex">
-                    {/* Stepper */}
-                    <div className="flex flex-col items-center mr-4">
-                        {materi.map((item, idx) => (
-                            <div
-                                key={item.id}
-                                className="flex flex-col items-center"
-                            >
+                <div className="relative flex flex-col gap-3">
+                    {/* Vertical line */}
+                    <div className="absolute left-[14px] top-0 bottom-0 w-1 bg-gray-200 z-0 rounded-full" />
+                    {/* Stepper + Cards */}
+                    {materi.map((item, idx) => (
+                        <div key={item.id} className="flex items-center relative z-10">
+                            {/* Stepper Icon */}
+                            <div className="w-8 flex justify-center items-center">
                                 {item.done ? (
-                                    <CheckCircle
-                                        className="text-green-500 bg-white rounded-full border-2 border-green-500"
-                                        size={28}
-                                    />
+                                    <CheckCircle className="text-green-500 bg-white rounded-full border-2 border-green-500" size={28} />
                                 ) : (
-                                    <FileText
-                                        className="text-gray-400 bg-white rounded-full border-2 border-gray-300"
-                                        size={28}
-                                    />
-                                )}
-                                {idx < materi.length - 1 && (
-                                    <div className="w-1 h-8 bg-gray-200" />
+                                    <FileText className="text-gray-400 bg-white rounded-full border-2 border-gray-300" size={28} />
                                 )}
                             </div>
-                        ))}
-                        {/* Quiz step */}
-                        <div className="flex flex-col items-center">
-                            <HelpCircle
-                                className="text-primary bg-white rounded-full border-2 border-primary"
-                                size={28}
-                            />
-                        </div>
-                    </div>
-                    {/* Materi List */}
-                    <div className="flex-1 space-y-3">
-                        {materi.map((item, idx) => (
-                            <div
-                                key={item.id}
-                                className="bg-white border rounded-xl p-3 flex items-center justify-between shadow-sm"
-                            >
-                                <div>
-                                    <div className="text-primary font-medium">
-                                        {idx + 1}. {item.title}
+                            {/* Materi Card */}
+                            <div className="flex-1 ml-2">
+                                <div className="bg-white border rounded-xl p-3 flex items-center justify-between shadow-sm">
+                                    <div>
+                                        <div className="text-primary font-medium">
+                                            {idx + 1}. {item.title}
+                                        </div>
+                                        <div className="text-xs text-gray-400">{item.duration}</div>
                                     </div>
-                                    <div className="text-xs text-gray-400">
-                                        {item.duration}
-                                    </div>
+                                    <Button variant="ghost" size="icon" className="text-primary">
+                                        <Download size={20} />
+                                    </Button>
                                 </div>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="text-primary"
-                                >
-                                    <Download size={20} />
-                                </Button>
                             </div>
-                        ))}
-                        {/* Quiz Section */}
-                        <div className="mt-4">
+                        </div>
+                    ))}
+                    {/* Quiz row */}
+                    <div className="flex items-center mt-2 relative z-10">
+                        <div className="w-8 flex justify-center items-center">
+                            <HelpCircle className="text-primary bg-white rounded-full border-2 border-primary" size={28} />
+                        </div>
+                        <div className="flex-1 ml-2">
                             <div className="bg-gradient-to-r from-primary to-blue-400 text-white rounded-xl p-3 flex items-center justify-between shadow">
                                 <div>
-                                    <div className="font-semibold">
-                                        Quiz 1: Pengantar Literasi Media
-                                    </div>
+                                    <div className="font-semibold">Quiz 1: Pengantar Literasi Media</div>
                                     <div className="text-xs">2 min</div>
                                 </div>
-                                <FileText
-                                    className="text-white opacity-60"
-                                    size={28}
-                                />
+                                <FileText className="text-white opacity-60" size={28} />
                             </div>
                         </div>
                     </div>
