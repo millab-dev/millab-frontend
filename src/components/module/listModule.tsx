@@ -82,14 +82,14 @@ export default function ListModule() {
                             className="border rounded-xl p-4 flex items-center justify-between gap-4"
                         >
                             <div className="flex items-center gap-4 w-full">
-                                <div className="bg-primary p-3 rounded-lg">
+                                <div className="bg-gradient-to-r from-primary to-primary/80 p-3 rounded-lg">
                                     <FileText
                                         className="text-white"
                                         size={24}
                                     />
                                 </div>
                                 <div className="w-full">
-                                    <h3 className="font-medium text-primary">
+                                    <h3 className="font-semibold text-primary max-sm:text-sm">
                                         {module.id}. {module.title}
                                     </h3>
                                     <div className="h-2 bg-gray-200 rounded-full mt-2">
