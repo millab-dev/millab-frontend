@@ -34,7 +34,7 @@ export default function DetailModule() {
     ];
 
     return (
-        <div className="mx-auto font-jakarta bg-primary min-h-screen sm:px-24 lg:px-50">
+        <div className="mx-auto font-jakarta bg-primary min-h-screen sm:px-24 lg:px-50 flex flex-col">
             {/* Header Section with blue background and clouds */}
             <div className="bg-primary p-8 relative overflow-hidden h-[150px]">
                 {/* Clouds as background pattern */}
@@ -49,7 +49,7 @@ export default function DetailModule() {
             </div>
 
             {/* Content Section */}
-            <div className="bg-white rounded-t-4xl p-6 sm:p-8 shadow-md relative min-h-screen">
+            <div className="bg-white rounded-t-4xl p-6 sm:p-8 shadow-md relative flex-grow">
                 {/* Card */}
                 <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white rounded-3xl shadow-lg p-6 w-max flex flex-col gap-2">
                     <div className="flex items-center justify-between">

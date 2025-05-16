@@ -16,7 +16,7 @@ export default function ListModule() {
     ];
 
     return (
-        <div className="mx-auto font-jakarta bg-primary sm:px-24 lg:px-50 min-h-screen">
+        <div className="mx-auto font-jakarta bg-primary sm:px-24 lg:px-50 min-h-screen flex flex-col">
             {/* Header Section with blue background */}
             <div className="bg-primary p-8 flex justify-between items-center relative overflow-hidden">
                 <div className="z-10">
@@ -67,7 +67,7 @@ export default function ListModule() {
             </div>
 
             {/* Content Section with white background */}
-            <div className="bg-white rounded-t-4xl p-6 sm:p-8 shadow-md min-h-screen">
+            <div className="bg-white rounded-t-4xl p-6 sm:p-8 shadow-md flex-grow">
                 <h2 className="text-xl font-bold text-primary mb-6">
                     Daftar Modul
                 </h2>
