@@ -8,6 +8,8 @@ import bear from "@/assets/bear.svg";
 import squirrel from "@/assets/squirrel.svg";
 import rabbit from "@/assets/rabbitBook.svg";
 
+import { Check } from "lucide-react";
+
 export default function SectionModule() {
     // You would typically fetch this content from an API
     // This is mockup data based on the image
@@ -73,10 +75,10 @@ export default function SectionModule() {
                 {moduleContent.content.map((section, index) => (
                     <div key={index} className="mb-8">
                         {/* Illustrations */}
-                        <div className="bg-pink-100 rounded-xl p-4 mb-4 flex justify-center items-center sm:gap-12">
-                            <Image src={bear} alt="bear" />
-                            <Image src={rabbit} alt="rabbit" />
-                            <Image src={squirrel} alt="squirrel" />
+                        <div className="rounded-xl py-6 px-4 mb-4 flex justify-between sm:justify-center items-end sm:gap-12 bg-gradient-to-b from-[#FFB9DA] to-white">
+                            <Image src={bear} alt="bear" className="w-22 h-auto"/>
+                            <Image src={rabbit} alt="rabbit" className="w-18 h-auto"/>
+                            <Image src={squirrel} alt="squirrel" className="w-22 h-auto" />
                         </div>
 
                         {/* Section Title and Content */}
@@ -105,15 +107,13 @@ export default function SectionModule() {
                     </div>
                 ))}
                 {/* Navigation Buttons */}
-                <div className="flex justify-between p-6 border-t mt-auto">
+                <div className="flex justify-between pt-6 px-6 border-t mt-auto items-center">
                     <Button variant="outline" className="px-8">
                         Prev
                     </Button>
                     <Button className="bg-primary text-white px-8 flex items-center gap-2">
                         <span>Mark as Done</span>
-                        <span className="w-5 h-5 flex items-center justify-center">
-                            ✓
-                        </span>
+                        <Check className="w-5 h-5" />
                     </Button>
                 </div>
             </div>
