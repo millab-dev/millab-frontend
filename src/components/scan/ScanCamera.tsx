@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Camera } from 'lucide-react';
+import { Camera, X } from 'lucide-react';
 import { IDetectedBarcode, Scanner as QrScanner } from '@yudiel/react-qr-scanner';
 import { useRouter } from 'next/navigation';
 
@@ -88,6 +88,15 @@ const ScanCamera = () => {
         </div>
       ) : (
         <div className="w-full md:max-w-sm mx-auto aspect-square bg-white rounded-lg overflow-hidden shadow-sm relative">
+          {/* Close button */}
+          <button 
+            onClick={() => setCameraActive(false)}
+            className="absolute top-3 right-3 z-10 bg-white rounded-full p-1 shadow-md hover:bg-gray-100 transition-all duration-200 ease-in-out"
+            aria-label="Close scanner"
+          >
+            <X className="h-6 w-6 text-gray-700" />
+          </button>
+
           <QrScanner
             onScan={onScanSuccess}
             onError={onScanError}
