@@ -1,75 +1,177 @@
-'use client';
-
+"use client"
 import React from 'react';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { Card, CardContent } from "@/components/ui/card";
+import { User } from '@/types/user';
 
-const ProfileHeader = () => {
+type Props = {
+    user: Partial<User>
+}
+
+const ProfileHeader = ({user}: Props) => {
   return (
-    <div className="w-full max-w-5xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="relative p-6 flex">
-        {/* Background design with light blue swirls */}
-        <div className="absolute top-0 right-0 left-0 bottom-0 bg-blue-50 opacity-30">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-100 rounded-full -mr-12 -mt-12"></div>
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-100 rounded-full -ml-16 -mb-16"></div>
+    <div className="w-full max-w-5xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="w-full"
+      >
+      <Card 
+        className="shadow-md p-0 border border-gray-200 hover:shadow-lg transition-all duration-300 relative overflow-hidden"
+      >
+        {/* Cloud Background Elements */}
+        <div className="absolute left-0 top-4 md:hidden">
+          <Image 
+            src="/cloud-left.svg" 
+            alt="" 
+            width={80} 
+            height={80}
+          />
         </div>
-        
-        {/* Logo */}
-        <div className="absolute top-4 right-6">
-          <div className="text-blue-600 font-bold text-xl">CILL LAB</div>
+        <div className="absolute right-0 bottom-0 md:hidden">
+          <Image 
+            src="/cloud-right.svg" 
+            alt="" 
+            width={80} 
+            height={80}
+          />
         </div>
-
-        {/* Character Illustration */}
-        <div className="relative w-1/3 flex items-center justify-center">
-          <div className="w-40 h-40 relative">
-            {/* Placeholder for character illustration */}
-            <div className="w-full h-full bg-blue-100 rounded-full flex items-center justify-center overflow-hidden">
-              <div className="text-blue-500 text-4xl">🐰</div>
-            </div>
-          </div>
+        <div className="absolute left-0 top-6 hidden md:flex">
+          <Image 
+            src="/cloud-left.svg" 
+            alt="" 
+            width={130} 
+            height={130}
+          />
         </div>
-
-        {/* Profile Information */}
-        <div className="relative w-2/3 pl-4">
-          {/* Profile Details */}
-          <div className="grid grid-cols-2 gap-y-2 gap-x-4">
-            {/* Left Column */}
-            <div>
-              <div className="mb-4">
-                <p className="text-gray-500 text-sm uppercase">NAME</p>
-                <p className="text-gray-800 font-semibold">Dien Fitriani Azzahra Dien Fitriani</p>
-              </div>
-              
-              <div className="mb-4">
-                <p className="text-gray-500 text-sm uppercase">BIRTHPLACE</p>
-                <p className="text-gray-800 font-semibold">Kalimantan</p>
-              </div>
-              
-              <div className="mb-4">
-                <p className="text-gray-500 text-sm uppercase">GENDER</p>
-                <p className="text-gray-800 font-semibold">Female</p>
+        <div className="absolute right-0 -bottom-2 hidden md:flex">
+          <Image 
+            src="/cloud-right.svg" 
+            alt="" 
+            width={130} 
+            height={130}
+          />
+        </div>
+        <CardContent className="p-4 md:p-6">
+          {/* Logo at top-center */}
+          <motion.div 
+            className="flex justify-center mb-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ 
+              duration: 0.3,
+              delay: 0.1
+            }}
+          >
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Image 
+                src={"/millab-logo.svg"} 
+                alt="" 
+                width={80} 
+                height={80} 
+                className='hidden md:flex'
+                priority
+              />
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Image 
+                src={"/millab-logo.svg"} 
+                alt="" 
+                width={60} 
+                height={60} 
+                className='flex md:hidden'
+                priority
+              />
+            </motion.div>
+          </motion.div>
+          <div className="flex flex-row">
+            {/* Image and DOB */}
+            <div className="flex flex-col items-center mr-4 md:mr-6">
+              {/* Image Placeholder */}
+              <motion.div 
+                className="w-[90px] bg-white h-[120px] md:w-[119px] md:h-[159px] relative overflow-hidden border border-[#D9D9D9]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ 
+                  duration: 0.3,
+                  delay: 0.2
+                }}
+                whileHover={{ 
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                  y: -2,
+                  transition: { 
+                    duration: 0.2,
+                    ease: [0.4, 0, 0.2, 1]
+                  }
+                }}
+              >
+                <Image 
+                  src="/kelinci.png" 
+                  alt="Profile character" 
+                  fill 
+                  className="object-cover" 
+                  priority
+                />
+              </motion.div>
+              {/* Date of Birth */}
+              <div className="mt-2 text-center">
+                <p className="text-xs md:text-sm font-semibold">{user.birthdate}</p>
               </div>
             </div>
             
-            {/* Right Column */}
-            <div>
-              <div className="mb-4">
-                <p className="text-gray-500 text-sm uppercase">USERNAME</p>
-                <p className="text-gray-800 font-semibold">@dien.fitriani.azzahr2</p>
+            {/* Profile Info */}
+            <div className="flex-1">
+              {/* NAME */}
+              <div className="mb-3">
+                <p className="text-[10px] md:text-xs text-gray-500 uppercase">NAME</p>
+                <p className="text-xs md:text-lg font-semibold">{user.name}</p>
               </div>
               
-              <div className="mb-4">
-                <p className="text-gray-500 text-sm uppercase">SCHOOL</p>
-                <p className="text-gray-800 font-semibold">SMAN 1 Depok</p>
+              {/* Two-column layout for smaller info */}
+              <div className="grid grid-cols-2 gap-x-2 gap-y-2">
+                {/* BIRTHPLACE */}
+                <div>
+                  <p className="text-[10px] md:text-xs text-gray-500 uppercase">BIRTHPLACE</p>
+                  <p className="text-xs md:text-lg font-semibold">{user.birthplace}</p>
+                </div>
+                
+                {/* PHONE */}
+                <div>
+                  <p className="text-[10px] md:text-xs text-gray-500 uppercase">PHONE</p>
+                  <p className="text-xs md:text-lg font-semibold">{user.phoneNumber}</p>
+                </div>
+                
+                {/* GENDER */}
+                <div>
+                  <p className="text-[10px] md:text-xs text-gray-500 uppercase">GENDER</p>
+                  <p className="text-xs md:text-lg font-semibold">{user.gender}</p>
+                </div>
+                
+                {/* SCHOOL */}
+                <div>
+                  <p className="text-[10px] md:text-xs text-gray-500 uppercase">SCHOOL</p>
+                  <p className="text-xs md:text-lg font-semibold">{user.socializationLocation}</p>
+                </div>
+              </div>
+              
+              {/* EMAIL - Single column below the grid */}
+              <div className="mt-4 col-span-2">
+                <p className="text-[10px] md:text-xs text-gray-500 uppercase">EMAIL</p>
+                <p className="text-xs md:text-lg font-semibold">{user.email}</p>
               </div>
             </div>
           </div>
-          
-          {/* Date of Birth */}
-          <div className="absolute bottom-0 left-4">
-            <p className="text-gray-600 text-sm">09-04-2005</p>
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
+      </motion.div>
     </div>
   );
 };

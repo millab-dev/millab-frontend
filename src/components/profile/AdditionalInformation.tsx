@@ -1,36 +1,73 @@
-'use client';
+
+"use client";
 
 import React from 'react';
+import { Card, CardContent } from "@/components/ui/card";
+import { Mail, Phone } from "lucide-react";
+import { motion } from 'framer-motion';
 
 const AdditionalInformation = () => {
   return (
-    <div className="w-full max-w-5xl mx-auto bg-white rounded-lg shadow-md overflow-hidden mt-4">
-      <div className="p-6">
-        <h2 className="text-lg font-semibold mb-4">Additional Information</h2>
-        
-        <div className="space-y-3">
-          {/* Email Information */}
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
+    <motion.div 
+      className="w-full max-w-5xl mx-auto mt-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3, delay: 0.15 }}
+    >
+      <motion.h2 
+        className="text-base md:text-lg font-semibold mb-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+      >
+        Additional Information
+      </motion.h2>
+      <motion.div
+        initial={{ opacity: 0, y: 5 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.25 }}
+      >
+        <Card className='p-0'>
+          <CardContent className="p-4 md:p-5">
+            <div className="space-y-4">
+            {/* Email Information */}
+            <motion.div 
+              className="flex items-center"
+              initial={{ opacity: 0, x: -5 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+              whileHover={{ x: 3, transition: { duration: 0.2 } }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Mail className="h-5 w-5 text-primary mr-3" />
+              </motion.div>
+              <span className="text-gray-700 text-sm md:text-base font-semibold">dienfitriani@gmail.com</span>
+            </motion.div>
+            
+            {/* Phone Information */}
+            <motion.div 
+              className="flex items-center"
+              initial={{ opacity: 0, x: -5 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.4 }}
+              whileHover={{ x: 3, transition: { duration: 0.2 } }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Phone className="h-5 w-5 text-primary mr-3" />
+              </motion.div>
+              <span className="text-gray-700 text-sm md:text-base font-semibold">+628884620475</span>
+            </motion.div>
             </div>
-            <span className="text-gray-700">dienfitriani@gmail.com</span>
-          </div>
-          
-          {/* Phone Information */}
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-            </div>
-            <span className="text-gray-700">+628884620475</span>
-          </div>
-        </div>
-      </div>
-    </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 };
 

@@ -28,19 +28,24 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import Link from "next/link";
 
 const formSchema = z.object({
     name: z.string().min(1, "Name is required"),
-    username: z.string().min(1, "Username is required"),
-    password: z.string().min(1, "Password is required"),
+    password: z.string()
+        .min(8, "Password must be at least 8 characters")
+        .refine(
+            (password) => /[A-Z]/.test(password),
+            "Password must contain at least one uppercase letter"
+        )
+        .refine(
+            (password) => /[0-9]/.test(password),
+            "Password must contain at least one number"
+        )
+        .refine(
+            (password) => /[!@#$%^&*(),.?":{}|<>]/.test(password),
+            "Password must contain at least one special character"
+        ),
     gender: z.enum(["Female", "Male"], {
         required_error: "Please select a gender",
     }),
@@ -58,20 +63,12 @@ export default function SignupForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
 
-    // Definisikan sekolah statis jika tidak mengambil dari API
-    const schools = [
-        { id: "school1", name: "School 1" },
-        { id: "school2", name: "School 2" },
-        { id: "school3", name: "School 3" },
-        { id: "school4", name: "SMA Negeri 1 Jakarta" },
-        { id: "school5", name: "SMA Negeri 3 Solo" },
-    ];
+    // School list removed as it's no longer needed
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
-            username: "",
             password: "",
             gender: "Female",
             birthplace: "",
@@ -91,7 +88,7 @@ export default function SignupForm() {
             // Mapping data form ke format API
             const registerData = {
                 name: values.name,
-                username: values.username,
+                username: values.name.toLowerCase().replace(/\s+/g, '.'), // Generate username from name
                 email: values.email,
                 password: values.password,
                 gender: values.gender,
@@ -197,22 +194,7 @@ export default function SignupForm() {
                                 )}
                             />
 
-                            <FormField
-                                control={form.control}
-                                name="username"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Username*</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="citrabelajarliterasi"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            {/* Username field removed as requested */}
 
                             <FormField
                                 control={form.control}
@@ -366,28 +348,14 @@ export default function SignupForm() {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Socialization Location*
+                                            School/Socialization Location*
                                         </FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                        >
-                                            <FormControl>
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Choose School" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {schools.map((school) => (
-                                                    <SelectItem
-                                                        key={school.id}
-                                                        value={school.id}
-                                                    >
-                                                        {school.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="SMA Negeri 3 Solo"
+                                                {...field}
+                                            />
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
