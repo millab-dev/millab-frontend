@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-const Navbar = () => {
+const BottomNavbar = () => {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [isHovering, setIsHovering] = useState("");
@@ -115,4 +115,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default BottomNavbar;
