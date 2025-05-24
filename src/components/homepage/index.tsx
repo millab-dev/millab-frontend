@@ -11,7 +11,7 @@ const Homepage = () => {
                 <Navbar/>
             </div>
             
-            <div className="flex flex-col min-h-screen bg-background relative">
+            <div className="flex flex-col min-h-screen bg-background relative overflow-x-hidden">
                 {/* Mobile background */}
                 <div className="absolute inset-0 bg-primary md:hidden z-0">
                     <img src="/cloud-group.svg" 

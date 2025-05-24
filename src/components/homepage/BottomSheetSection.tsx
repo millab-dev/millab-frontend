@@ -15,7 +15,7 @@ const BottomSheetSection = () => {
   return (
     <motion.div 
       ref={ref}
-      className="w-full min-h-[calc(100vh-14.43rem)] md:min-h-[calc(100vh-16.43rem)] rounded-t-4xl bg-background shadow-lg max-w-7xl mx-auto"
+      className="w-full min-h-[calc(100vh-14.43rem)] md:min-h-[calc(100vh-16.43rem)] rounded-t-4xl bg-background shadow-lg max-w-7xl mx-auto overflow-x-hidden"
       initial={{ y: 100, opacity: 0 }}
       animate={isInView ? { y: 0, opacity: 1 } : { y: 100, opacity: 0 }}
       transition={{ 
