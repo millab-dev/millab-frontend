@@ -1,0 +1,115 @@
+"use client"
+import { Zap, Gem } from 'lucide-react'
+import { motion } from 'framer-motion'
+
+const InformationSection = () => {
+    return (
+        <motion.div 
+            className="px-4 pt-6 w-full mx-auto max-w-6xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+        >
+            {/* Desktop layout (row) with responsive fallback to mobile layout (column) */}
+            <motion.div 
+                className="flex flex-col md:flex-row md:items-center justify-center md:gap-x-12"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+            >
+                {/* Left side: Profile and Welcome text */}
+                <motion.div 
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                    <motion.div 
+                        className="relative flex-shrink-0 w-[4.375rem] h-[4.375rem] md:w-[8.4375rem] md:h-[8.4375rem] rounded-full border-2 border-primary shadow-md overflow-hidden"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                    >
+                        <div className="w-full h-full rounded-full bg-blue-100 flex items-center justify-center overflow-hidden">
+                            <img 
+                                src="/kelinci.png" 
+                                alt="Profile" 
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                    </motion.div>
+                    
+                    <motion.div 
+                        className="text-white"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.5 }}
+                    >
+                        <p className="text-base md:text-3xl font-semibold">Welcome back,</p>
+                        <h2 className="text-3xl md:text-6xl font-bold">Mimi!</h2>
+                    </motion.div>
+                </motion.div>
+
+                {/* Right side: Stats and progress (column in mobile, right-aligned column in desktop) */}
+                <motion.div 
+                    className="mt-6 md:mt-0 md:flex md:flex-col md:items-end"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                    {/* Streak and Points: row in both mobile and desktop */}
+                    <motion.div 
+                        className="flex justify-between xmd:justify-end md:gap-4 items-center w-full"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.5 }}
+                    >
+                        <motion.div 
+                            className="flex items-center bg-white rounded-full px-3 py-1 shadow-md"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <Zap size={18} className="text-primary mr-1.5" />
+                            <span className="font-semibold text-primary text-sm">1 Day Streak</span>
+                        </motion.div>
+                        
+                        <motion.div 
+                            className="flex items-center text-white ml-4 md:ml-0"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <Gem size={18} className="mr-1" />
+                            <span className="font-semibold text-sm">235</span>
+                        </motion.div>
+                    </motion.div>
+                    
+                    {/* Progress bar - now part of the right column in desktop */}
+                    <motion.div 
+                        className="mt-2 md:mt-3 w-full md:w-80 lg:w-[43rem]"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.6 }}
+                    >
+                        <div className="w-full bg-white/30 rounded-full h-2.5 md:h-3.5 mb-1 overflow-hidden">
+                            <motion.div 
+                                className="h-full rounded-full" 
+                                style={{ 
+                                    backgroundColor: '#EF5BA1'
+                                }}
+                                initial={{ width: '0%' }}
+                                animate={{ width: '10%' }}
+                                transition={{ duration: 1, delay: 0.8 }}
+                            />
+                        </div>
+                        <div className="flex justify-between mt-2 md:mt-3 text-xs md:text-sm">
+                            <span className="font-semibold text-white">Level 1</span>
+                            <span className="font-semibold text-white">0/120 xp</span>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            </motion.div>
+        </motion.div>
+    )
+}
+
+export default InformationSection
