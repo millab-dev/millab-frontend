@@ -3,8 +3,12 @@
 import { Download, FileText, CheckCircle, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import cloud from "@/assets/cloudPattern.svg";
+import { useRouter, useParams } from "next/navigation";
 
 export default function DetailModule() {
+    const router = useRouter();
+    const params = useParams();
+    const id = params.id as string;
     // Mock data for the materi/steps
     const materi = [
         {
@@ -106,14 +110,17 @@ export default function DetailModule() {
                             </div>
                             {/* Materi Card */}
                             <div className="flex-1 ml-2">
-                                <div className="bg-white border rounded-xl p-3 flex items-center justify-between shadow-sm">
+                                <div
+                                    className="bg-white border rounded-xl p-3 flex items-center justify-between shadow-sm cursor-pointer hover:bg-gray-50 transition"
+                                    onClick={() => router.push(`/module/${id}/${item.id}`)}
+                                >
                                     <div>
                                         <div className="text-primary font-medium">
                                             {idx + 1}. {item.title}
                                         </div>
                                         <div className="text-xs text-gray-400">{item.duration}</div>
                                     </div>
-                                    <Button variant="ghost" size="icon" className="text-primary">
+                                    <Button variant="ghost" size="icon" className="text-primary" onClick={e => e.stopPropagation()}>
                                         <Download size={20} />
                                     </Button>
                                 </div>
@@ -126,7 +133,10 @@ export default function DetailModule() {
                             <HelpCircle className="text-primary bg-white rounded-full border-2 border-primary" size={28} />
                         </div>
                         <div className="flex-1 ml-2">
-                            <div className="bg-gradient-to-r from-primary to-blue-400 text-white rounded-xl p-3 flex items-center justify-between shadow">
+                            <div
+                                className="bg-gradient-to-r from-primary to-blue-400 text-white rounded-xl p-3 flex items-center justify-between shadow cursor-pointer hover:opacity-90 transition"
+                                onClick={() => router.push(`/module/${id}/quiz`)}
+                            >
                                 <div>
                                     <div className="font-semibold">Quiz 1: Pengantar Literasi Media</div>
                                     <div className="text-xs">2 min</div>

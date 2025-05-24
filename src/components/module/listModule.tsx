@@ -5,15 +5,21 @@ import { Button } from "@/components/ui/button";
 import cloud from "@/assets/cloud.svg";
 import Image from "next/image";
 import rabbit from "@/assets/rabbitBook.svg";
+import { useRouter } from "next/navigation";
 
 export default function ListModule() {
+    const router = useRouter();
+    
     // Mock data for the modules
     const modules = [
         { id: 1, title: "Pengantar Literasi Media & Informasi", progress: 20 },
         { id: 2, title: "Pengantar Literasi Media & Informasi", progress: 20 },
         { id: 3, title: "Pengantar Literasi Media & Informasi", progress: 20 },
-
     ];
+
+    const handleModuleClick = (id: number) => {
+        router.push(`/module/${id}`);
+    };
 
     return (
         <div className="mx-auto font-jakarta bg-primary sm:px-24 lg:px-50 min-h-screen flex flex-col">
@@ -77,7 +83,8 @@ export default function ListModule() {
                     {modules.map((module) => (
                         <div
                             key={module.id}
-                            className="border rounded-xl p-4 flex items-center justify-between gap-4"
+                            className="border rounded-xl p-4 flex items-center justify-between gap-4 cursor-pointer hover:shadow-md transition-shadow"
+                            onClick={() => handleModuleClick(module.id)}
                         >
                             <div className="flex items-center gap-4 w-full">
                                 <div className="bg-gradient-to-r from-primary to-primary/80 p-3 rounded-lg">
@@ -108,6 +115,10 @@ export default function ListModule() {
                                 variant="ghost"
                                 size="icon"
                                 className="text-primary"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    // Handle download functionality here
+                                }}
                             >
                                 <Download size={20} />
                             </Button>
