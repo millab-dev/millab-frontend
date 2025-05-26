@@ -1,16 +1,19 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import React from "react";
+import React, { useState } from "react";
 import cloud from "@/assets/cloudPattern.svg";
 import Image from "next/image";
 import bear from "@/assets/bear.svg";
 import squirrel from "@/assets/squirrel.svg";
 import rabbit from "@/assets/rabbitBook.svg";
-
-import { Check } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Check, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 
 export default function SectionModule() {
+    const router = useRouter();
+    const [isMarkedAsDone, setIsMarkedAsDone] = useState(false);
     // You would typically fetch this content from an API
     // This is mockup data based on the image
     const moduleContent = {
@@ -51,6 +54,17 @@ export default function SectionModule() {
         ],
     };
 
+    const handleMarkAsDone = () => {
+        setIsMarkedAsDone(true);
+        toast.success("Berhasil menyelesaikan materi");
+        // You can add any additional logic here like API calls to save progress
+    };
+
+    const handleNext = () => {
+        // Navigate to next section or back to module detail
+        router.back(); // or router.push('/next-section')
+    };
+
     return (
         <div className="bg-primary min-h-screen font-jakarta sm:px-24 lg:px-50 mx-auto flex flex-col">
             {/* Header with section number and title */}
@@ -76,9 +90,21 @@ export default function SectionModule() {
                     <div key={index} className="mb-8">
                         {/* Illustrations */}
                         <div className="rounded-xl py-6 px-4 mb-4 flex justify-between sm:justify-center items-end sm:gap-12 bg-gradient-to-b from-[#FFB9DA] to-white">
-                            <Image src={bear} alt="bear" className="w-22 h-auto"/>
-                            <Image src={rabbit} alt="rabbit" className="w-18 h-auto"/>
-                            <Image src={squirrel} alt="squirrel" className="w-22 h-auto" />
+                            <Image
+                                src={bear}
+                                alt="bear"
+                                className="w-22 h-auto"
+                            />
+                            <Image
+                                src={rabbit}
+                                alt="rabbit"
+                                className="w-18 h-auto"
+                            />
+                            <Image
+                                src={squirrel}
+                                alt="squirrel"
+                                className="w-22 h-auto"
+                            />
                         </div>
 
                         {/* Section Title and Content */}
@@ -108,12 +134,28 @@ export default function SectionModule() {
                 ))}
                 {/* Navigation Buttons */}
                 <div className="flex justify-between pt-6 px-6 border-t mt-auto items-center">
-                    <Button variant="outline" className="px-8">
+                    <Button
+                        variant="outline"
+                        className="px-8 cursor-pointer"
+                        onClick={() => router.back()}
+                    >
                         Prev
                     </Button>
-                    <Button className="bg-primary text-white px-8 flex items-center gap-2">
-                        <span>Mark as Done</span>
-                        <Check className="w-5 h-5" />
+
+                    <Button
+                        className={`px-8 flex items-center gap-2 cursor-pointer transition-all duration-300 ${
+                            isMarkedAsDone
+                                ? " text-primary ring-1 ring-primary bg-white hover:bg-primary hover:text-white"
+                                : "bg-primary hover:bg-primary/90 text-white"
+                        }`}
+                        onClick={isMarkedAsDone ? handleNext : handleMarkAsDone}
+                    >
+                        <span>{isMarkedAsDone ? "Next" : "Mark as Done"}</span>
+                        {isMarkedAsDone ? (
+                            <ArrowRight className="w-5 h-5" />
+                        ) : (
+                            <Check className="w-5 h-5" />
+                        )}
                     </Button>
                 </div>
             </div>
