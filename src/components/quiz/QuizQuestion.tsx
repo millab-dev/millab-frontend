@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, List, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuizQuestionData, QuizOption } from "./Quiz";
+import cloud from "@/assets/cloudPatternBlue.svg";
 
 interface QuizQuestionProps {
     question: QuizQuestionData;
@@ -58,7 +59,9 @@ export default function QuizQuestion({
     const getOptionLabel = (option: QuizOption) => {
         if (showResults) {
             if (option.isCorrect) {
-                return selectedAnswer === option.id ? "Selected Correct Answer ✓" : "Correct Answer ✓";
+                return selectedAnswer === option.id
+                    ? "Selected Correct Answer ✓"
+                    : "Correct Answer ✓";
             } else if (selectedAnswer === option.id) {
                 return "Selected Wrong Answer ✗";
             } else {
@@ -83,7 +86,12 @@ export default function QuizQuestion({
     };
 
     return (
-        <div className="min-h-screen bg-[#F8F8F8] sm:p-4 font-jakarta">
+        <div
+            className="min-h-screen bg-[#F8F8F8] sm:p-4 font-jakarta bg-repeat bg-[length:600px] lg:bg-[length:800px]"
+            style={{
+                backgroundImage: `url(${cloud.src})`,         
+            }}
+        >
             <div className="max-w-2xl mx-auto">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-8 max-sm:p-4">
@@ -129,7 +137,8 @@ export default function QuizQuestion({
                                     `}
                                     onClick={() => onAnswerSelect(option.id)}
                                     onMouseEnter={() =>
-                                        !showResults && setHoveredOption(option.id)
+                                        !showResults &&
+                                        setHoveredOption(option.id)
                                     }
                                     onMouseLeave={() =>
                                         !showResults && setHoveredOption(null)
@@ -160,7 +169,7 @@ export default function QuizQuestion({
                         >
                             Prev
                         </Button>
-                    
+
                         {!showResults ? (
                             <Button
                                 onClick={onCheckAnswer}
@@ -175,7 +184,10 @@ export default function QuizQuestion({
                                 onClick={onNextQuestion}
                                 className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium"
                             >
-                                {currentQuestionNumber === totalQuestions ? "Finish Quiz" : "Next Question"} →
+                                {currentQuestionNumber === totalQuestions
+                                    ? "Finish Quiz"
+                                    : "Next Question"}{" "}
+                                →
                             </Button>
                         )}
                     </div>
@@ -183,4 +195,4 @@ export default function QuizQuestion({
             </div>
         </div>
     );
-} 
+}

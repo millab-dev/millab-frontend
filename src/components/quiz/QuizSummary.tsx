@@ -3,6 +3,7 @@
 import { ArrowLeft, RotateCcw, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuizQuestionData, QuizAnswer } from "./Quiz";
+import cloud from "@/assets/cloudPatternBlue.svg";
 
 interface QuizSummaryProps {
     quizData: QuizQuestionData[];
@@ -47,7 +48,9 @@ export default function QuizSummary({
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4 font-jakarta">
+        <div className="min-h-screen bg-gray-50 p-4 font-jakarta bg-repeat bg-[length:600px] lg:bg-[length:800px]" style={{
+            backgroundImage: `url(${cloud.src})`,
+        }}>
             <div className="max-w-2xl mx-auto">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-8">

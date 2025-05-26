@@ -38,22 +38,15 @@ export default function DetailModule() {
     ];
 
     return (
-        <div className="mx-auto font-jakarta bg-primary min-h-screen sm:px-24 lg:px-50 flex flex-col">
-            {/* Header Section with blue background and clouds */}
-            <div className="bg-primary p-8 relative overflow-hidden h-[150px]">
-                {/* Clouds as background pattern */}
-                <div
-                    className="absolute inset-0 z-0"
-                    style={{
-                        backgroundImage: `url(${cloud.src})`,
-                        backgroundRepeat: "repeat",
-                        backgroundSize: "600px",
-                    }}
-                />
-            </div>
+        <div
+            className="mx-auto font-jakarta bg-primary min-h-screen sm:px-24 lg:px-40 flex flex-col bg-repeat bg-[length:600px] lg:bg-[length:900px]"
+            style={{
+                backgroundImage: `url(${cloud.src})`,
+            }}
+        >
 
             {/* Content Section */}
-            <div className="bg-white rounded-t-4xl p-6 sm:p-8 shadow-md relative flex-grow">
+            <div className="bg-white rounded-t-4xl p-6 sm:p-8 shadow-md relative flex-grow mt-30">
                 {/* Card */}
                 <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white rounded-3xl shadow-lg p-6 w-max flex flex-col gap-2">
                     <div className="flex items-center justify-between">
@@ -93,34 +86,54 @@ export default function DetailModule() {
                         </div>
                     </div>
                 </div>
-                <h2 className="text-xl font-bold text-primary mt-32 mb-6">Materi</h2>
+                <h2 className="text-xl font-bold text-primary mt-32 mb-6">
+                    Materi
+                </h2>
                 <div className="relative flex flex-col gap-3">
                     {/* Vertical line */}
                     <div className="absolute left-[14px] top-0 bottom-0 w-1 bg-gray-200 z-0 rounded-full" />
                     {/* Stepper + Cards */}
                     {materi.map((item, idx) => (
-                        <div key={item.id} className="flex items-center relative z-10">
+                        <div
+                            key={item.id}
+                            className="flex items-center relative z-10"
+                        >
                             {/* Stepper Icon */}
                             <div className="w-8 flex justify-center items-center">
                                 {item.done ? (
-                                    <CheckCircle className="text-green-500 bg-white rounded-full border-2 border-green-500" size={28} />
+                                    <CheckCircle
+                                        className="text-green-500 bg-white rounded-full border-2 border-green-500"
+                                        size={28}
+                                    />
                                 ) : (
-                                    <FileText className="text-gray-400 bg-white rounded-full border-2 border-gray-300" size={28} />
+                                    <FileText
+                                        className="text-gray-400 bg-white rounded-full border-2 border-gray-300"
+                                        size={28}
+                                    />
                                 )}
                             </div>
                             {/* Materi Card */}
                             <div className="flex-1 ml-2">
                                 <div
-                                    className="bg-white border rounded-xl p-3 flex items-center justify-between shadow-sm cursor-pointer hover:bg-gray-50 transition"
-                                    onClick={() => router.push(`/module/${id}/${item.id}`)}
+                                    className="bg-white border rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition shadow-md"
+                                    onClick={() =>
+                                        router.push(`/module/${id}/${item.id}`)
+                                    }
                                 >
                                     <div>
                                         <div className="text-primary font-medium">
                                             {idx + 1}. {item.title}
                                         </div>
-                                        <div className="text-xs text-gray-400">{item.duration}</div>
+                                        <div className="text-xs text-gray-400">
+                                            {item.duration}
+                                        </div>
                                     </div>
-                                    <Button variant="ghost" size="icon" className="text-primary" onClick={e => e.stopPropagation()}>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-primary"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
                                         <Download size={20} />
                                     </Button>
                                 </div>
@@ -130,18 +143,28 @@ export default function DetailModule() {
                     {/* Quiz row */}
                     <div className="flex items-center mt-2 relative z-10">
                         <div className="w-8 flex justify-center items-center">
-                            <HelpCircle className="text-primary bg-white rounded-full border-2 border-primary" size={28} />
+                            <HelpCircle
+                                className="text-primary bg-white rounded-full border-2 border-primary"
+                                size={28}
+                            />
                         </div>
                         <div className="flex-1 ml-2">
                             <div
-                                className="bg-gradient-to-r from-primary to-blue-400 text-white rounded-xl p-3 flex items-center justify-between shadow cursor-pointer hover:opacity-90 transition"
-                                onClick={() => router.push(`/module/${id}/quiz`)}
+                                className="bg-gradient-to-r shadow-md from-primary to-blue-400 text-white rounded-xl p-3 flex items-center justify-between cursor-pointer hover:opacity-90 transition"
+                                onClick={() =>
+                                    router.push(`/module/${id}/quiz`)
+                                }
                             >
                                 <div>
-                                    <div className="font-semibold">Quiz 1: Pengantar Literasi Media</div>
+                                    <div className="font-semibold">
+                                        Quiz 1: Pengantar Literasi Media
+                                    </div>
                                     <div className="text-xs">2 min</div>
                                 </div>
-                                <FileText className="text-white opacity-60" size={28} />
+                                <FileText
+                                    className="text-white opacity-60"
+                                    size={28}
+                                />
                             </div>
                         </div>
                     </div>

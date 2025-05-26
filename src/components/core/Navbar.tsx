@@ -44,7 +44,7 @@ const Navbar = () => {
   return (
     <>
       <motion.nav 
-        className={`fixed top-0 left-0 right-0 z-50 bg-white py-4 px-4 md:px-6 transition-all duration-300 ${scrolled ? 'shadow-md' : 'border-b border-gray-200'}`}
+        className={`fixed top-0 left-0 right-0 z-50 bg-white py-4 px-4 md:px-6 transition-all duration-300 ${scrolled ? 'shadow-md' : 'border-b border-gray-200'} font-jakarta`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: 'spring', stiffness: 100, damping: 15 }}>
