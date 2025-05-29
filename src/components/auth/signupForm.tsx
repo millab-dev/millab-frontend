@@ -15,7 +15,6 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -326,15 +325,19 @@ export default function SignupForm() {
                                                 className="w-auto p-0 font-jakarta"
                                                 align="start"
                                             >
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
-                                                    initialFocus
-                                                    captionLayout="dropdown-buttons"
-                                                    fromYear={1960}
-                                                    toYear={2030}
-                                                />
+                                                <FormControl>
+                                                    <Input 
+                                                        type="date"
+                                                        className="font-jakarta"
+                                                        value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
+                                                        onChange={(e) => {
+                                                            const date = e.target.value ? new Date(e.target.value) : null;
+                                                            field.onChange(date);
+                                                        }}
+                                                        min="1960-01-01"
+                                                        max="2030-12-31"
+                                                    />
+                                                </FormControl>
                                             </PopoverContent>
                                         </Popover>
                                         <FormMessage />
