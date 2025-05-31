@@ -6,15 +6,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
-import { Eye, EyeOff, CalendarIcon } from "lucide-react";
+import { Eye, EyeOff, Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,9 +58,8 @@ const formSchema = z.object({
 export default function SignupForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [calendarOpen, setCalendarOpen] = useState(false);
     const router = useRouter();
-
-    // School list removed as it's no longer needed
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -78,16 +75,18 @@ export default function SignupForm() {
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        setIsSubmitting(true);
+        
+        // Create a unique toast ID for the loading notification
+        const loadingToastId = "signup-loading-" + Date.now();
+        
+        // Show initial loading toast
+        toast.loading("Creating your account...", { id: loadingToastId });
+        
         try {
-            setIsSubmitting(true);
-
-            // Tampilkan loading toast
-            const loadingToast = toast.loading("Creating your account...");
-
             // Mapping data form ke format API
             const registerData = {
                 name: values.name,
-                username: values.name.toLowerCase().replace(/\s+/g, '.'), // Generate username from name
                 email: values.email,
                 password: values.password,
                 gender: values.gender,
@@ -115,14 +114,15 @@ export default function SignupForm() {
 
             const data = await response.json();
 
-            // Dismiss loading toast
-            toast.dismiss(loadingToast);
+            // Always dismiss the loading toast first
+            toast.dismiss(loadingToastId);
 
             if (data.success) {
-                // Pendaftaran berhasil
+                // Pendaftaran berhasil - use a new unique ID for success toast
+                const successToastId = "signup-success-" + Date.now();
                 toast.success("Registration successful", {
-                    description:
-                        "Your account has been created. Redirecting to login...",
+                    id: successToastId,
+                    description: "Your account has been created. Redirecting to login...",
                     duration: 3000,
                 });
 
@@ -131,18 +131,24 @@ export default function SignupForm() {
                     router.push("/signin");
                 }, 1500);
             } else {
-                // Pendaftaran gagal
+                // Pendaftaran gagal - use a new unique ID for error toast
+                const errorToastId = "signup-error-" + Date.now();
                 toast.error("Registration failed", {
-                    description:
-                        data.error || "Something went wrong. Please try again.",
+                    id: errorToastId,
+                    description: data.error || "Something went wrong. Please try again.",
+                    duration: 5000, // Keep error message visible for 5 seconds
                 });
             }
         } catch (error) {
+            // Make sure to dismiss the loading toast before showing error
+            toast.dismiss(loadingToastId);
+            
+            // Show error toast with a new unique ID
+            const catchErrorToastId = "signup-catch-error-" + Date.now();
             toast.error("Error during registration", {
-                description:
-                    error instanceof Error
-                        ? error.message
-                        : "Unknown error occurred",
+                id: catchErrorToastId,
+                description: error instanceof Error ? error.message : "Unknown error occurred",
+                duration: 5000, // Keep error message visible for 5 seconds
             });
         } finally {
             setIsSubmitting(false);
@@ -192,8 +198,6 @@ export default function SignupForm() {
                                     </FormItem>
                                 )}
                             />
-
-                            {/* Username field removed as requested */}
 
                             <FormField
                                 control={form.control}
@@ -296,48 +300,43 @@ export default function SignupForm() {
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col">
                                         <FormLabel>Birthdate*</FormLabel>
-                                        <Popover>
-                                            <PopoverTrigger
-                                                asChild
-                                                className="border-primary"
-                                            >
+                                        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                                            <PopoverTrigger asChild>
                                                 <FormControl>
                                                     <Button
+                                                        type="button"
                                                         variant="outline"
-                                                        className="w-full pl-3 text-left font-normal flex justify-between items-center h-9"
+                                                        className={`w-full pl-3 text-left font-normal ${!field.value && "text-muted-foreground"} flex justify-between items-center`}
                                                     >
                                                         {field.value ? (
-                                                            format(
-                                                                field.value,
-                                                                "PPP"
-                                                            )
+                                                            format(field.value, "PPP")
                                                         ) : (
-                                                            <span className="text-muted-foreground">
-                                                                Input your
-                                                                Birthdate
-                                                            </span>
+                                                            <span>Pick a date</span>
                                                         )}
-                                                        <CalendarIcon className="h-4 w-4 text-blue-500 ml-auto" />
+                                                        <CalendarIcon className="ml-auto h-4 w-4 text-primary" />
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
                                             <PopoverContent
-                                                className="w-auto p-0 font-jakarta"
+                                                className="w-auto p-0"
                                                 align="start"
                                             >
-                                                <FormControl>
-                                                    <Input 
-                                                        type="date"
-                                                        className="font-jakarta"
-                                                        value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
-                                                        onChange={(e) => {
-                                                            const date = e.target.value ? new Date(e.target.value) : null;
+                                                <div className="p-3">
+                                                    <DayPicker
+                                                        mode="single"
+                                                        captionLayout="dropdown"
+                                                        selected={field.value}
+                                                        onSelect={(date) => {
                                                             field.onChange(date);
+                                                            setCalendarOpen(false);
                                                         }}
-                                                        min="1960-01-01"
-                                                        max="2030-12-31"
+                                                        disabled={{
+                                                            before: new Date("1900-01-01"),
+                                                            after: new Date()
+                                                        }}
+                                                       
                                                     />
-                                                </FormControl>
+                                                </div>
                                             </PopoverContent>
                                         </Popover>
                                         <FormMessage />
@@ -390,7 +389,7 @@ export default function SignupForm() {
                                         <FormLabel>Phone Number</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="citra123@gmail.com"
+                                                placeholder="08123456789"
                                                 {...field}
                                             />
                                         </FormControl>
