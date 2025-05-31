@@ -97,10 +97,7 @@ export default function SignupForm() {
             };
 
             // Direct fetch to API
-            const response = await fetch(
-                `${
-                    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
-                }/api/v1/auth/register`,
+            const response = await fetch(`/api/v1/auth/register`,
                 {
                     method: "POST",
                     headers: {

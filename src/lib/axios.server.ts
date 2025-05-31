@@ -18,7 +18,8 @@ const getAxiosServerInstance = async () => {
     // Tidak perlu menambahkan cookie secara manual
     
     return axios.create({
-        baseURL: process.env.NEXT_PUBLIC_API_URL,
+        // Gunakan path relatif sehingga request akan dikirim ke domain frontend
+        // dan di-proxy oleh Next.js rewrites ke backend
         withCredentials: true,
         headers: headerObj
     });

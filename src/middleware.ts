@@ -19,10 +19,9 @@ export async function middleware(request: NextRequest) {
         });
 
         // Direct fetch to check authentication
-        const response = await fetch(
-            `${
-                process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
-            }/api/v1/auth/me`,
+        console.log("Checking authentication...");
+        console.log(process.env.NEXT_PUBLIC_API_URL);
+        const response = await fetch(`/api/v1/auth/me`,
             {
                 headers,
                 credentials: "include",
