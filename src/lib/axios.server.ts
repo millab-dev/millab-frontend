@@ -17,9 +17,11 @@ const getAxiosServerInstance = async () => {
     // Cookie sudah termasuk dalam headers yang diambil dari request
     // Tidak perlu menambahkan cookie secara manual
     
+        // Gunakan absolute URL untuk bypass Next.js rewrites
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    
     return axios.create({
-        // Gunakan path relatif sehingga request akan dikirim ke domain frontend
-        // dan di-proxy oleh Next.js rewrites ke backend
+        baseURL: apiBaseUrl, // Gunakan URL API langsung seperti di middleware
         withCredentials: true,
         headers: headerObj
     });

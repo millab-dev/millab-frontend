@@ -20,8 +20,11 @@ export async function middleware(request: NextRequest) {
 
         // Direct fetch to check authentication
         console.log("Checking authentication...");
-        console.log(process.env.NEXT_PUBLIC_API_URL);
-        const response = await fetch(`/api/v1/auth/me`,
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+        console.log(`Using API URL: ${apiBaseUrl}`);
+        
+        // Use absolute URL with the API base URL instead of relative path
+        const response = await fetch(`${apiBaseUrl}/api/v1/auth/me`,
             {
                 headers,
                 credentials: "include",
