@@ -107,7 +107,7 @@ const Leaderboard = () => {
               Leaderboard
             </motion.h2>
             <motion.p 
-              className="text-lg md:text-xl text-[#EF5BA1] font-medium"
+              className="text-lg md:text-xl text-[#EF5BA1] font-semibold"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3, delay: 0.1 }}

@@ -1,0 +1,53 @@
+"use client"
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
+import MillabSection from './MillabSection'
+import OurTeamSection from './OurTeamSection'
+import WhatHaveWeMade from './WhatHaveWeMade'
+import AwardSection from './AwardSection'
+
+const BottomSheetSection = () => {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, amount: 0.1 })
+  
+  return (
+    <motion.div 
+      ref={ref}
+      className="w-full min-h-[calc(100vh-14.43rem)] md:min-h-[calc(100vh-16.43rem)] rounded-t-4xl bg-background shadow-lg max-w-7xl mx-auto overflow-x-hidden"
+      initial={{ y: 100, opacity: 0 }}
+      animate={isInView ? { y: 0, opacity: 1 } : { y: 100, opacity: 0 }}
+      transition={{ 
+        duration: 0.7, 
+        ease: [0.22, 1, 0.36, 1] // Custom ease curve for smooth animation
+      }}
+    >
+      <div className="flex flex-col px-4 pt-4 pb-24 lg:pt-12 lg:pb-12 max-w-6xl mx-auto">
+        {/* MIL Lab section */}
+        <MillabSection />
+        
+        <hr className="my-4 border-t-2 border-gray-300" />
+        
+        {/* Team section */}
+        <div className="mt-4">
+          <OurTeamSection />
+        </div>
+        
+        <hr className="my-4 border-t-2 border-gray-300" />
+        
+        {/* What Have We Made section */}
+        <div className="mt-4">
+          <WhatHaveWeMade />
+        </div>
+        
+        <hr className="my-4 border-t-2 border-gray-300" />
+        
+        {/* Award section */}
+        <div className="mt-4">
+          <AwardSection />
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+export default BottomSheetSection

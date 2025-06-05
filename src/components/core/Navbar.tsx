@@ -35,6 +35,7 @@ const Navbar = () => {
     { name: "Module", path: "/module" },
     { name: "Final Quiz", path: "/final-quiz" },
     { name: "Profile", path: "/profile" },
+    { name: "About Us", path: "/about-us" },
   ];
 
   const toggleMenu = () => {
