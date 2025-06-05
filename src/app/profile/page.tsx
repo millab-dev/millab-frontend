@@ -7,14 +7,15 @@ export const metadata: Metadata = {
   description: 'View and manage your Millab profile',
 };
 
-// Define props type for the Page component
+// Define the correct props type for Next.js App Router
 type PageProps = {
-  searchParams?: { section?: string }
-}
+  params: { [key: string]: string | string[] };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
 export default async function Page({ searchParams }: PageProps) {
-  // Use optional chaining to safely access the section property
-  const section = searchParams?.section || 'settings';
+  // Get section from searchParams
+  const section = typeof searchParams.section === 'string' ? searchParams.section : 'settings';
   return (
     <ProfilePage section={section} />
   );

@@ -29,11 +29,14 @@ const ProfilePage = async ({ section = 'settings' }: ProfilePageProps) => {
       
       <div className="min-h-screen pb-20 bg-background relative overflow-x-hidden">
         {/* Mobile background */}
-        <div className="absolute inset-0 bg-primary md:hidden z-0">
-          <img src="/cloud-group.svg" 
-               className="w-full object-contain h-auto max-h-[16rem] mt-8 scale-[120%]" 
-               alt="Cloud background"/>
-        </div>
+        <div className="absolute inset-0 bg-primary md:hidden z-0"
+          style={{
+            backgroundImage: "url('/cloud-background.svg')",
+            backgroundRepeat: "repeat",
+            backgroundSize: "auto auto",
+            backgroundPosition: "top center"
+          }}
+        />
         
         {/* Desktop background */}
         <div className="fixed inset-0 bg-primary hidden md:block z-0"
