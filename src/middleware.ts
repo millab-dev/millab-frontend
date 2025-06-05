@@ -33,6 +33,8 @@ export async function middleware(request: NextRequest) {
         
         // Only forward cookies header from API response to client
         const cookies = response.headers?.['set-cookie'];
+        console.log("Response headers: ", response.headers)
+        console.log("Cookies exists:", !!cookies);
         if (cookies) {
             // Handle cookies correctly whether it's a string or array
             if (Array.isArray(cookies)) {

@@ -28,8 +28,8 @@ const TabBar: React.FC<TabBarProps> = ({ activeTab }) => {
             className={cn(
               "py-2 text-sm font-medium block transition-colors duration-200",
               activeTab === 'achievements' 
-                ? "border-b-2 border-yellow-400 text-white font-bold" 
-                : "text-yellow-100 hover:text-yellow-50"
+                ? "border-b-2 border-yellow-400 text-yellow-400 font-bold" 
+                : "text-white hover:text-yellow-50"
             )}
           >
             Achievements
