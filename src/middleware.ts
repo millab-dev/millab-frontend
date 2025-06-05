@@ -14,10 +14,24 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-        // Using axiosServer instead of direct fetch
-        console.log("Checking authentication...");
+        // First, explicitly try to refresh the token if there's a refresh_token cookie
+        // This is more reliable than relying on backend silent refresh
+        const refreshToken = request.cookies.get('refresh_token');
+        let refreshResponse;
         
-        // Use axiosServer to make the API call
+        if (refreshToken) {
+            try {
+                console.log("Found refresh token, explicitly refreshing...");
+                refreshResponse = await axiosServer.get("/api/v1/auth/refresh");
+                console.log("Refresh response status:", refreshResponse.status);
+            } catch (refreshError) {
+                console.error("Error refreshing token:", refreshError);
+                // Continue even if refresh fails - we'll check auth next
+            }
+        }
+        
+        // Now check authentication with the /me endpoint
+        console.log("Checking authentication...");
         const response = await axiosServer.get("/api/v1/auth/me");
         
         // With axios, the data is already parsed as JSON
@@ -28,13 +42,17 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL("/signin", request.url));
         }
 
-        // Create NextResponse and only forward cookies header from API response
+        // Create NextResponse and forward cookies header from API response
         const nextResponse = NextResponse.next();
         
-        // Only forward cookies header from API response to client
-        const cookies = response.headers?.['set-cookie'];
-        console.log("Response headers: ", response.headers)
+        // Try to get cookies from refresh response first, then from me response
+        const responseWithCookies = refreshResponse?.headers?.['set-cookie'] ? 
+            refreshResponse : response;
+            
+        const cookies = responseWithCookies.headers?.['set-cookie'];
+        console.log("Response headers: ", responseWithCookies.headers);
         console.log("Cookies exists:", !!cookies);
+        
         if (cookies) {
             // Handle cookies correctly whether it's a string or array
             if (Array.isArray(cookies)) {
