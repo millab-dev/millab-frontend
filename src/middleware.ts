@@ -14,43 +14,32 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-        // First, explicitly try to refresh the token if there's a refresh_token cookie
-        // This is more reliable than relying on backend silent refresh
-        const refreshToken = request.cookies.get('refresh_token');
-        let refreshResponse;
-        
-        if (refreshToken) {
-            try {
-                console.log("Found refresh token, explicitly refreshing...");
-                refreshResponse = await axiosServer.get("/api/v1/auth/refresh");
-                console.log("Refresh response status:", refreshResponse.status);
-            } catch (refreshError) {
-                console.error("Error refreshing token:", refreshError);
-                // Continue even if refresh fails - we'll check auth next
+        // Use only the refresh endpoint for both authentication and cookie refresh
+        console.log("Using refresh endpoint for authentication...");
+        let response;
+        try {
+            response = await axiosServer.get("/api/v1/auth/refresh");
+            console.log("Auth refresh status:", response.status);
+            
+            // If refresh is successful, we're authenticated
+            if (response.data && response.data.success) {
+                console.log("Authentication successful via refresh endpoint");
+            } else {
+                console.log("Refresh endpoint indicated auth failure");
+                return NextResponse.redirect(new URL("/signin", request.url));
             }
-        }
-        
-        // Now check authentication with the /me endpoint
-        console.log("Checking authentication...");
-        const response = await axiosServer.get("/api/v1/auth/me");
-        
-        // With axios, the data is already parsed as JSON
-        const data = response.data;
-        
-        // If not authenticated (status not 200), redirect to signin
-        if (!data.success) {
+        } catch (authError) {
+            console.error("Authentication error:", authError);
+            // If auth fails, redirect to signin
             return NextResponse.redirect(new URL("/signin", request.url));
         }
 
         // Create NextResponse and forward cookies header from API response
         const nextResponse = NextResponse.next();
         
-        // Try to get cookies from refresh response first, then from me response
-        const responseWithCookies = refreshResponse?.headers?.['set-cookie'] ? 
-            refreshResponse : response;
-            
-        const cookies = responseWithCookies.headers?.['set-cookie'];
-        console.log("Response headers: ", responseWithCookies.headers);
+        // Get cookies directly from the refresh response
+        const cookies = response.headers?.['set-cookie'];
+        console.log("Response headers: ", response.headers);
         console.log("Cookies exists:", !!cookies);
         
         if (cookies) {
