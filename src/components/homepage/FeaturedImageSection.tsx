@@ -15,12 +15,12 @@ const FeaturedImageSection = () => {
       transition={{ duration: 0.7 }}
     >
       <img 
-        src="/mil-founder.svg" 
+        src="/mil-founder.png" 
         alt="Founder" 
         className="w-full md:hidden mx-auto h-auto rounded-2xl"
       />
       <img 
-        src="/mil-founder-md.svg" 
+        src="/mil-founder-md.png" 
         alt="Founder" 
         className="w-full hidden md:block mx-auto h-auto rounded-2xl"
       />

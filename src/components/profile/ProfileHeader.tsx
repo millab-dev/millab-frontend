@@ -13,61 +13,84 @@ const ProfileHeader = ({user}: Props) => {
   return (
     <div className="w-full max-w-5xl mx-auto">
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
         className="w-full"
       >
       <Card 
         className="shadow-md p-0 border border-gray-200 hover:shadow-lg transition-all duration-300 relative overflow-hidden"
       >
         {/* Cloud Background Elements */}
-        <div className="absolute left-0 top-4 md:hidden">
+        <motion.div 
+          className="absolute left-0 top-4 md:hidden"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+        >
           <Image 
             src="/cloud-left.svg" 
             alt="" 
             width={80} 
             height={80}
           />
-        </div>
-        <div className="absolute right-0 bottom-0 md:hidden">
+        </motion.div>
+        <motion.div 
+          className="absolute right-0 bottom-0 md:hidden"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
+        >
           <Image 
             src="/cloud-right.svg" 
             alt="" 
             width={80} 
             height={80}
           />
-        </div>
-        <div className="absolute left-0 top-6 hidden md:flex">
+        </motion.div>
+        <motion.div 
+          className="absolute left-0 top-6 hidden md:flex"
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+        >
           <Image 
             src="/cloud-left.svg" 
             alt="" 
             width={130} 
             height={130}
           />
-        </div>
-        <div className="absolute right-0 -bottom-2 hidden md:flex">
+        </motion.div>
+        <motion.div 
+          className="absolute right-0 -bottom-2 hidden md:flex"
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+        >
           <Image 
             src="/cloud-right.svg" 
             alt="" 
             width={130} 
             height={130}
           />
-        </div>
+        </motion.div>
         <CardContent className="p-4 md:p-6">
           {/* Logo at top-center */}
           <motion.div 
             className="flex justify-center mb-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ 
-              duration: 0.3,
-              delay: 0.1
+              duration: 0.5,
+              delay: 0.3,
+              type: "spring",
+              stiffness: 200
             }}
           >
             <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               <Image 
                 src={"/millab-logo.svg"} 
@@ -98,18 +121,22 @@ const ProfileHeader = ({user}: Props) => {
               {/* Image Placeholder */}
               <motion.div 
                 className="w-[90px] bg-white h-[120px] md:w-[119px] md:h-[159px] relative overflow-hidden border border-[#D9D9D9]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ 
-                  duration: 0.3,
-                  delay: 0.2
+                  type: "spring",
+                  stiffness: 100,
+                  damping: 15,
+                  delay: 0.4
                 }}
                 whileHover={{ 
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                  y: -2,
+                  y: -5,
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                  border: '1px solid #FFB020',
                   transition: { 
-                    duration: 0.2,
-                    ease: [0.4, 0, 0.2, 1]
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 15
                   }
                 }}
               >

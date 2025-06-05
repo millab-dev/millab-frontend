@@ -24,24 +24,27 @@ const SettingSection = ({ user }: SettingSectionProps) => {
     return (
         <div className="w-full max-w-5xl mx-auto mt-4">
             {/* Settings Header */}
-            <motion.h2 
-                className="text-base md:text-lg font-semibold mb-4"
+            {/* <motion.h2 
+                className="text-base md:text-lg font-semibold mb-4 md:hidden"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
             >
                 Settings
-            </motion.h2>
+            </motion.h2> */}
             
             <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
                 className="space-y-3"
             >
                 {/* Edit Profile Option */}
                 <motion.div
-                    whileHover={{ y: -2, transition: { duration: 0.2 } }}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.1 }}
+                    whileHover={{ y: -4, boxShadow: "0 10px 25px rgba(0,0,0,0.1)", transition: { type: "spring", stiffness: 400, damping: 15 } }}
                     className="w-full"
                 >
                     <div 
@@ -71,7 +74,10 @@ const SettingSection = ({ user }: SettingSectionProps) => {
 
                 {/* Change Password Option */}
                 <motion.div
-                    whileHover={{ y: -2, transition: { duration: 0.2 } }}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.2 }}
+                    whileHover={{ y: -4, boxShadow: "0 10px 25px rgba(0,0,0,0.1)", transition: { type: "spring", stiffness: 400, damping: 15 } }}
                     className="w-full"
                 >
                     <div 
@@ -100,7 +106,10 @@ const SettingSection = ({ user }: SettingSectionProps) => {
 
                 {/* Logout Option */}
                 <motion.div
-                    whileHover={{ y: -2, transition: { duration: 0.2 } }}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.3 }}
+                    whileHover={{ y: -4, boxShadow: "0 10px 25px rgba(0,0,0,0.1)", transition: { type: "spring", stiffness: 400, damping: 15 } }}
                     className="w-full"
                 >
                     <div 

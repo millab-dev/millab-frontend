@@ -32,14 +32,14 @@ const FinalTestSection = () => {
       >
         {/* Mobile image */}
         <img 
-          src="/final-quiz-link.svg" 
+          src="/final-quiz-link.png" 
           alt="Final Quiz - Ready to test your skill?" 
           className="w-full h-auto rounded-lg md:hidden"
         />
         
         {/* Desktop image */}
         <img 
-          src="/final-quiz-link-desktop.svg" 
+          src="/final-quiz-link-desktop.png" 
           alt="Final Quiz - Ready to test your skill?" 
           className="w-full h-auto rounded-lg hidden md:block"
         />

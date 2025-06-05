@@ -7,8 +7,15 @@ export const metadata: Metadata = {
   description: 'View and manage your Millab profile',
 };
 
-export default function Page() {
+// Define props type for the Page component
+type PageProps = {
+  searchParams?: { section?: string }
+}
+
+export default async function Page({ searchParams }: PageProps) {
+  // Use optional chaining to safely access the section property
+  const section = searchParams?.section || 'settings';
   return (
-    <ProfilePage />
+    <ProfilePage section={section} />
   );
 }
