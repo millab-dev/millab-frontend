@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 
 // Define the correct props type for Next.js App Router
 type PageProps = {
-  params: { [key: string]: string | string[] };
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
