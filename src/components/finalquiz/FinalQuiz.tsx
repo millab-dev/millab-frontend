@@ -15,7 +15,7 @@ export default function FinalQuiz() {
                 </h1>
 
                 {/* Score Section */}
-                <div className="bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl p-8 mb-6 text-white relative overflow-hidden">
+                <div className="bg-gradient-to-r from-primary to-blue-400 rounded-2xl p-8 mb-6 text-white relative overflow-hidden">
                     {/* Decorative stars/elements */}
                     <div className="absolute top-4 right-8 opacity-20">
                         <Image src={star} alt="star" className="w-30 h-30" />
