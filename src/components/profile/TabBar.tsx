@@ -26,7 +26,7 @@ const TabBar: React.FC<TabBarProps> = ({ activeTab }) => {
           <Link 
             href="/profile?section=achievements"
             className={cn(
-              "py-2 text-sm font-medium block transition-colors duration-200",
+              "py-2 text-base font-medium block transition-colors duration-200",
               activeTab === 'achievements' 
                 ? "border-b-2 border-yellow-400 text-white font-bold" 
                 : "text-white hover:text-yellow-50"
@@ -51,7 +51,7 @@ const TabBar: React.FC<TabBarProps> = ({ activeTab }) => {
           <Link 
             href="/profile?section=settings"
             className={cn(
-              "py-2 text-sm font-medium block transition-colors duration-200",
+              "py-2 text-base font-medium block transition-colors duration-200",
               activeTab === 'settings' 
                 ? "border-b-2 border-yellow-400 text-white font-bold" 
                 : "text-white hover:text-yellow-50"
