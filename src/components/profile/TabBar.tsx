@@ -54,7 +54,7 @@ const TabBar: React.FC<TabBarProps> = ({ activeTab }) => {
               "py-2 text-sm font-medium block transition-colors duration-200",
               activeTab === 'settings' 
                 ? "border-b-2 border-yellow-400 text-white font-bold" 
-                : "text-yellow-100 hover:text-yellow-50"
+                : "text-white hover:text-yellow-50"
             )}
           >
             Settings
