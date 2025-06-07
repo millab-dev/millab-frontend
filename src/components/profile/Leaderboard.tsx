@@ -13,7 +13,7 @@ const Leaderboard = () => {
   // Reference for the entire card container
   const cardRef = React.useRef(null);
   // Animation triggers when just 5% of the card is visible
-  const isCardInView = useInView(cardRef, { once: true, amount: 0.05 });
+  const isCardInView = useInView(cardRef, { once: true, amount: 0.01 });
   // Mock data for the leaderboard - more than 20 entries but we'll display only top 10
   const leaderboardData: LeaderboardEntry[] = [
     { rank: 1, name: 'John Doe', score: 3000 },
