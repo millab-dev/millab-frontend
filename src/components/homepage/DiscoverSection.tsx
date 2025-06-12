@@ -129,7 +129,7 @@ const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
         <h2 className="text-xl md:text-2xl font-bold text-primary">{t.title}</h2>
         <motion.a 
           href="/module" 
-          className="text-gray-500 flex items-center hover:text-primary transition-colors"
+          className="text-gray-500 flex items-center hover:text-primary transition-colors whitespace-nowrap"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -148,15 +148,25 @@ const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.6, delay: 0.1 }}
       >
-        {filteredModules.map((module, index) => (
-          <motion.div
-            key={module.id}
-            className="w-[260px] md:w-[280px] flex-shrink-0 flex-grow-0"
+        {filteredModules.length === 0 ? (
+          <motion.div 
+            className="w-full py-8 flex items-center justify-center text-gray-500"
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 * index }}
-            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            transition={{ duration: 0.5 }}
           >
+            <p className="text-center">{t.notFound}</p>
+          </motion.div>
+        ) : (
+          filteredModules.map((module, index) => (
+            <motion.div
+              key={module.id}
+              className="w-[260px] md:w-[280px] flex-shrink-0 flex-grow-0"
+              initial={{ opacity: 0 }}
+              animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 * index }}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            >
             <Card className="shadow-sm hover:shadow transition-all duration-300 p-0 flex flex-col overflow-hidden h-full">
               <CardContent className="p-0 flex flex-col flex-1 w-full">
                 {/* Module card content */}
@@ -217,7 +227,9 @@ const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
               </CardContent>
             </Card>
           </motion.div>
-        ))}
+          ))
+        )}
+        
       </motion.div>
     </div>
   )

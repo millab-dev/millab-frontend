@@ -7,6 +7,7 @@ export type TranslationsType = {
     title: string;
     seeAll: string;
     searchPlaceholder?: string; // Optional - only used in DiscoverSection
+    notFound?: string; // For displaying when no modules match the search
     categories: {
       [key in ModuleCategory]: string;
     };
@@ -79,6 +80,7 @@ export const discoverTranslations: TranslationsType = {
     title: "Temukan Modul Pilihanmu",
     seeAll: "Lihat Semua",
     searchPlaceholder: "Cari modul...",
+    notFound: "Tidak ada modul yang ditemukan",
     categories: {
       beginner: "Pemula",
       intermediate: "Menengah",
@@ -89,6 +91,7 @@ export const discoverTranslations: TranslationsType = {
     title: "Discover Modules",
     seeAll: "See All",
     searchPlaceholder: "Search modules...",
+    notFound: "No modules found",
     categories: {
       beginner: "Beginner",
       intermediate: "Intermediate",
