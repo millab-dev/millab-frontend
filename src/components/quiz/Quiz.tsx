@@ -6,7 +6,6 @@ import QuizQuestion from "./QuizQuestion";
 
 import QuizSummary from "./QuizSummary";
 import QuizNavigation from "./QuizNavigation";
-import Navbar from "../core/Navbar";
 
 export interface QuizOption {
     id: string;
@@ -252,7 +251,6 @@ export default function Quiz() {
 
     return (
         <>
-            <Navbar />
             <QuizQuestion
                 question={currentQuestion}
                 currentQuestionNumber={currentQuestionIndex + 1}
