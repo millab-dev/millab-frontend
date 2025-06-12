@@ -1,7 +1,9 @@
 import ListModule from "@/components/module/listModule";
+import Navbar from "@/components/core/Navbar";
 
 export default function page() {
-  return (
+  return (<>
+    <Navbar />
     <ListModule />
-  )
+  </>)
 }

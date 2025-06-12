@@ -6,15 +6,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
-import { CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,15 +25,9 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 
 const formSchema = z.object({
+    name: z.string().min(1, "Name is required"),
     username: z.string().min(1, "Username is required"),
     gender: z.enum(["Female", "Male"], {
         required_error: "Please select a gender",
@@ -50,36 +42,32 @@ const formSchema = z.object({
 
 export default function CompleteProfileForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [calendarOpen, setCalendarOpen] = useState(false);
     const router = useRouter();
-
-    // Static schools data
-    const schools = [
-        { id: "school1", name: "School 1" },
-        { id: "school2", name: "School 2" },
-        { id: "school3", name: "School 3" },
-        { id: "school4", name: "SMA Negeri 1 Jakarta" },
-        { id: "school5", name: "SMA Negeri 3 Solo" },
-    ];
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            name: "",
             username: "",
             gender: "Female",
             birthplace: "",
             socialization: "",
             phone: "",
         },
-    });
-
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    });    async function onSubmit(values: z.infer<typeof formSchema>) {
+        setIsSubmitting(true);
+        
+        // Create a unique toast ID for the loading notification
+        const loadingToastId = "complete-profile-loading-" + Date.now();
+        
+        // Show initial loading toast
+        toast.loading("Completing your profile...", { id: loadingToastId });
+        
         try {
-            setIsSubmitting(true);
-
-            const loadingToast = toast.loading("Completing your profile...");
-
             // Mapping data form to API format
             const profileData = {
+                name: values.name,
                 username: values.username,
                 gender: values.gender,
                 birthplace: values.birthplace,
@@ -102,31 +90,51 @@ export default function CompleteProfileForm() {
 
             const data = await response.json();
 
-            toast.dismiss(loadingToast);            if (data.success) {
-                toast.success("Profile completed successfully!");
-                // Redirect to home page
-                router.push("/");
-                // Optionally refresh the page to update auth state
-                window.location.reload();
+            // Always dismiss the loading toast first
+            toast.dismiss(loadingToastId);
+
+            if (data.success) {
+                // Profile completion successful - use a new unique ID for success toast
+                const successToastId = "complete-profile-success-" + Date.now();
+                toast.success("Profile completed successfully!", {
+                    id: successToastId,
+                    description: "Redirecting to home page...",
+                    duration: 3000,
+                });
+
+                // Redirect to home page after 1.5 seconds
+                setTimeout(() => {
+                    router.push("/");
+                }, 1500);
             } else {
-                toast.error(data.error || "Failed to complete profile");
+                // Profile completion failed - use a new unique ID for error toast
+                const errorToastId = "complete-profile-error-" + Date.now();
+                toast.error("Profile completion failed", {
+                    id: errorToastId,
+                    description: data.error || "Something went wrong. Please try again.",
+                    duration: 5000, // Keep error message visible for 5 seconds
+                });
             }
         } catch (error) {
-            console.error("Complete profile error:", error);
-            toast.error("An error occurred. Please try again.");
+            // Make sure to dismiss the loading toast before showing error
+            toast.dismiss(loadingToastId);
+            
+            // Show error toast with a new unique ID
+            const catchErrorToastId = "complete-profile-catch-error-" + Date.now();
+            toast.error("Error completing profile", {
+                id: catchErrorToastId,
+                description: error instanceof Error ? error.message : "Unknown error occurred",
+                duration: 5000, // Keep error message visible for 5 seconds
+            });
         } finally {
             setIsSubmitting(false);
         }
-    }
-
-    return (
-        <div className="flex min-h-screen items-center justify-center font-jakarta mx-5 sm:mx-0">
+    }    return (
+        <div className="flex min-h-screen items-center justify-center font-jakarta my-8 mx-5 sm:mx-0">
             <div className="w-full max-w-md">
                 <div className="flex items-center justify-center gap-2 mb-8">
                     <Image
                         src={authLogo}
-                        width={64}
-                        height={64}
                         alt="MIL Logo"
                         className="object-contain"
                     />
@@ -146,17 +154,33 @@ export default function CompleteProfileForm() {
                     <Form {...form}>
                         <form
                             onSubmit={form.handleSubmit(onSubmit)}
-                            className="space-y-6"
-                        >
+                            className="space-y-4"
+                        >                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Name*</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Citra Lesmana"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
                             <FormField
                                 control={form.control}
                                 name="username"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Username</FormLabel>
+                                        <FormLabel>Username*</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Enter your username"
+                                                placeholder="citrabelajarliterasi"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -169,29 +193,29 @@ export default function CompleteProfileForm() {
                                 control={form.control}
                                 name="gender"
                                 render={({ field }) => (
-                                    <FormItem className="space-y-3">
-                                        <FormLabel>Gender</FormLabel>
+                                    <FormItem>
+                                        <FormLabel>Gender*</FormLabel>
                                         <FormControl>
                                             <RadioGroup
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
-                                                className="flex gap-6"
+                                                value={field.value}
+                                                className="flex gap-6 mt-1"
                                             >
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem
                                                         value="Female"
-                                                        id="female"
+                                                        id="Female"
                                                     />
-                                                    <label htmlFor="female">
+                                                    <label htmlFor="Female">
                                                         Female
                                                     </label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem
                                                         value="Male"
-                                                        id="male"
+                                                        id="Male"
                                                     />
-                                                    <label htmlFor="male">
+                                                    <label htmlFor="Male">
                                                         Male
                                                     </label>
                                                 </div>
@@ -207,10 +231,10 @@ export default function CompleteProfileForm() {
                                 name="birthplace"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Birthplace</FormLabel>
+                                        <FormLabel>Birthplace*</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Enter your birthplace"
+                                                placeholder="Solo"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -224,25 +248,21 @@ export default function CompleteProfileForm() {
                                 name="birthdate"
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col">
-                                        <FormLabel>Birthdate</FormLabel>
-                                        <Popover>
+                                        <FormLabel>Birthdate*</FormLabel>
+                                        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                                             <PopoverTrigger asChild>
                                                 <FormControl>
                                                     <Button
+                                                        type="button"
                                                         variant="outline"
-                                                        className="w-full pl-3 text-left font-normal"
-                                                    >                                                        {field.value ? (
-                                                            field.value.toLocaleDateString('en-US', {
-                                                                year: 'numeric',
-                                                                month: 'long',
-                                                                day: 'numeric'
-                                                            })
+                                                        className={`w-full pl-3 text-left font-normal ${!field.value && "text-muted-foreground"} flex justify-between items-center`}
+                                                    >
+                                                        {field.value ? (
+                                                            format(field.value, "PPP")
                                                         ) : (
-                                                            <span className="text-muted-foreground">
-                                                                Pick a date
-                                                            </span>
+                                                            <span>Pick a date</span>
                                                         )}
-                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                        <CalendarIcon className="ml-auto h-4 w-4 text-primary" />
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -250,19 +270,21 @@ export default function CompleteProfileForm() {
                                                 className="w-auto p-0"
                                                 align="start"
                                             >
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
-                                                    disabled={(date) =>
-                                                        date > new Date() ||
-                                                        date <
-                                                            new Date(
-                                                                "1900-01-01"
-                                                            )
-                                                    }
-                                                    initialFocus
-                                                />
+                                                <div className="p-3">
+                                                    <DayPicker
+                                                        mode="single"
+                                                        captionLayout="dropdown"
+                                                        selected={field.value}
+                                                        onSelect={(date) => {
+                                                            field.onChange(date);
+                                                            setCalendarOpen(false);
+                                                        }}
+                                                        disabled={{
+                                                            before: new Date("1900-01-01"),
+                                                            after: new Date()
+                                                        }}
+                                                    />
+                                                </div>
                                             </PopoverContent>
                                         </Popover>
                                         <FormMessage />
@@ -275,27 +297,15 @@ export default function CompleteProfileForm() {
                                 name="socialization"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>School</FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                        >
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select your school" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {schools.map((school) => (
-                                                    <SelectItem
-                                                        key={school.id}
-                                                        value={school.name}
-                                                    >
-                                                        {school.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <FormLabel>
+                                            School/Socialization Location*
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="SMA Negeri 3 Solo"
+                                                {...field}
+                                            />
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -306,10 +316,10 @@ export default function CompleteProfileForm() {
                                 name="phone"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Phone Number (Optional)</FormLabel>
+                                        <FormLabel>Phone Number</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="+62 XXX XXX XXXX"
+                                                placeholder="08123456789"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -320,10 +330,12 @@ export default function CompleteProfileForm() {
 
                             <Button
                                 type="submit"
-                                className="w-full py-5"
+                                className="w-full py-5 mt-4"
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting ? "Completing Profile..." : "Complete Profile"}
+                                {isSubmitting
+                                    ? "Completing Profile..."
+                                    : "Complete Profile"}
                             </Button>
                         </form>
                     </Form>

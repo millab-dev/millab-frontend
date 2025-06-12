@@ -3,7 +3,7 @@
 import React from 'react';
 import ScanCamera from './ScanCamera';
 import ScanDescription from './ScanDescription';
-import Navbar from '../core/Navbar';
+import BottomNavbar from '../core/BottomNavbar';
 
 const ScanPage = () => {
   return (
@@ -19,7 +19,7 @@ const ScanPage = () => {
         <ScanCamera />
         <ScanDescription />
       </div>
-      <Navbar/>
+      <BottomNavbar/>
     </div>
   );
 };

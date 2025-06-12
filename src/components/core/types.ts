@@ -1,0 +1,40 @@
+// Define SectionProps for language support
+export interface SectionProps {
+  language?: 'id' | 'en';
+}
+
+// Define Navbar translations structure
+export type NavbarTranslationsType = {
+  [key: string]: {
+    navItems: {
+      name: string;
+      path: string;
+    }[];
+  };
+};
+
+// Navbar translations
+export const navbarTranslations: NavbarTranslationsType = {
+  id: {
+    navItems: [
+      { name: "Beranda", path: "/" },
+      { name: "Modul", path: "/module" },
+      { name: "Kuis Akhir", path: "/final-quiz" },
+      { name: "Profil", path: "/profile" },
+      { name: "Tentang Kami", path: "/about-us" },
+      { name: "Masuk", path: "/signin" },
+      { name: "Daftar", path: "/signup" },
+    ]
+  },
+  en: {
+    navItems: [
+      { name: "Home", path: "/" },
+      { name: "Module", path: "/module" },
+      { name: "Final Quiz", path: "/final-quiz" },
+      { name: "Profile", path: "/profile" },
+      { name: "About Us", path: "/about-us" },
+      { name: "Sign In", path: "/signin" },
+      { name: "Sign Up", path: "/signup" },
+    ]
+  }
+};

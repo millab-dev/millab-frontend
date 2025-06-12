@@ -1,62 +1,60 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import axiosServer from "./lib/axios.server";
+
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
     const isAuthPage =
         request.nextUrl.pathname === "/signin" ||
-        request.nextUrl.pathname === "/signup";
-    
-    const isCompleteProfilePage = request.nextUrl.pathname === "/complete-profile";
-    
+        request.nextUrl.pathname === "/signup" ||
+        request.nextUrl.pathname === "/about-us";
     // Skip middleware for auth pages
     if (isAuthPage) {
         return NextResponse.next();
     }
 
     try {
-        // Create headers object from request
-        const headers = new Headers();
-        request.headers.forEach((value, key) => {
-            headers.set(key, value);
-        });
-
-        // Direct fetch to check authentication
-        const response = await fetch(
-            `${
-                process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
-            }/api/v1/auth/me`,
-            {
-                headers,
-                credentials: "include",
-                cache: "no-store",
+        // Use the /me endpoint to check if user is authenticated
+        console.log("Checking authentication via /me endpoint...");
+        let response;
+        try {
+            response = await axiosServer.get("/api/v1/auth/me");
+            console.log("Auth check status:", response.status);
+            
+            // If /me is successful, we're authenticated
+            if (response.data && response.data.success) {
+                console.log("Authentication successful via /me endpoint");
+            } else {
+                console.log("/me endpoint indicated auth failure");
+                return NextResponse.redirect(new URL("/signin", request.url));
             }
-        );
-
-        const data = await response.json();
-
-        // If not authenticated (status not 200), redirect to signin
-        if (!data.success) {
+        } catch (authError) {
+            console.error("Authentication error:", authError);
+            // If auth fails, redirect to signin
             return NextResponse.redirect(new URL("/signin", request.url));
         }
 
-        // Check if user profile is incomplete
-        const user = data.data;
-        const needsProfile = !user.username || !user.gender || !user.birthplace || 
-                            !user.birthdate || !user.socializationLocation || !user.phoneNumber;
-
-        // If user needs to complete profile and not on complete-profile page
-        if (needsProfile && !isCompleteProfilePage) {
-            return NextResponse.redirect(new URL("/complete-profile", request.url));
+        // Create NextResponse and forward cookies header from API response
+        const nextResponse = NextResponse.next();
+        
+        // Get cookies directly from the /me response (in case backend refreshes tokens)
+        const cookies = response.headers?.['set-cookie'];
+        console.log("Response headers: ", response.headers);
+        console.log("Cookies exists:", !!cookies);
+        
+        if (cookies) {
+            // Handle cookies correctly whether it's a string or array
+            if (Array.isArray(cookies)) {
+                cookies.forEach(cookie => {
+                    nextResponse.headers.append('set-cookie', cookie);
+                });
+            } else {
+                nextResponse.headers.set('set-cookie', cookies);
+            }
         }
-
-        // If user doesn't need profile completion but is on complete-profile page
-        if (!needsProfile && isCompleteProfilePage) {
-            return NextResponse.redirect(new URL("/", request.url));
-        }
-
-        // If authenticated and profile is complete (or on complete-profile page), allow access
-        return NextResponse.next();
+        
+        return nextResponse;
     } catch (error) {
         // If there's an error checking auth, redirect to signin
         console.error("Auth check error:", error);

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import ScanPage from '@/components/scan';
-import Navbar from '@/components/core/Navbar';
+import BottomNavbar from '@/components/core/BottomNavbar';
 
 export const metadata: Metadata = {
   title: 'Scan QR Code - Millab',

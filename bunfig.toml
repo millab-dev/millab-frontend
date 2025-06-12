@@ -1,9 +1,0 @@
-[install]
-# registry options
-registry = "https://registry.npmjs.org/"
-# use the exact installed versions when generating a lockfile
-exact = true
-
-[test]
-# use the DOM environment by default in tests
-environment = "dom"
