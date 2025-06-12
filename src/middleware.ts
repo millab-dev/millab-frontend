@@ -6,6 +6,9 @@ export async function middleware(request: NextRequest) {
     const isAuthPage =
         request.nextUrl.pathname === "/signin" ||
         request.nextUrl.pathname === "/signup";
+    
+    const isCompleteProfilePage = request.nextUrl.pathname === "/complete-profile";
+    
     // Skip middleware for auth pages
     if (isAuthPage) {
         return NextResponse.next();
@@ -37,7 +40,22 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL("/signin", request.url));
         }
 
-        // If authenticated, allow access
+        // Check if user profile is incomplete
+        const user = data.data;
+        const needsProfile = !user.username || !user.gender || !user.birthplace || 
+                            !user.birthdate || !user.socializationLocation || !user.phoneNumber;
+
+        // If user needs to complete profile and not on complete-profile page
+        if (needsProfile && !isCompleteProfilePage) {
+            return NextResponse.redirect(new URL("/complete-profile", request.url));
+        }
+
+        // If user doesn't need profile completion but is on complete-profile page
+        if (!needsProfile && isCompleteProfilePage) {
+            return NextResponse.redirect(new URL("/", request.url));
+        }
+
+        // If authenticated and profile is complete (or on complete-profile page), allow access
         return NextResponse.next();
     } catch (error) {
         // If there's an error checking auth, redirect to signin
