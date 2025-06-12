@@ -68,7 +68,7 @@ const AwardSection: React.FC<SectionProps> = ({ language = 'id' }) => {
       
       <motion.div 
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        variants={containerVariants}
+        variants={containerVariants as any}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
@@ -77,7 +77,7 @@ const AwardSection: React.FC<SectionProps> = ({ language = 'id' }) => {
           <motion.div 
             key={index}
             className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:bg-blue-50/30 group"
-            variants={itemVariants}
+            variants={itemVariants as any}
             whileHover={{ scale: 1.03 }}
           >
             <div className="w-32 h-32 mb-4 flex items-center justify-center">
