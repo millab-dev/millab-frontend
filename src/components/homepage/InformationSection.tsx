@@ -1,8 +1,11 @@
 "use client"
 import { Zap, Gem } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { SectionProps, informationTranslations } from './types'
 
-const InformationSection = () => {
+const InformationSection = ({ language = 'id' }: SectionProps) => {
+    // Get translations based on language
+    const t = informationTranslations[language];
     return (
         <motion.div 
             className="px-4 pt-6 w-full mx-auto max-w-6xl"
@@ -45,7 +48,7 @@ const InformationSection = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.5 }}
                     >
-                        <p className="text-base md:text-3xl font-semibold">Welcome back,</p>
+                        <p className="text-base md:text-3xl font-semibold">{t.welcomeBack}</p>
                         <h2 className="text-3xl md:text-6xl font-bold">Mimi!</h2>
                     </motion.div>
                 </motion.div>

@@ -3,8 +3,11 @@ import React from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import authLogo from "@/assets/authLogo.svg"
+import { SectionProps, millabSectionTranslations } from './types'
 
-const MillabSection = () => {
+const MillabSection = ({ language = 'id' }: SectionProps) => {
+  // Get translations based on language parameter
+  const t = millabSectionTranslations[language];
   return (
     <div className="w-full pb-10 md:pb-12 pt-8 md:pt-6">
       <div className="flex flex-col md:flex-row items-center justify-between gap-8">
@@ -16,20 +19,14 @@ const MillabSection = () => {
           transition={{ delay: 0.3, duration: 0.5 }}
         >
           <div className="md:hidden flex justify-center mb-4">
-            <Image src={authLogo} alt="Mill Lab Logo" width={120} height={40} className="h-16 w-auto" />
+            <Image src={authLogo} alt={t.logoAlt} width={120} height={40} className="h-16 w-auto" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 hidden md:block">MIL Lab Indonesia</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 hidden md:block">{t.title}</h2>
           <p className="text-base md:text-lg text-gray-700 mb-6">
-            <span className="md:hidden font-bold">Millab Indonesia </span> adalah Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam posuere 
-            sollicitudin nunc. Vestibulum vel pretium erat. Aenean euismod finibus leo, quis 
-            semper dolor. Nulla vulputate nulla eget orci lobortis, vitae egestas erat sodales. 
-            Sed accumsan commodo pulvinar. Nunc et eros nec ante condimentum posuere.
+            <span className="md:hidden font-bold">{t.title} </span> {t.description1}
           </p>
           <p className="text-base md:text-lg text-gray-700">
-            Suspendisse ac risus at ante finibus feugiat quis vel massa. Quisque venenatis, felis 
-            ac suscipit viverra, nisi sem aliquam enim, ac scelerisque lorem nulla ac mi. Sed et 
-            ante eu orci tincidunt lobortis. Morbi consequat, urna vel tempor porta, metus felis 
-            mattis leo, faucibus viverra justo arcu ut ligula. Donec rhoncus accumsan nunc.
+            {t.description2}
           </p>
         </motion.div>
         
@@ -43,7 +40,7 @@ const MillabSection = () => {
           <div className="relative w-full h-64 md:h-80 flex justify-end">
             <Image 
               src="/pet-ask.png" 
-              alt="MIL Lab Assistant" 
+              alt={t.imageAlt} 
               width={400}
               height={400}
               className="object-contain"

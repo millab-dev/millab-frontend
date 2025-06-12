@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { SectionProps, awardSectionTranslations } from './types'
 
 // Award data
 const awards = [
@@ -42,28 +43,27 @@ const itemVariants = {
   }
 }
 
-const AwardSection: React.FC = () => {
+const AwardSection: React.FC<SectionProps> = ({ language = 'id' }) => {
+  // Get translations based on language
+  const t = awardSectionTranslations[language];
   return (
     <div className="py-12 px-4 md:px-8 max-w-7xl mx-auto">
       <motion.h2 
         className="text-3xl md:text-4xl font-bold text-center mb-3"
         initial={{ opacity: 0, y: -20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        Here are some awards we have...
+        {t.title}
       </motion.h2>
       
       <motion.p 
-        className="text-center text-gray-600 mb-10 max-w-3xl mx-auto"
+        className="text-center md:text-lg text-gray-600 mb-10 max-w-3xl mx-auto"
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
+        animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam posuere sollicitudin nunc. Vestibulum vel pretium erat.
-        Aenean euismod finibus leo, quis semper dolor. Nulla vulputate nulla eget orci lobortis, vitae egestas erat sodales.
+        {t.description}
       </motion.p>
       
       <motion.div 

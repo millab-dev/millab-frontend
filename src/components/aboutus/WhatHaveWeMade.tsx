@@ -2,8 +2,9 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { SectionProps, projectSectionTranslations } from './types'
 
-// Product data
+// Product data (will always be the same regardless of language)
 const products = [
   {
     name: 'Product Name',
@@ -38,7 +39,9 @@ const itemVariants = {
   }
 }
 
-const WhatHaveWeMade: React.FC = () => {
+const WhatHaveWeMade: React.FC<SectionProps> = ({ language = 'id' }) => {
+  // Get translations based on language
+  const t = projectSectionTranslations[language];
   return (
     <div className="pt-4 pb-10 md:pt-8 md:pb-8 px-4 md:px-8 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12">
@@ -58,25 +61,23 @@ const WhatHaveWeMade: React.FC = () => {
         </motion.div>
         
         {/* Content */}
-        <div className="flex-1">
+        <div className="w-full md:flex-1">
           <motion.h2 
-            className="text-3xl md:text-4xl font-bold mb-4"
+            className="text-2xl md:text-3xl font-bold mb-4 text-center md:text-left"
             initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            What have we made so far?
+            {t.title}
           </motion.h2>
           
           <motion.p 
-            className="text-gray-600 mb-8"
+            className="text-base md:text-lg text-gray-600 mb-6 text-center md:text-left"
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam posuere sollicitudin nunc. Vestibulum vel pretium erat. Aenean euismod finibus leo, quis semper dolor.
+            {t.description}
           </motion.p>
           
           {/* Products grid */}

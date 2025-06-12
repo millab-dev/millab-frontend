@@ -2,18 +2,19 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { SectionProps, teamSectionTranslations } from './types'
 
-// Team member data
-const teamMembers = [
-  { name: 'Member Name', role: 'Role', image: 'https://randomuser.me/api/portraits/men/1.jpg' },
-  { name: 'Member Name', role: 'Role', image: 'https://randomuser.me/api/portraits/women/2.jpg' },
-  { name: 'Member Name', role: 'Role', image: 'https://randomuser.me/api/portraits/men/3.jpg' },
-  { name: 'Member Name', role: 'Role', image: 'https://randomuser.me/api/portraits/women/4.jpg' },
-  { name: 'Member Name', role: 'Role', image: 'https://randomuser.me/api/portraits/men/5.jpg' },
-  { name: 'Member Name', role: 'Role', image: 'https://randomuser.me/api/portraits/women/6.jpg' },
-  { name: 'Member Name', role: 'Role', image: 'https://randomuser.me/api/portraits/men/7.jpg' },
-  { name: 'Member Name', role: 'Role', image: 'https://randomuser.me/api/portraits/women/8.jpg' },
-  { name: 'Member Name', role: 'Role', image: 'https://randomuser.me/api/portraits/men/9.jpg' },
+// Images for team members (these remain the same regardless of language)
+const teamImages = [
+  'https://randomuser.me/api/portraits/men/1.jpg',
+  'https://randomuser.me/api/portraits/women/2.jpg',
+  'https://randomuser.me/api/portraits/men/3.jpg',
+  'https://randomuser.me/api/portraits/women/4.jpg',
+  'https://randomuser.me/api/portraits/men/5.jpg',
+  'https://randomuser.me/api/portraits/women/6.jpg',
+  'https://randomuser.me/api/portraits/men/7.jpg',
+  'https://randomuser.me/api/portraits/women/8.jpg',
+  'https://randomuser.me/api/portraits/men/9.jpg',
 ]
 
 // Animation variants for team member cards
@@ -30,7 +31,15 @@ const cardVariants = {
   })
 }
 
-const OurTeamSection: React.FC = () => {
+const OurTeamSection: React.FC<SectionProps> = ({ language = 'id' }) => {
+  // Get translations based on language
+  const t = teamSectionTranslations[language];
+  
+  // Combine translations with images
+  const teamMembers = t.teamMembers.map((member, index) => ({
+    ...member,
+    image: teamImages[index]
+  }));
   return (
     <div className="pt-4 pb-10 md:pt-8 md:pb-8 px-4 md:px-8 max-w-7xl mx-auto">
       <motion.h2 
@@ -39,7 +48,7 @@ const OurTeamSection: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        Our Team
+        {t.title}
       </motion.h2>
       
       <motion.p 
@@ -48,8 +57,7 @@ const OurTeamSection: React.FC = () => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam posuere sollicitudin nunc. Vestibulum vel pretium erat. 
-        Aenean euismod finibus leo, quis semper dolor. Nulla vulputate nulla eget arci lobortis, vitae egestas erat sodales.
+        {t.description}
       </motion.p>
       
       <div className="flex flex-wrap justify-center gap-x-2 gap-y-6 sm:gap-x-6 sm:gap-y-8 md:gap-x-8 md:gap-y-10 mx-auto">

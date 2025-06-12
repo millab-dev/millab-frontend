@@ -7,7 +7,8 @@ import axiosServer from "./lib/axios.server";
 export async function middleware(request: NextRequest) {
     const isAuthPage =
         request.nextUrl.pathname === "/signin" ||
-        request.nextUrl.pathname === "/signup";
+        request.nextUrl.pathname === "/signup" ||
+        request.nextUrl.pathname === "/about-us";
     // Skip middleware for auth pages
     if (isAuthPage) {
         return NextResponse.next();

@@ -29,24 +29,29 @@ const ProfilePage = async ({ section = 'settings' }: ProfilePageProps) => {
       
       <div className="min-h-screen pb-20 bg-background relative overflow-x-hidden">
         {/* Mobile background */}
-        <div className="absolute inset-0 bg-primary md:hidden z-0"
-          style={{
-            backgroundImage: "url('/cloud-background.svg')",
-            backgroundRepeat: "repeat",
-            backgroundSize: "auto auto",
-            backgroundPosition: "top center"
-          }}
-        />
-        
-        {/* Desktop background */}
-        <div className="fixed inset-0 bg-primary hidden md:block z-0"
-          style={{
-            backgroundImage: "url('/cloud-background.svg')",
-            backgroundRepeat: "repeat",
-            backgroundSize: "auto auto",
-            backgroundPosition: "top center"
-          }}
-        />
+        <div className="fixed inset-0 z-0 bg-primary md:hidden"
+                    style={{
+                        backgroundImage: "url('/batik-bg-4.svg')",
+                        backgroundRepeat: "repeat",
+                        backgroundSize: "auto auto",
+                        backgroundPosition: "top left"
+                    }}
+                />
+                
+                {/* Desktop background with scaling options */}
+                <div className="fixed inset-0 z-0 bg-primary hidden md:block">
+                    <div className="absolute inset-0 w-full h-full overflow-hidden">
+                        <div 
+                            className="w-[1536px] h-full mx-auto"
+                            style={{
+                                backgroundImage: "url('/batik-bg-4.svg')",
+                                backgroundRepeat: "repeat",
+                                backgroundSize: "cover",
+                                backgroundPosition: "center"
+                            }}
+                        />
+                    </div>
+                </div>
       <div className="mx-auto px-4 py-6 relative z-10">
         {/* Mobile Tab Navigation - Only visible on mobile */}
         <div className="md:hidden">

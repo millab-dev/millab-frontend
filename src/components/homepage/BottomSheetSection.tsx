@@ -4,7 +4,6 @@ import { motion, useInView } from 'framer-motion'
 import FeaturedImageSection from './FeaturedImageSection'
 import ContinueReadingSection from './ContinueReadingSection'
 import DiscoverSection from './DiscoverSection'
-import ListOfModuleSection from './ListOfModuleSection'
 import GuidelinesSection from './GuidelinesSection'
 import FinalTestSection from './FinalTestSection'
 
@@ -23,24 +22,23 @@ const BottomSheetSection = () => {
         ease: [0.22, 1, 0.36, 1] // Custom ease curve for smooth animation
       }}
     >
-      <div className="flex flex-col px-4 pt-4 pb-24 lg:pt-12 lg:pb-12 max-w-6xl mx-auto">
+      <div className="flex flex-col gap-y-4 md:gap-y-8 px-4 pt-4 pb-24 lg:pt-12 lg:pb-12 max-w-6xl mx-auto">
         {/* Featured image with animations */}
         <FeaturedImageSection />
-        
-        {/* Continue Reading section */}
-        <ContinueReadingSection />
-        
+       
         {/* Discover Modules section */}
         <DiscoverSection />
-        
-        {/* List of Modules section */}
-        <ListOfModuleSection />
+
+         {/* Continue Reading section */}
+         <ContinueReadingSection />
+
+          {/* Final Test section */}
+        <FinalTestSection />
         
         {/* Guidelines section */}
         <GuidelinesSection />
         
-        {/* Final Test section */}
-        <FinalTestSection />
+       
       </div>
     </motion.div>
   )

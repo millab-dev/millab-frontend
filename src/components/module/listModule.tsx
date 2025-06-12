@@ -24,9 +24,10 @@ export default function ListModule() {
 
     return (
         <>
-            <Navbar />
+           
             <div
-                className="mx-auto font-jakarta bg-primary sm:px-24 lg:px-40 min-h-screen flex flex-col bg-repeat bg-[length:600px] lg:bg-[length:900px]"
+                className="mx-auto font-jakarta bg-primary sm:px-24 lg:px-40 min-h-screen flex flex-col 
+                bg-repeat bg-[length:600px] lg:bg-[length:900px]"
                 style={{
                     backgroundImage: `url(${cloud.src})`,
                 }}

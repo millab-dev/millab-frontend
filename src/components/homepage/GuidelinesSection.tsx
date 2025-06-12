@@ -6,17 +6,33 @@ import {
 } from "@/components/ui/card"
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { SectionProps, guidelinesTranslations } from './types'
 
-const GuidelinesSection = () => {
-  const guidelines = [
+// Define type for guideline item keys - must match keys in translations
+type GuidelineItemKey = 'website' | 'offlineProduct';
+
+type GuidelineItem = {
+  id: number;
+  key: GuidelineItemKey; // Use the specific type
+  icon: React.ReactNode;
+};
+
+type GuidelinesSectionProps = SectionProps;
+
+const GuidelinesSection = ({ language = 'id' }: GuidelinesSectionProps) => {
+  // Get translations based on language
+  const t = guidelinesTranslations[language];
+  
+  // Define guidelines with properly typed keys
+  const guidelines: GuidelineItem[] = [
     {
       id: 1,
-      title: "Website",
+      key: 'website',
       icon: <Globe className="text-white w-6 h-6" />,
     },
     {
       id: 2,
-      title: "Offline Product",
+      key: 'offlineProduct',
       icon: <Package className="text-white w-6 h-6" />,
     }
   ]
@@ -25,14 +41,14 @@ const GuidelinesSection = () => {
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 })
 
   return (
-    <div className="w-full py-4" ref={sectionRef}>
+    <div className="w-full " ref={sectionRef}>
       <motion.h2 
         className="text-xl md:text-2xl font-bold mb-4 px-1 text-primary"
         initial={{ opacity: 0, y: -10 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
         transition={{ duration: 0.5 }}
       >
-        Guidelines
+        {t.title}
       </motion.h2>
       
       <motion.div 
@@ -64,7 +80,7 @@ const GuidelinesSection = () => {
                     </motion.div>
                   </div>
                 </div>
-                <span className="font-bold text-primary">{item.title}</span>
+                <span className="font-bold text-primary">{t.items[item.key]}</span>
               </CardContent>
             </Card>
           </motion.div>

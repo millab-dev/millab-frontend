@@ -7,8 +7,9 @@ import MillabSection from './MillabSection'
 import OurTeamSection from './OurTeamSection'
 import WhatHaveWeMade from './WhatHaveWeMade'
 import AwardSection from './AwardSection'
+import { SectionProps } from './types'
 
-const DesktopCardContent: React.FC = () => {
+const DesktopCardContent: React.FC<SectionProps> = ({ language = 'id' }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -18,24 +19,24 @@ const DesktopCardContent: React.FC = () => {
     >
       <Card className="p-0">
         <CardContent className="p-8">
-          <MillabSection />
+          <MillabSection language={language} />
           
           <hr className="my-5 border-t-2 border-gray-300" />
           
           <div className="mt-5">
-            <OurTeamSection />
+            <OurTeamSection language={language} />
           </div>
           
           <hr className="my-5 border-t-2 border-gray-300" />
           
           <div className="mt-5">
-            <WhatHaveWeMade />
+            <WhatHaveWeMade language={language} />
           </div>
           
           <hr className="my-5 border-t-2 border-gray-300" />
           
           <div className="mt-5">
-            <AwardSection />
+            <AwardSection language={language} />
           </div>
         </CardContent>
       </Card>

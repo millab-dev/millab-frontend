@@ -1,14 +1,20 @@
-'use client'
 
-import AboutUsNavbar from "./AboutUsNavbar"
 import BottomSheetSection from "./BottomSheetSection"
 import DesktopCardContent from "./DesktopCardContent"
+import Navbar from "../core/Navbar"
+import { aboutUsTranslations, SectionProps } from "./types"
 
-const AboutUs = () => {
+interface AboutUsProps {
+    language?: 'id' | 'en';
+}
+
+const AboutUs = ({ language = 'id' }: AboutUsProps) => {
+    // Get translations based on language
+    const t = aboutUsTranslations[language];
     return (
         <>
             <div className="">
-                <AboutUsNavbar/>
+                <Navbar/>
             </div>
             
             <div className="flex flex-col min-h-screen bg-background relative overflow-x-hidden">
@@ -42,18 +48,18 @@ const AboutUs = () => {
                     {/* Top section with heading */}
                     <div className="h-[8rem] w-full">
                         <div className="h-full flex items-center justify-center">
-                            <h1 className="text-4xl md:text-5xl font-bold text-white text-center">About Us</h1>
+                            <h1 className="text-4xl md:text-5xl font-bold text-white text-center">{t.pageTitle}</h1>
                         </div>
                     </div>
                     
                     {/* Mobile: Bottom sheet layout */}
                     <div className="md:hidden">
-                        <BottomSheetSection />
+                        <BottomSheetSection language={language} />
                     </div>
                     
                     {/* Desktop: Card layout using DesktopCardContent component */}
                     <div className="hidden md:block max-w-7xl mx-auto px-4 pb-16">
-                        <DesktopCardContent />
+                        <DesktopCardContent language={language} />
                     </div>
                 </div>
             </div>
