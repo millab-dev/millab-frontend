@@ -3,8 +3,11 @@ import React, { useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import Leaderboard from './Leaderboard';
 import { motion, useInView } from 'framer-motion';
+import { ProfileComponentProps, achievementSectionTranslations } from './types';
 
-const AchievementSection = () => {
+const AchievementSection: React.FC<ProfileComponentProps> = ({ language = 'id' }) => {
+    // Get translations based on language
+    const t = achievementSectionTranslations[language];
     const cardRef = useRef(null);
     const isInView = useInView(cardRef, { once: true, amount: 0.3 });
     
@@ -18,7 +21,7 @@ const AchievementSection = () => {
             >
             <Card className="bg-gray-50 border border-gray-200 p-0 mb-4">
                 <CardContent className="flex flex-col items-center justify-center px-8 py-6 md:px-12">
-                    <h2 className="text-center text-2xl md:text-3xl font-semibold mb-6 text-primary">The Champions</h2>
+                    <h2 className="text-center text-2xl md:text-3xl font-semibold mb-6 text-primary">{t.title}</h2>
                     <img src="/champions.png" alt="Champions Trophy" className="" />
                     
                     <div className="grid grid-cols-3 gap-4 w-full">
@@ -46,7 +49,7 @@ const AchievementSection = () => {
                 </CardContent>
             </Card>
             </motion.div>
-            <Leaderboard/>
+            <Leaderboard language={language}/>
         </div>
     );
 };

@@ -19,8 +19,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { motion } from 'framer-motion'
+import { ProfileComponentProps, changePasswordPopupTranslations } from "./types"
 
-interface ChangePasswordPopupProps {
+interface ChangePasswordPopupProps extends ProfileComponentProps {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -28,7 +29,9 @@ interface ChangePasswordPopupProps {
 const ChangePasswordPopup: React.FC<ChangePasswordPopupProps> = ({
   open,
   onOpenChange,
+  language = 'id',
 }) => {
+  const t = changePasswordPopupTranslations[language];
   const router = useRouter()
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -58,12 +61,12 @@ const ChangePasswordPopup: React.FC<ChangePasswordPopupProps> = ({
     e.preventDefault()
     
     if (newPassword !== confirmPassword) {
-      setError('New passwords do not match')
+      setError(t.passwordMismatchError)
       return
     }
     
     if (passwordStrength < 3) {
-      setError('Password not strong enough')
+      setError(t.passwordRequirements)
       return
     }
     
@@ -102,7 +105,7 @@ const ChangePasswordPopup: React.FC<ChangePasswordPopupProps> = ({
     } catch (error) {
       console.error('Error changing password:', error)
       setIsSubmitting(false)
-      setError('An unexpected error occurred. Please try again.')
+      setError(t.unexpectedError || 'An unexpected error occurred. Please try again.')
     }
   }
 
@@ -110,16 +113,16 @@ const ChangePasswordPopup: React.FC<ChangePasswordPopupProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Change Password</DialogTitle>
+          <DialogTitle>{t.title}</DialogTitle>
           <DialogDescription>
-            Enter your current password and new password to update your credentials.
+            {t.description}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="current-password">
-                Current Password
+                {t.currentPasswordLabel}
               </Label>
               <div className="relative">
                 <Input
@@ -143,7 +146,7 @@ const ChangePasswordPopup: React.FC<ChangePasswordPopupProps> = ({
             
             <div className="grid gap-2">
               <Label htmlFor="new-password">
-                New Password
+                {t.newPasswordLabel}
               </Label>
               <div className="relative">
                 <Input
@@ -181,19 +184,19 @@ const ChangePasswordPopup: React.FC<ChangePasswordPopupProps> = ({
                   <ul className="text-xs space-y-1 text-gray-500">
                     <li className={cn("flex items-center gap-1", hasMinLength ? "text-green-600" : "")}>
                       {hasMinLength ? <Check size={12} /> : null}
-                      At least 8 characters
+                      {t.minLengthRequirement || 'At least 8 characters'}
                     </li>
                     <li className={cn("flex items-center gap-1", hasUppercase ? "text-green-600" : "")}>
                       {hasUppercase ? <Check size={12} /> : null}
-                      At least one uppercase letter
+                      {t.uppercaseRequirement || 'At least one uppercase letter'}
                     </li>
                     <li className={cn("flex items-center gap-1", hasNumber ? "text-green-600" : "")}>
                       {hasNumber ? <Check size={12} /> : null}
-                      At least one number
+                      {t.numberRequirement || 'At least one number'}
                     </li>
                     <li className={cn("flex items-center gap-1", hasSpecialChar ? "text-green-600" : "")}>
                       {hasSpecialChar ? <Check size={12} /> : null}
-                      At least one special character
+                      {t.specialCharRequirement || 'At least one special character'}
                     </li>
                   </ul>
                 </div>
@@ -202,7 +205,7 @@ const ChangePasswordPopup: React.FC<ChangePasswordPopupProps> = ({
             
             <div className="grid gap-2">
               <Label htmlFor="confirm-password">
-                Confirm New Password
+                {t.confirmPasswordLabel}
               </Label>
               <div className="relative">
                 <Input
@@ -223,11 +226,11 @@ const ChangePasswordPopup: React.FC<ChangePasswordPopupProps> = ({
                 </button>
               </div>
               {confirmPassword && !passwordsMatch && (
-                <p className="text-xs text-red-500">Passwords do not match</p>
+                <p className="text-xs text-red-500">{t.passwordMismatchError}</p>
               )}
               {confirmPassword && passwordsMatch && (
                 <p className="text-xs text-green-600 flex items-center gap-1">
-                  <Check size={12} /> Passwords match
+                  <Check size={12} /> {t.passwordsMatchMessage || 'Passwords match'}
                 </p>
               )}
             </div>
@@ -243,7 +246,7 @@ const ChangePasswordPopup: React.FC<ChangePasswordPopupProps> = ({
                 className="bg-green-50 text-green-700 p-2 rounded-md text-sm flex items-center gap-2"
               >
                 <Check size={16} />
-                Password changed successfully!
+                {t.successMessage}
               </motion.div>
             )}
           </div>
@@ -255,16 +258,16 @@ const ChangePasswordPopup: React.FC<ChangePasswordPopupProps> = ({
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
             >
-              Cancel
+              {t.cancelButton}
             </Button>
             <Button type="submit" disabled={isSubmitting || success}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Updating...
+                  {t.updatingMessage || 'Updating...'}
                 </>
               ) : (
-                "Update Password"
+                t.saveButton
               )}
             </Button>
           </DialogFooter>

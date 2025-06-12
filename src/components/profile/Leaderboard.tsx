@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, useInView } from 'framer-motion';
+import { ProfileComponentProps, leaderboardTranslations } from './types';
 
 type LeaderboardEntry = {
   rank: number;
@@ -9,7 +10,10 @@ type LeaderboardEntry = {
   isCurrentUser?: boolean;
 };
 
-const Leaderboard = () => {
+const Leaderboard: React.FC<ProfileComponentProps> = ({ language = 'id' }) => {
+  // Get translations based on language
+  const t = leaderboardTranslations[language];
+
   // Reference for the entire card container
   const cardRef = React.useRef(null);
   // Animation triggers when just 5% of the card is visible
@@ -37,14 +41,14 @@ const Leaderboard = () => {
     { rank: 19, name: 'Sebastian Lee', score: 340 },
     { rank: 20, name: 'Isabella Walker', score: 320 },
   ];
-  
+
   // We only display the top 10
   const displayedLeaderboard = leaderboardData.slice(0, 10);
 
   // Current user data (at position 401)
   const currentUser: LeaderboardEntry = {
     rank: 401,
-    name: 'You',
+    name: t.youLabel,
     score: 50,
     isCurrentUser: true
   };
@@ -66,56 +70,48 @@ const Leaderboard = () => {
     };
 
     return (
-      <div 
-        key={entry.rank} 
+      <div
+        key={entry.rank}
         className={`flex items-center py-2 px-4 ${entry.isCurrentUser ? 'bg-[#FFCF89] rounded-md' : ''}`}
       >
         <div className="flex items-center justify-center w-8 mr-1">
           {getMedalImage()}
         </div>
-        <div className="flex items-center flex-grow min-w-0 pr-1" style={{width: "calc(100% - 90px)"}}>
-          <img 
-            src="/rabbit-leaderboard.png" 
-            alt="User" 
-            className="h-12 w-12 mr-2 flex-shrink-0" 
+        <div className="flex items-center flex-grow min-w-0 pr-1" style={{ width: "calc(100% - 90px)" }}>
+          <img
+            src="/rabbit-leaderboard.png"
+            alt="User"
+            className="h-12 w-12 mr-2 flex-shrink-0"
           />
           <span className="text-sm md:text-base font-medium truncate">{entry.name}</span>
         </div>
         <div className="text-sm md:text-base text-gray-600 font-medium flex-shrink-0 w-[60px] text-right">
-          {entry.score} xp
+          {entry.score} {t.xpLabel}
         </div>
       </div>
     );
   };
 
   return (
-      <motion.div
-        ref={cardRef}
-        initial={{ opacity: 0, y: 30 }}
-        animate={isCardInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-      >
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 30 }}
+      animate={isCardInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       <Card className="p-0 overflow-hidden border border-gray-200">
         <CardContent className="p-4">
           <div className="flex flex-col items-center mb-6">
-            <motion.h2 
+            <motion.h2
               className="text-2xl md:text-3xl font-semibold text-primary"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              Leaderboard
+              {t.title}
             </motion.h2>
-            <motion.p 
-              className="text-lg md:text-xl text-[#EF5BA1] font-semibold"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-            >
-              3 days to go
-            </motion.p>
           </div>
-          
+
           <div className="divide-y divide-gray-100">
             {/* Leaderboard rows */}
             <div className="space-y-2">
@@ -123,7 +119,7 @@ const Leaderboard = () => {
                 const RowAnimated = () => {
                   const rowRef = React.useRef(null);
                   const isRowInView = useInView(rowRef, { once: true, amount: 0.5 });
-                  
+
                   return (
                     <motion.div
                       ref={rowRef}
@@ -136,26 +132,26 @@ const Leaderboard = () => {
                     </motion.div>
                   );
                 };
-                
+
                 return <RowAnimated key={entry.rank} />;
               })}
-              
+
               {/* Gap indicator if user is outside top 10 */}
               {currentUser.rank > 10 && (
                 <div className="py-2 px-4 text-center text-gray-400 text-sm font-bold">
-                  <motion.div 
+                  <motion.div
                     className="text-center py-1"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3, delay: 0.2 }}
                   >
                     <div className="text-gray-400 leading-[0.6]">
-                      •<br/>•<br/>•
+                      {t.gapIndicator}
                     </div>
                   </motion.div>
                 </div>
               )}
-              
+
               {/* Current user row */}
               {(() => {
                 const CurrentUserRowAnimated = () => {

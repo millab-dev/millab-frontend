@@ -10,12 +10,15 @@ import ChangePasswordPopup from './ChangePasswordPopup';
 import EditProfilePopup from './EditProfilePopup';
 import { User } from '@/types/user';
 import { logout } from '@/actions/auth.logout';
+import { ProfileComponentProps, settingSectionTranslations } from './types';
 
-interface SettingSectionProps {
+interface SettingSectionProps extends ProfileComponentProps {
     user: Partial<User>
 }
 
-const SettingSection = ({ user }: SettingSectionProps) => {
+const SettingSection = ({ user, language = 'id' }: SettingSectionProps) => {
+    // Get translations based on language
+    const t = settingSectionTranslations[language];
     const router = useRouter();
     const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
     const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
@@ -57,7 +60,7 @@ const SettingSection = ({ user }: SettingSectionProps) => {
                                     <div className="flex items-center justify-center mr-4">
                                         <Image src="/profile.svg" width={24} height={24} alt="Edit Profile" />
                                     </div>
-                                    <span className="font-medium text-base">Edit Profile</span>
+                                    <span className="font-medium text-base">{t.editProfile}</span>
                                 </div>
                                 <ChevronRight className="text-primary" size={20} />
                             </CardContent>
@@ -70,6 +73,7 @@ const SettingSection = ({ user }: SettingSectionProps) => {
                     open={isEditProfileOpen}
                     onOpenChange={setIsEditProfileOpen}
                     userData={user}
+                    language={language}
                 />
 
                 {/* Change Password Option */}
@@ -90,7 +94,7 @@ const SettingSection = ({ user }: SettingSectionProps) => {
                                     <div className="flex items-center justify-center mr-4">
                                         <Image src="/change-password.svg" width={24} height={24} alt="Change Password" />
                                     </div>
-                                    <span className="font-medium text-base">Change Password</span>
+                                    <span className="font-medium text-base">{t.changePassword}</span>
                                 </div>
                                 <ChevronRight className="text-primary" size={20} />
                             </CardContent>
@@ -102,6 +106,7 @@ const SettingSection = ({ user }: SettingSectionProps) => {
                 <ChangePasswordPopup
                     open={isChangePasswordOpen}
                     onOpenChange={setIsChangePasswordOpen}
+                    language={language}
                 />
 
                 {/* Logout Option */}
@@ -158,10 +163,10 @@ const SettingSection = ({ user }: SettingSectionProps) => {
                                         {isLoggingOut ? (
                                             <div className="flex items-center">
                                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                Logging out...
+                                                {t.loggingOut}
                                             </div>
                                         ) : (
-                                            'Logout'
+                                            t.logout
                                         )}
                                     </span>
                                 </div>

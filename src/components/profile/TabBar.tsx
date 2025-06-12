@@ -4,12 +4,15 @@ import React from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { ProfileComponentProps, tabBarTranslations } from './types';
 
-interface TabBarProps {
+interface TabBarProps extends ProfileComponentProps {
   activeTab: 'achievements' | 'settings';
 }
 
-const TabBar: React.FC<TabBarProps> = ({ activeTab }) => {
+const TabBar: React.FC<TabBarProps> = ({ activeTab, language = 'id' }) => {
+  // Get translations based on language
+  const t = tabBarTranslations[language];
   return (
     <motion.div 
       className="mt-3 mb-4 px-0"
@@ -32,7 +35,7 @@ const TabBar: React.FC<TabBarProps> = ({ activeTab }) => {
                 : "text-white hover:text-yellow-50"
             )}
           >
-            Achievements
+            {t.achievements}
           </Link>
           {activeTab === 'achievements' && (
             <motion.div
@@ -57,7 +60,7 @@ const TabBar: React.FC<TabBarProps> = ({ activeTab }) => {
                 : "text-white hover:text-yellow-50"
             )}
           >
-            Settings
+            {t.settings}
           </Link>
           {activeTab === 'settings' && (
             <motion.div

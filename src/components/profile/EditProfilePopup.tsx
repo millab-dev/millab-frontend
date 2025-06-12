@@ -27,8 +27,9 @@ import {
 
 import { User } from "@/types/user"
 import { updateProfileData } from "@/actions/profile.update-profile-data"
+import { ProfileComponentProps, editProfilePopupTranslations } from "./types"
 
-interface EditProfilePopupProps {
+interface EditProfilePopupProps extends ProfileComponentProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   userData: Partial<User>
@@ -37,8 +38,11 @@ interface EditProfilePopupProps {
 const EditProfilePopup: React.FC<EditProfilePopupProps> = ({
   open,
   onOpenChange,
-  userData
+  userData,
+  language = 'id'
 }) => {
+  // Get translations based on language
+  const t = editProfilePopupTranslations[language];
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: userData.name,
@@ -131,16 +135,16 @@ const EditProfilePopup: React.FC<EditProfilePopupProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Edit Profile</DialogTitle>
+          <DialogTitle>{t.title}</DialogTitle>
           <DialogDescription>
-            Update your profile information below.
+            {t.description}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             {/* Name field */}
             <div className="grid gap-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name">{t.nameLabel}</Label>
               <Input
                 id="name"
                 name="name"
@@ -153,7 +157,7 @@ const EditProfilePopup: React.FC<EditProfilePopupProps> = ({
             
             {/* Birthplace field */}
             <div className="grid gap-2">
-              <Label htmlFor="birthplace">Birthplace</Label>
+              <Label htmlFor="birthplace">{t.birthplaceLabel}</Label>
               <Input
                 id="birthplace"
                 name="birthplace"
@@ -166,7 +170,7 @@ const EditProfilePopup: React.FC<EditProfilePopupProps> = ({
             
             {/* Birthdate field */}
             <div className="grid gap-2">
-              <Label htmlFor="birthdate">Date of Birth</Label>
+              <Label htmlFor="birthdate">{t.birthdateLabel}</Label>
               <Input
                 id="birthdate"
                 name="birthdate"
@@ -181,7 +185,7 @@ const EditProfilePopup: React.FC<EditProfilePopupProps> = ({
 
             {/* Phone field */}
             <div className="grid gap-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phone">{t.phoneLabel}</Label>
               <Input
                 id="phone"
                 name="phone"
@@ -194,24 +198,24 @@ const EditProfilePopup: React.FC<EditProfilePopupProps> = ({
             
             {/* Gender field */}
             <div className="grid gap-2">
-              <Label htmlFor="gender">Gender</Label>
+              <Label htmlFor="gender">{t.genderLabel}</Label>
               <Select 
                 value={formData.gender} 
                 onValueChange={(value) => handleSelectChange("gender", value)}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select gender" />
+                  <SelectValue placeholder={t.selectGenderPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Female">Female</SelectItem>
-                  <SelectItem value="Male">Male</SelectItem>
+                  <SelectItem value="Female">{t.femaleOption}</SelectItem>
+                  <SelectItem value="Male">{t.maleOption}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
             {/* School field */}
             <div className="grid gap-2">
-              <Label htmlFor="school">School</Label>
+              <Label htmlFor="school">{t.schoolLabel}</Label>
               <Input
                 id="school"
                 name="school"
@@ -231,7 +235,7 @@ const EditProfilePopup: React.FC<EditProfilePopupProps> = ({
                 className="bg-green-50 text-green-700 p-2 rounded-md text-sm flex items-center gap-2"
               >
                 <Check size={16} />
-                Profile updated successfully!
+                {t.successMessage}
               </motion.div>
             )}
             
@@ -258,16 +262,16 @@ const EditProfilePopup: React.FC<EditProfilePopupProps> = ({
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
             >
-              Cancel
+              {t.cancelButton}
             </Button>
             <Button type="submit" disabled={isSubmitting || success}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Updating...
+                  {t.updatingMessage}
                 </>
               ) : (
-                "Save Changes"
+                t.saveButton
               )}
             </Button>
           </DialogFooter>

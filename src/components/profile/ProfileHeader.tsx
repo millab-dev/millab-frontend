@@ -4,12 +4,15 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from "@/components/ui/card";
 import { User } from '@/types/user';
+import { ProfileComponentProps, profileHeaderTranslations } from './types';
 
 type Props = {
     user: Partial<User>
-}
+} & ProfileComponentProps;
 
-const ProfileHeader = ({user}: Props) => {
+const ProfileHeader = ({user, language = 'id'}: Props) => {
+  // Get translations based on language
+  const t = profileHeaderTranslations[language];
   return (
     <div className="w-full max-w-5xl mx-auto">
       <motion.div
@@ -158,7 +161,7 @@ const ProfileHeader = ({user}: Props) => {
             <div className="flex-1">
               {/* NAME */}
               <div className="mb-3">
-                <p className="text-xs md:text-sm text-gray-500 uppercase">NAME</p>
+                <p className="text-xs md:text-sm text-gray-500 uppercase">{t.nameLabel}</p>
                 <p className="text-sm md:text-xl font-semibold">{user.name}</p>
               </div>
               
@@ -166,32 +169,32 @@ const ProfileHeader = ({user}: Props) => {
               <div className="grid grid-cols-2 gap-x-2 gap-y-2">
                 {/* BIRTHPLACE */}
                 <div>
-                  <p className="text-xs md:text-sm text-gray-500 uppercase">BIRTHPLACE</p>
+                  <p className="text-xs md:text-sm text-gray-500 uppercase">{t.birthplaceLabel}</p>
                   <p className="text-sm md:text-xl font-semibold">{user.birthplace}</p>
                 </div>
                 
                 {/* PHONE */}
                 <div>
-                  <p className="text-xs md:text-sm text-gray-500 uppercase">PHONE</p>
+                  <p className="text-xs md:text-sm text-gray-500 uppercase">{t.phoneLabel}</p>
                   <p className="text-sm md:text-xl font-semibold">{user.phoneNumber}</p>
                 </div>
                 
                 {/* GENDER */}
                 <div>
-                  <p className="text-xs md:text-sm text-gray-500 uppercase">GENDER</p>
+                  <p className="text-xs md:text-sm text-gray-500 uppercase">{t.genderLabel}</p>
                   <p className="text-sm md:text-xl font-semibold">{user.gender}</p>
                 </div>
                 
                 {/* SCHOOL */}
                 <div>
-                  <p className="text-xs md:text-sm text-gray-500 uppercase">SCHOOL</p>
+                  <p className="text-xs md:text-sm text-gray-500 uppercase">{t.schoolLabel}</p>
                   <p className="text-sm md:text-xl font-semibold">{user.socializationLocation}</p>
                 </div>
               </div>
               
               {/* EMAIL - Single column below the grid */}
               <div className="mt-4 col-span-2">
-                <p className="text-xs md:text-sm text-gray-500 uppercase">EMAIL</p>
+                <p className="text-xs md:text-sm text-gray-500 uppercase">{t.emailLabel}</p>
                 <p className="text-sm md:text-xl font-semibold">{user.email}</p>
               </div>
             </div>

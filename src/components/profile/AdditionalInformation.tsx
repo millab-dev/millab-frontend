@@ -5,8 +5,11 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Phone } from "lucide-react";
 import { motion } from 'framer-motion';
+import { ProfileComponentProps, additionalInformationTranslations } from './types';
 
-const AdditionalInformation = () => {
+const AdditionalInformation: React.FC<ProfileComponentProps> = ({ language = 'id' }) => {
+  // Get translations based on language
+  const t = additionalInformationTranslations[language];
   return (
     <motion.div 
       className="w-full max-w-5xl mx-auto mt-4"
@@ -20,7 +23,7 @@ const AdditionalInformation = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.2 }}
       >
-        Additional Information
+        {t.title}
       </motion.h2>
       <motion.div
         initial={{ opacity: 0, y: 5 }}
