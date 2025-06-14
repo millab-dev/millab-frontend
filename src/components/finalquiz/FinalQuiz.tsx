@@ -4,6 +4,8 @@ import intermediateIcon from "@/assets/intermediateIcon.svg";
 import advancedIcon from "@/assets/advancedIcon.svg";
 import Image from "next/image";
 import star from "@/assets/star.svg";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function FinalQuiz() {
     return (
@@ -30,12 +32,39 @@ export default function FinalQuiz() {
                             Can you beat your own record?
                         </p>
 
-                        {/* How to Play Button */}
-                        <button className="bg-white text-blue-600 font-semibold px-8 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 flex items-center gap-2
-                        w-full justify-center">
-                            <Gamepad2 className="w-6 h-6" />
-                            How to Play
-                        </button>
+                        {/* How to Play Button with Modal */}
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <button className="bg-white text-primary font-semibold px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors 
+                                duration-200 flex items-center gap-2 w-full justify-center text-lg cursor-pointer">
+                                    <Gamepad2 className="w-6 h-6" />
+                                    How to Play?
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-md w-full rounded-2xl p-8 font-jakarta">
+                                <DialogHeader>
+                                    <DialogTitle className="text-3xl font-bold text-center mb-6">How to Play?</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-4 mb-6">
+                                    {["Take the quiz and answer each question.",
+                                      "See your results instantly after finishing.",
+                                      "Your results will be added as points to your profile.",
+                                      "Check your rank on the leaderboard and challenge friends!"].map((step, idx) => (
+                                        <div key={idx} className="flex items-center gap-4">
+                                            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-100 text-primary font-bold text-lg">
+                                                {idx + 1}
+                                            </div>
+                                            <div className="text-base font-medium text-gray-800 flex-1">
+                                                {step}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <DialogClose asChild>
+                                    <Button className="w-full mt-2" variant="default">Understand!</Button>
+                                </DialogClose>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
 
@@ -53,8 +82,7 @@ export default function FinalQuiz() {
                                         Beginner
                                     </h3>
                                     <p className="text-gray-600">
-                                        Lorem ipsum dolor sit amet consectetur.
-                                        Enim nunc dictum sagittis montes.
+                                        Perfect for newcomers! Start with basic questions and build your confidence.
                                     </p>
                                 </div>
                             </div>
@@ -88,8 +116,7 @@ export default function FinalQuiz() {
                                         Intermediate
                                     </h3>
                                     <p className="text-gray-600">
-                                        Lorem ipsum dolor sit amet consectetur.
-                                        Enim nunc dictum sagittis montes.
+                                        Ready for a challenge? Test your knowledge with more complex questions and scenarios.
                                     </p>
                                 </div>
                             </div>
@@ -123,8 +150,7 @@ export default function FinalQuiz() {
                                         Advanced
                                     </h3>
                                     <p className="text-gray-600">
-                                        Lorem ipsum dolor sit amet consectetur.
-                                        Enim nunc dictum sagittis montes.
+                                        Ready for the ultimate test? Push your knowledge to the limit with the most challenging questions.
                                     </p>
                                 </div>
                             </div>
