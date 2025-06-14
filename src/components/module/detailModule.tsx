@@ -11,6 +11,7 @@ interface Module {
     id: string;
     title: string;
     description: string;
+    difficulty: 'Easy' | 'Intermediate' | 'Advanced';
     order: number;
     sections: ModuleSection[];
     quiz: ModuleQuiz;
@@ -34,7 +35,6 @@ interface ModuleQuiz {
     description: string;
     duration: string;
     totalQuestions: number;
-    passingScore: number;
     isActive: boolean;
 }
 
@@ -62,9 +62,7 @@ export default function DetailModule() {
         if (id) {
             fetchModule();
         }
-    }, [id]);
-
-    const fetchModule = async () => {
+    }, [id]);    const fetchModule = async () => {
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/${id}`,
@@ -77,6 +75,7 @@ export default function DetailModule() {
 
             if (data.success) {
                 setModule(data.data);
+                // Module access is automatically tracked on the backend when fetching module details
             } else {
                 toast.error(data.error || "Failed to fetch module");
                 router.push("/module");
@@ -154,21 +153,33 @@ export default function DetailModule() {
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="text-primary"
-                                onClick={() => {
+                                className="text-primary"                                onClick={() => {
                                     // TODO: Implement download functionality
-                                    toast.info("Download functionality coming soon!");
+                                    toast.info("Fitur unduh segera hadir!");
                                 }}
                             >
                                 <Download size={22} />
                             </Button>
-                        </div>
-                        <div className="mt-2">
-                            <div className="text-md sm:text-xl font-semibold text-primary">
-                                {module.title}
+                        </div>                        <div className="mt-2">
+                            <div className="flex items-center gap-2 mb-2">
+                                <div className="text-md sm:text-xl font-semibold text-primary">
+                                    {module.title}
+                                </div>
+                                <span
+                                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                        module.difficulty === "Easy"
+                                            ? "bg-green-100 text-green-800"
+                                            : module.difficulty === "Intermediate"
+                                            ? "bg-yellow-100 text-yellow-800"
+                                            : "bg-red-100 text-red-800"
+                                    }`}
+                                >
+                                    {module.difficulty === "Easy" ? "Mudah" : 
+                                     module.difficulty === "Intermediate" ? "Menengah" : "Sulit"}
+                                </span>
                             </div>
                             <div className="text-gray-400 text-sm mt-1">
-                                Sections {getCompletedSectionsCount()}/{getTotalSectionsCount()} | Quiz {isQuizCompleted() ? "1/1" : "0/1"}
+                                Bagian {getCompletedSectionsCount()}/{getTotalSectionsCount()} | Kuis {isQuizCompleted() ? "1/1" : "0/1"}
                             </div>
                             <div className="flex items-center gap-2 mt-2">
                                 <div className="flex-1 h-2 bg-gray-200 rounded-full">
@@ -182,8 +193,20 @@ export default function DetailModule() {
                                 </span>
                             </div>
                         </div>
-                    </div>                    <h2 className="text-xl font-bold text-primary">
-                        Sections
+                    </div>                    {/* Module Description */}
+                    <div className="bg-white rounded-xl shadow-sm p-6">
+                        <h2 className="text-lg font-bold text-primary mb-3">
+                            Deskripsi Modul
+                        </h2>
+                        <div 
+                            className="text-gray-700 prose prose-sm max-w-none leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: module.description }}
+                        />
+                    </div>
+
+                    {/* Sections Heading */}
+                    <h2 className="text-xl font-bold text-primary">
+                        Materi
                     </h2>
                     <div className="relative flex flex-col gap-3">
                         {/* Vertical line */}

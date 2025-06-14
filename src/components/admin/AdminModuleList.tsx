@@ -10,6 +10,7 @@ interface Module {
   id: string;
   title: string;
   description: string;
+  difficulty: 'Easy' | 'Intermediate' | 'Advanced';
   order: number;
   sections: ModuleSection[];
   quiz: ModuleQuiz;
@@ -181,8 +182,7 @@ export default function AdminModuleList() {
               {modules.map((module) => (
                 <div key={module.id} className="px-6 py-4 hover:bg-gray-50">
                   <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3">
+                    <div className="flex-1">                      <div className="flex items-center gap-3">
                         <h3 className="text-lg font-semibold text-gray-900">
                           {module.order}. {module.title}
                         </h3>
@@ -195,8 +195,22 @@ export default function AdminModuleList() {
                         >
                           {module.isActive ? "Active" : "Inactive"}
                         </span>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            module.difficulty === "Easy"
+                              ? "bg-green-100 text-green-800"
+                              : module.difficulty === "Intermediate"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {module.difficulty}
+                        </span>
                       </div>
-                      <p className="text-gray-600 mt-1">{module.description}</p>
+                      <div 
+                        className="text-gray-600 mt-1 prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: module.description }}
+                      />
                       <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
                         <span>{module.sections.length} sections</span>
                         <span>Quiz: {module.quiz.totalQuestions} questions</span>

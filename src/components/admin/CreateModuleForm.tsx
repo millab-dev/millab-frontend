@@ -12,6 +12,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Form,
   FormControl,
   FormField,
@@ -24,8 +31,8 @@ import { toast } from "sonner";
 const sectionSchema = z.object({
   title: z.string().min(1, "Section title is required"),
   content: z.string().min(1, "Section content is required"),
-  duration: z.string().min(1, "Duration is required"),
-  order: z.number().min(0, "Order must be positive"),
+  duration: z.coerce.number().min(1, "Duration must be at least 1 minute"),
+  order: z.coerce.number().min(0, "Order must be positive"),
   pdfUrl: z.string().optional(),
   isActive: z.boolean(),
 });
@@ -34,17 +41,16 @@ const questionSchema = z.object({
   question: z.string().min(1, "Question is required"),
   type: z.enum(['multiple-choice', 'true-false']),
   options: z.array(z.string().min(1, "Option cannot be empty")).min(2, "Must have at least 2 options"),
-  correctAnswer: z.number().min(0, "Must select correct answer"),
+  correctAnswer: z.coerce.number().min(0, "Must select correct answer"),
   explanation: z.string().optional(),
-  order: z.number().min(1),
+  order: z.coerce.number().min(1, "Question order must be at least 1"),
 });
 
 const quizSchema = z.object({
   title: z.string().min(1, "Quiz title is required"),
   description: z.string().min(1, "Quiz description is required"),
-  duration: z.string().min(1, "Duration is required"),
-  totalQuestions: z.number().min(1, "Must have at least 1 question"),
-  passingScore: z.number().min(0).max(100, "Must be between 0-100"),
+  duration: z.coerce.number().min(1, "Duration must be at least 1 minute"),
+  totalQuestions: z.coerce.number().min(1, "Must have at least 1 question"),
   questions: z.array(questionSchema).min(1, "Must have at least 1 question"),
   isActive: z.boolean(),
 });
@@ -52,7 +58,10 @@ const quizSchema = z.object({
 const moduleSchema = z.object({
   title: z.string().min(1, "Module title is required"),
   description: z.string().min(1, "Module description is required"),
-  order: z.number().min(1, "Order must be positive"),
+  difficulty: z.enum(['Easy', 'Intermediate', 'Advanced'], {
+    errorMap: () => ({ message: "Please select a difficulty level" })
+  }),
+  order: z.coerce.number().min(1, "Order must be positive"),
   sections: z.array(sectionSchema).min(1, "Must have at least one section"),
   quiz: quizSchema,
   isActive: z.boolean(),
@@ -63,17 +72,19 @@ type ModuleFormData = z.infer<typeof moduleSchema>;
 export default function CreateModuleForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  
   const form = useForm<ModuleFormData>({
     resolver: zodResolver(moduleSchema),
     defaultValues: {
       title: "",
       description: "",
+      difficulty: "Easy" as const,
       order: 1,
       sections: [
         {
           title: "",
           content: "",
-          duration: "",
+          duration: 5,
           order: 1,
           pdfUrl: "",
           isActive: true,
@@ -82,9 +93,8 @@ export default function CreateModuleForm() {
       quiz: {
         title: "",
         description: "",
-        duration: "",
+        duration: 10,
         totalQuestions: 1,
-        passingScore: 70,
         questions: [
           {
             question: "",
@@ -100,6 +110,7 @@ export default function CreateModuleForm() {
       isActive: true,
     },
   });
+
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "sections",
@@ -117,6 +128,19 @@ export default function CreateModuleForm() {
     toast.loading("Creating module...", { id: loadingToastId });
 
     try {
+      // Transform data to add " min" suffix to duration fields
+      const transformedData = {
+        ...data,
+        sections: data.sections.map(section => ({
+          ...section,
+          duration: `${section.duration} min`
+        })),
+        quiz: {
+          ...data.quiz,
+          duration: `${data.quiz.duration} min`
+        }
+      };
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/admin/create`,
         {
@@ -125,7 +149,7 @@ export default function CreateModuleForm() {
             "Content-Type": "application/json",
           },
           credentials: "include",
-          body: JSON.stringify(data),
+          body: JSON.stringify(transformedData),
         }
       );
 
@@ -168,7 +192,7 @@ export default function CreateModuleForm() {
     append({
       title: "",
       content: "",
-      duration: "",
+      duration: 5,
       order: fields.length + 1,
       pdfUrl: "",
       isActive: true,
@@ -201,7 +225,7 @@ export default function CreateModuleForm() {
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-900">Basic Information</h2>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <FormField
                     control={form.control}
                     name="title"
@@ -214,7 +238,9 @@ export default function CreateModuleForm() {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />                  <FormField
+                  />
+
+                  <FormField
                     control={form.control}
                     name="order"
                     render={({ field }) => (
@@ -225,14 +251,43 @@ export default function CreateModuleForm() {
                             type="number" 
                             placeholder="1" 
                             value={field.value?.toString() || ""}
-                            onChange={(e) => field.onChange(Number(e.target.value) || 1)}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(value === "" ? "" : Number(value) || 1);
+                            }}
+                            onFocus={(e) => e.target.select()}
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </div>                <FormField
+
+                  <FormField
+                    control={form.control}
+                    name="difficulty"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Difficulty Level*</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select difficulty" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Easy">Easy</SelectItem>
+                            <SelectItem value="Intermediate">Intermediate</SelectItem>
+                            <SelectItem value="Advanced">Advanced</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
                   control={form.control}
                   name="description"
                   render={({ field }) => (
@@ -318,15 +373,27 @@ export default function CreateModuleForm() {
                         name={`sections.${index}.duration`}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Duration*</FormLabel>
+                            <FormLabel>Duration (minutes)*</FormLabel>
                             <FormControl>
-                              <Input placeholder="e.g., 5 min" {...field} />
+                              <Input 
+                                type="number" 
+                                placeholder="5" 
+                                min="1"
+                                value={field.value?.toString() || ""}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === "" ? "" : Number(value) || 1);
+                                }}
+                                onFocus={(e) => e.target.select()}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                    </div>                    <FormField
+                    </div>
+
+                    <FormField
                       control={form.control}
                       name={`sections.${index}.content`}
                       render={({ field }) => (
@@ -379,7 +446,9 @@ export default function CreateModuleForm() {
                     </div>
                   </div>
                 ))}
-              </div>              {/* Quiz */}
+              </div>
+
+              {/* Quiz */}
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-900">Module Quiz</h2>
                 
@@ -404,15 +473,27 @@ export default function CreateModuleForm() {
                       name="quiz.duration"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Quiz Duration*</FormLabel>
+                          <FormLabel>Quiz Duration (minutes)*</FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g., 10 min" {...field} />
+                            <Input 
+                              type="number" 
+                              placeholder="10" 
+                              min="1"
+                              value={field.value?.toString() || ""}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                field.onChange(value === "" ? "" : Number(value));
+                              }}
+                              onFocus={(e) => e.target.select()}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </div>                  <FormField
+                  </div>
+
+                  <FormField
                     control={form.control}
                     name="quiz.description"
                     render={({ field }) => (
@@ -430,7 +511,8 @@ export default function CreateModuleForm() {
                     )}
                   />
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">                    <FormField
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
                       control={form.control}
                       name="quiz.totalQuestions"
                       render={({ field }) => (
@@ -440,25 +522,13 @@ export default function CreateModuleForm() {
                             <Input 
                               type="number" 
                               placeholder="5" 
+                              min="1"
                               value={field.value?.toString() || ""}
-                              onChange={(e) => field.onChange(Number(e.target.value) || 1)}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />                    <FormField
-                      control={form.control}
-                      name="quiz.passingScore"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Passing Score (%)*</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              placeholder="70" 
-                              value={field.value?.toString() || ""}
-                              onChange={(e) => field.onChange(Number(e.target.value) || 70)}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                field.onChange(value === "" ? "" : Number(value));
+                              }}
+                              onFocus={(e) => e.target.select()}
                             />
                           </FormControl>
                           <FormMessage />
@@ -521,7 +591,9 @@ export default function CreateModuleForm() {
                               <Trash2 size={16} className="text-red-600" />
                             </Button>
                           )}
-                        </div>                        <FormField
+                        </div>
+
+                        <FormField
                           control={form.control}
                           name={`quiz.questions.${questionIndex}.question`}
                           render={({ field }) => (

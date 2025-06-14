@@ -14,6 +14,7 @@ interface Module {
     id: string;
     title: string;
     description: string;
+    difficulty: 'Easy' | 'Intermediate' | 'Advanced';
     order: number;
     sections: ModuleSection[];
     quiz: ModuleQuiz;
@@ -88,11 +89,9 @@ export default function ListModule() {
 
     const handleModuleClick = (id: string) => {
         router.push(`/module/${id}`);
-    };
-
-    const downloadAllModules = () => {
+    };    const downloadAllModules = () => {
         // TODO: Implement download all functionality
-        toast.info("Download all functionality coming soon!");
+        toast.info("Fitur unduh semua segera hadir!");
     };
 
     if (loading) {
@@ -118,14 +117,13 @@ export default function ListModule() {
                     <div className="z-0">
                         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2">
                             Modul Pembelajaran
-                        </h1>                        <p className="text-white/90 mb-4">{modules.length} Module{modules.length !== 1 ? 's' : ''}</p>
-                        <Button
+                        </h1>                        <p className="text-white/90 mb-4">{modules.length} Modul</p>                        <Button
                             variant="secondary"
                             className="flex items-center gap-2"
                             onClick={downloadAllModules}
                         >
                             <Download size={18} />
-                            Download All
+                            Unduh Semua
                         </Button>
                         <Image
                             src={rabbit}
@@ -141,9 +139,8 @@ export default function ListModule() {
                         Daftar Modul
                     </h2>                    {/* Module List */}
                     <div className="space-y-4">
-                        {modules.length === 0 ? (
-                            <div className="text-center py-8">
-                                <p className="text-gray-500">No modules available at the moment.</p>
+                        {modules.length === 0 ? (                            <div className="text-center py-8">
+                                <p className="text-gray-500">Tidak ada modul yang tersedia saat ini.</p>
                             </div>
                         ) : (
                             modules.map((module) => {
@@ -160,23 +157,41 @@ export default function ListModule() {
                                                     className="text-white"
                                                     size={24}
                                                 />
-                                            </div>
-                                            <div className="w-full">
-                                                <h3 className="font-semibold text-primary max-sm:text-sm">
-                                                    {module.order}. {module.title}
-                                                </h3>
-                                                <p className="text-gray-600 text-sm mt-1 max-sm:text-xs">
-                                                    {module.description}
-                                                </p>
+                                            </div>                                            <div className="w-full">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <h3 className="font-semibold text-primary max-sm:text-sm">
+                                                        {module.order}. {module.title}
+                                                    </h3>
+                                                    <span
+                                                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                            module.difficulty === "Easy"
+                                                                ? "bg-green-100 text-green-800"
+                                                                : module.difficulty === "Intermediate"
+                                                                ? "bg-yellow-100 text-yellow-800"
+                                                                : "bg-red-100 text-red-800"
+                                                        }`}
+                                                    >
+                                                        {module.difficulty === "Easy" ? "Mudah" : 
+                                                         module.difficulty === "Intermediate" ? "Menengah" : "Sulit"}
+                                                    </span>
+                                                </div>
+                                                <div 
+                                                    className="text-gray-600 text-sm mt-1 max-sm:text-xs prose prose-sm max-w-none line-clamp-2"
+                                                    dangerouslySetInnerHTML={{ 
+                                                        __html: module.description.length > 150 
+                                                            ? module.description.substring(0, 150) + '...' 
+                                                            : module.description 
+                                                    }}
+                                                />
                                                 <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-                                                    <span>{module.sections.length} section{module.sections.length !== 1 ? 's' : ''}</span>
+                                                    <span>{module.sections.length} bagian</span>
                                                     <span>•</span>
-                                                    <span>Quiz: {module.quiz.totalQuestions} question{module.quiz.totalQuestions !== 1 ? 's' : ''}</span>
+                                                    <span>Kuis: {module.quiz.totalQuestions} pertanyaan</span>
                                                     {module.progress?.quizCompleted && (
                                                         <>
                                                             <span>•</span>
                                                             <span className="text-green-600 font-medium">
-                                                                Score: {module.progress.quizScore}%
+                                                                Skor: {module.progress.quizScore}%
                                                             </span>
                                                         </>
                                                     )}
@@ -190,7 +205,7 @@ export default function ListModule() {
                                                     ></div>
                                                 </div>
                                                 <div className="text-xs text-gray-500 mt-1">
-                                                    {progress}% complete
+                                                    {progress}% selesai
                                                 </div>
                                             </div>
                                         </div>
@@ -198,11 +213,10 @@ export default function ListModule() {
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg cursor-pointer"
-                                            onClick={(e) => {
+                                            className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg cursor-pointer"                                            onClick={(e) => {
                                                 e.stopPropagation();
                                                 // TODO: Implement individual module download
-                                                toast.info("Module download coming soon!");
+                                                toast.info("Unduh modul segera hadir!");
                                             }}
                                         >
                                             <Download size={20} />

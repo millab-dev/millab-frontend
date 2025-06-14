@@ -122,15 +122,15 @@ export default function QuizSummary({
                                             {index + 1}
                                         </div>
                                     </div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center justify-between mb-2">
+                                    <div className="flex-1">                                        <div className="flex items-center justify-between mb-2">
                                             <span className="text-sm text-blue-600 font-medium">
                                                 {points} point{points !== 1 ? 's' : ''}
                                             </span>
                                         </div>
-                                        <h3 className="font-medium text-gray-800 mb-3 text-sm">
-                                            {question.question}
-                                        </h3>
+                                        <div 
+                                            className="font-medium text-gray-800 mb-3 text-sm prose prose-sm max-w-none"
+                                            dangerouslySetInnerHTML={{ __html: question.question }}
+                                        />
                                         
                                         {/* Answer Options */}
                                         <div className="space-y-2">
@@ -164,11 +164,13 @@ export default function QuizSummary({
                                                     <div key={option.id}>
                                                         <div className="text-xs text-gray-600 mb-1">
                                                             {labelText} {iconText}
-                                                        </div>
-                                                        <div className={`p-3 rounded-lg ${bgColor} ${textColor} text-sm`}>
+                                                        </div>                                                        <div className={`p-3 rounded-lg ${bgColor} ${textColor} text-sm`}>
                                                             <div className="flex items-center gap-2">
                                                                 <span className="font-semibold">{option.id}</span>
-                                                                <span>{option.text}</span>
+                                                                <div 
+                                                                    className="prose prose-sm max-w-none"
+                                                                    dangerouslySetInnerHTML={{ __html: option.text }}
+                                                                />
                                                             </div>
                                                         </div>
                                                     </div>

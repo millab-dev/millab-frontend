@@ -9,6 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useRouter, useParams } from "next/navigation";
@@ -20,8 +27,8 @@ const sectionSchema = z.object({
   id: z.string().optional(),
   title: z.string().min(1, "Section title is required"),
   content: z.string().min(1, "Section content is required"),
-  duration: z.string().min(1, "Section duration is required"),
-  order: z.number().min(1, "Section order must be at least 1"),
+  duration: z.coerce.number().min(1, "Section duration must be at least 1 minute"),
+  order: z.coerce.number().min(1, "Section order must be at least 1"),
   pdfUrl: z.string().optional(),
   isActive: z.boolean(),
 });
@@ -31,18 +38,17 @@ const questionSchema = z.object({
   question: z.string().min(1, "Question is required"),
   type: z.enum(['multiple-choice', 'true-false']),
   options: z.array(z.string().min(1, "Option cannot be empty")).min(2, "Must have at least 2 options"),
-  correctAnswer: z.number().min(0, "Must select correct answer"),
+  correctAnswer: z.coerce.number().min(0, "Must select correct answer"),
   explanation: z.string().optional(),
-  order: z.number().min(1),
+  order: z.coerce.number().min(1, "Question order must be at least 1"),
 });
 
 const quizSchema = z.object({
   id: z.string().optional(),
   title: z.string().min(1, "Quiz title is required"),
   description: z.string().min(1, "Quiz description is required"),
-  duration: z.string().min(1, "Quiz duration is required"),
-  totalQuestions: z.number().min(1, "Must have at least 1 question"),
-  passingScore: z.number().min(0).max(100, "Passing score must be between 0 and 100"),
+  duration: z.coerce.number().min(1, "Quiz duration must be at least 1 minute"),
+  totalQuestions: z.coerce.number().min(1, "Must have at least 1 question"),
   questions: z.array(questionSchema).min(1, "Must have at least 1 question"),
   isActive: z.boolean(),
 });
@@ -50,7 +56,10 @@ const quizSchema = z.object({
 const moduleSchema = z.object({
   title: z.string().min(1, "Module title is required"),
   description: z.string().min(1, "Module description is required"),
-  order: z.number().min(1, "Module order must be at least 1"),
+  difficulty: z.enum(['Easy', 'Intermediate', 'Advanced'], {
+    errorMap: () => ({ message: "Please select a difficulty level" })
+  }),
+  order: z.coerce.number().min(1, "Module order must be at least 1"),
   sections: z.array(sectionSchema).min(1, "Must have at least one section"),
   quiz: quizSchema,
   isActive: z.boolean(),
@@ -62,6 +71,7 @@ interface Module {
   id: string;
   title: string;
   description: string;
+  difficulty: 'Easy' | 'Intermediate' | 'Advanced';
   order: number;
   sections: ModuleSection[];
   quiz: ModuleQuiz;
@@ -86,7 +96,6 @@ interface ModuleQuiz {
   description: string;
   duration: string;
   totalQuestions: number;
-  passingScore: number;
   questions: QuizQuestion[];
   isActive: boolean;
 }
@@ -109,18 +118,16 @@ export default function EditModuleForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const form = useForm<ModuleFormData>({
-    resolver: zodResolver(moduleSchema),
-    defaultValues: {
+    resolver: zodResolver(moduleSchema),    defaultValues: {
       title: "",
       description: "",
+      difficulty: "Easy" as const,
       order: 1,
-      sections: [],
-      quiz: {
+      sections: [],      quiz: {
         title: "",
         description: "",
-        duration: "",
+        duration: 10,
         totalQuestions: 1,
-        passingScore: 70,
         questions: [
           {
             question: "",
@@ -151,7 +158,6 @@ export default function EditModuleForm() {
       fetchModule();
     }
   }, [moduleId]);
-
   const fetchModule = async () => {
     try {
       const response = await fetch(
@@ -170,23 +176,31 @@ export default function EditModuleForm() {
           form.reset({
             title: module.title,
             description: module.description,
+            difficulty: module.difficulty,
             order: module.order,
             sections: module.sections.map((section: ModuleSection) => ({
               id: section.id,
               title: section.title,
               content: section.content,
-              duration: section.duration,
+              duration: parseInt(section.duration.replace(" min", "")) || 5,
               order: section.order,
               pdfUrl: section.pdfUrl || "",
               isActive: section.isActive,
-            })),
-            quiz: {
+            })),            quiz: {
               id: module.quiz.id,
               title: module.quiz.title,
               description: module.quiz.description,
-              duration: module.quiz.duration,
+              duration: parseInt(module.quiz.duration.replace(" min", "")) || 10,
               totalQuestions: module.quiz.totalQuestions,
-              passingScore: module.quiz.passingScore,
+              questions: module.quiz.questions.map((question: QuizQuestion) => ({
+                id: question.id,
+                question: question.question,
+                type: question.type,
+                options: question.options,
+                correctAnswer: question.correctAnswer,
+                explanation: question.explanation || "",
+                order: question.order,
+              })),
               isActive: module.quiz.isActive,
             },
             isActive: module.isActive,
@@ -207,7 +221,6 @@ export default function EditModuleForm() {
       setLoading(false);
     }
   };
-
   const onSubmit = async (data: ModuleFormData) => {
     setIsSubmitting(true);
 
@@ -219,6 +232,19 @@ export default function EditModuleForm() {
     });
 
     try {
+      // Transform duration fields from numbers to strings with " min" suffix
+      const transformedData = {
+        ...data,
+        sections: data.sections.map(section => ({
+          ...section,
+          duration: `${section.duration} min`
+        })),
+        quiz: {
+          ...data.quiz,
+          duration: `${data.quiz.duration} min`
+        }
+      };
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/admin/${moduleId}`,
         {
@@ -227,7 +253,7 @@ export default function EditModuleForm() {
             "Content-Type": "application/json",
           },
           credentials: "include",
-          body: JSON.stringify(data),
+          body: JSON.stringify(transformedData),
         }
       );
 
@@ -267,12 +293,11 @@ export default function EditModuleForm() {
       setIsSubmitting(false);
     }
   };
-
   const addSection = () => {
     append({
       title: "",
       content: "",
-      duration: "",
+      duration: 5,
       order: fields.length + 1,
       pdfUrl: "",
       isActive: true,
@@ -318,9 +343,8 @@ export default function EditModuleForm() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                {/* Basic Module Information */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">                {/* Basic Module Information */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <FormField
                     control={form.control}
                     name="title"
@@ -333,18 +357,46 @@ export default function EditModuleForm() {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />                  <FormField
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="difficulty"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Difficulty Level*</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select difficulty" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Easy">Easy</SelectItem>
+                            <SelectItem value="Intermediate">Intermediate</SelectItem>
+                            <SelectItem value="Advanced">Advanced</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
                     control={form.control}
                     name="order"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Module Order*</FormLabel>
-                        <FormControl>
-                          <Input
+                        <FormControl>                          <Input
                             type="number"
                             min="1"
                             value={field.value?.toString() || ""}
-                            onChange={(e) => field.onChange(Number(e.target.value) || 1)}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(value === "" ? "" : Number(value) || 1);
+                            }}
+                            onFocus={(e) => e.target.select()}
                           />
                         </FormControl>
                         <FormMessage />
@@ -430,16 +482,24 @@ export default function EditModuleForm() {
                               <FormMessage />
                             </FormItem>
                           )}
-                        />
-
-                        <FormField
+                        />                        <FormField
                           control={form.control}
                           name={`sections.${index}.duration`}
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Duration*</FormLabel>
+                              <FormLabel>Duration (minutes)*</FormLabel>
                               <FormControl>
-                                <Input placeholder="e.g., 15 minutes" {...field} />
+                                <Input
+                                  type="number"
+                                  min="1"
+                                  placeholder="5"
+                                  value={field.value?.toString() || ""}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    field.onChange(value === "" ? "" : Number(value) || 5);
+                                  }}
+                                  onFocus={(e) => e.target.select()}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -493,24 +553,7 @@ export default function EditModuleForm() {
                                   onCheckedChange={field.onChange}
                                 />
                               </FormControl>
-                            </FormItem>
-                          )}
-                        />                        <FormField
-                          control={form.control}
-                          name={`sections.${index}.order`}                        render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Section Order*</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  min="1"
-                                  value={field.value?.toString() || ""}
-                                  onChange={(e) => field.onChange(Number(e.target.value) || 1)}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
+                            </FormItem>                          )}
                         />
                       </div>
                     </div>
@@ -535,16 +578,24 @@ export default function EditModuleForm() {
                             <FormMessage />
                           </FormItem>
                         )}
-                      />
-
-                      <FormField
+                      />                      <FormField
                         control={form.control}
                         name="quiz.duration"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Quiz Duration*</FormLabel>
+                            <FormLabel>Quiz Duration (minutes)*</FormLabel>
                             <FormControl>
-                              <Input placeholder="e.g., 30 minutes" {...field} />
+                              <Input
+                                type="number"
+                                min="1"
+                                placeholder="10"
+                                value={field.value?.toString() || ""}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === "" ? "" : Number(value));
+                                }}
+                                onFocus={(e) => e.target.select()}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -570,38 +621,26 @@ export default function EditModuleForm() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">                      <FormField
                         control={form.control}
-                        name="quiz.totalQuestions"                        render={({ field }) => (
+                        name="quiz.totalQuestions"
+                        render={({ field }) => (
                           <FormItem>
                             <FormLabel>Total Questions*</FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
                                 min="1"
+                                placeholder="5"
                                 value={field.value?.toString() || ""}
-                                onChange={(e) => field.onChange(Number(e.target.value) || 1)}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === "" ? "" : Number(value));
+                                }}
+                                onFocus={(e) => e.target.select()}
                               />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
-                        )}
-                      />                      <FormField
-                        control={form.control}
-                        name="quiz.passingScore"                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Passing Score (%)*</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                min="0"
-                                max="100"
-                                value={field.value?.toString() || ""}
-                                onChange={(e) => field.onChange(Number(e.target.value) || 70)}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                        )}                      />
 
                       <FormField
                         control={form.control}
@@ -675,9 +714,7 @@ export default function EditModuleForm() {
                                 <FormMessage />
                               </FormItem>
                             )}
-                          />
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          />                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField
                               control={form.control}
                               name={`quiz.questions.${questionIndex}.type`}
@@ -688,27 +725,21 @@ export default function EditModuleForm() {
                                     <select
                                       {...field}
                                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                      onChange={(e) => {
+                                        field.onChange(e.target.value);
+                                        // Reset options when changing type
+                                        if (e.target.value === 'true-false') {
+                                          form.setValue(`quiz.questions.${questionIndex}.options`, ["True", "False"]);
+                                          form.setValue(`quiz.questions.${questionIndex}.correctAnswer`, 0);
+                                        } else {
+                                          form.setValue(`quiz.questions.${questionIndex}.options`, ["", "", "", ""]);
+                                          form.setValue(`quiz.questions.${questionIndex}.correctAnswer`, 0);
+                                        }
+                                      }}
                                     >
                                       <option value="multiple-choice">Multiple Choice</option>
                                       <option value="true-false">True/False</option>
                                     </select>
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />                              <FormField
-                              control={form.control}
-                              name={`quiz.questions.${questionIndex}.correctAnswer`}
-                              render={({ field }) => (                                <FormItem>
-                                  <FormLabel>Correct Answer (Option Index)*</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      type="number"
-                                      min="0"
-                                      placeholder="0"
-                                      value={field.value?.toString() || ""}
-                                      onChange={(e) => field.onChange(Number(e.target.value) || 0)}
-                                    />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -718,24 +749,56 @@ export default function EditModuleForm() {
 
                           <div className="space-y-2">
                             <FormLabel>Answer Options*</FormLabel>
-                            {[0, 1, 2, 3].map((optionIndex) => (
-                              <FormField
-                                key={optionIndex}
-                                control={form.control}
-                                name={`quiz.questions.${questionIndex}.options.${optionIndex}`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormControl>
-                                      <Input
-                                        placeholder={`Option ${optionIndex + 1}`}
-                                        {...field}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                            ))}
+                            {form.watch(`quiz.questions.${questionIndex}.type`) === 'true-false' ? (
+                              <div className="space-y-2">
+                                <div className="flex items-center space-x-2">
+                                  <input
+                                    type="radio"
+                                    name={`correct-${questionIndex}`}
+                                    checked={form.watch(`quiz.questions.${questionIndex}.correctAnswer`) === 0}
+                                    onChange={() => form.setValue(`quiz.questions.${questionIndex}.correctAnswer`, 0)}
+                                  />
+                                  <span>True</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <input
+                                    type="radio"
+                                    name={`correct-${questionIndex}`}
+                                    checked={form.watch(`quiz.questions.${questionIndex}.correctAnswer`) === 1}
+                                    onChange={() => form.setValue(`quiz.questions.${questionIndex}.correctAnswer`, 1)}
+                                  />
+                                  <span>False</span>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="space-y-2">
+                                {form.watch(`quiz.questions.${questionIndex}.options`).map((option, optionIndex) => (
+                                  <div key={optionIndex} className="flex items-center space-x-2">
+                                    <input
+                                      type="radio"
+                                      name={`correct-${questionIndex}`}
+                                      checked={form.watch(`quiz.questions.${questionIndex}.correctAnswer`) === optionIndex}
+                                      onChange={() => form.setValue(`quiz.questions.${questionIndex}.correctAnswer`, optionIndex)}
+                                    />
+                                    <FormField
+                                      control={form.control}
+                                      name={`quiz.questions.${questionIndex}.options.${optionIndex}`}
+                                      render={({ field }) => (
+                                        <FormItem className="flex-1">
+                                          <FormControl>
+                                            <Input 
+                                              placeholder={`Option ${optionIndex + 1}`}
+                                              {...field} 
+                                            />
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
 
                           <FormField

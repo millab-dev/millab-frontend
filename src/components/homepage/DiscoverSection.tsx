@@ -6,7 +6,7 @@ import {
   CardContent,
 } from "@/components/ui/card"
 import { motion, useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Input } from "@/components/ui/input"
 import {
   ModuleCategory,
@@ -14,91 +14,174 @@ import {
   SectionProps,
   discoverTranslations
 } from './types'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
-// Use BaseModule for the modules
-type Module = BaseModule;
+// Backend module interface
+interface BackendModule {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: 'Easy' | 'Intermediate' | 'Advanced';
+  order: number;
+  sections: any[];
+  quiz: any;
+  isActive: boolean;
+  progress?: {
+    completionPercentage: number;
+  };
+}
+
+// Use BaseModule for the modules but extend it
+type Module = BaseModule & {
+  description?: string;
+  sections?: any[];
+  quiz?: any;
+};
 
 // Use SectionProps for component props
 type DiscoverSectionProps = SectionProps;
 
 const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
+  const router = useRouter();
   // Get translations based on language
   const t = discoverTranslations[language];
-  // Mock data for modules
-  const allModules: Module[] = [
-    {
-      id: 1,
-      title: "Modul 1: Pengantar Literasi Media & Digital",
-      progress: 20,
-      category: "beginner"
-    },
-    {
-      id: 2,
-      title: "Modul 2: Analisis Konten Digital",
-      progress: 45,
-      category: "intermediate"
-    },
-    {
-      id: 3,
-      title: "Modul 3: Keamanan Digital & Privasi",
-      progress: 10,
-      category: "beginner"
-    },
-    {
-      id: 4,
-      title: "Modul 4: Produksi Konten Kreatif",
-      progress: 0,
-      category: "advanced"
-    },
-    {
-      id: 5,
-      title: "Modul 5: Media Sosial & Etika Online",
-      progress: 75,
-      category: "intermediate"
-    },
-    {
-      id: 6,
-      title: "Modul 6: Fact-Checking & Verifikasi Informasi",
-      progress: 30,
-      category: "beginner"
-    },
-    {
-      id: 7,
-      title: "Modul 7: Multimedia & Visual Literacy",
-      progress: 50,
-      category: "intermediate"
-    },
-    {
-      id: 8,
-      title: "Modul 8: Cybersecurity Lanjutan",
-      progress: 15,
-      category: "advanced"
-    },
-    {
-      id: 9,
-      title: "Modul 9: Digital Marketing Ethics",
-      progress: 60,
-      category: "advanced"
-    },
-    {
-      id: 10,
-      title: "Modul 10: Literasi AI & Machine Learning",
-      progress: 5,
-      category: "advanced"
+  
+  const [modules, setModules] = useState<Module[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Fetch homepage modules (orders 1, 5, 11)
+  useEffect(() => {
+    fetchHomepageModules();
+  }, []);
+
+  const fetchHomepageModules = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/homepage`,
+        {
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Transform backend modules to frontend format
+        const transformedModules: Module[] = data.data.map((module: BackendModule) => ({
+          id: parseInt(module.id),
+          title: `Modul ${module.order}: ${module.title}`,
+          progress: module.progress?.completionPercentage || 0,
+          category: module.difficulty === 'Easy' ? 'beginner' : 
+                   module.difficulty === 'Intermediate' ? 'intermediate' : 'advanced',
+          description: module.description,
+          sections: module.sections,
+          quiz: module.quiz
+        }));
+        setModules(transformedModules);
+      } else {
+        toast.error(data.error || "Failed to fetch modules");
+      }
+    } catch (error) {
+      console.error("Error fetching homepage modules:", error);
+      toast.error("Failed to fetch modules");
+    } finally {
+      setLoading(false);
     }
-  ]
+  };
+
+  const handleModuleClick = (moduleId: number) => {
+    // Find the actual module ID from our data
+    const actualModule = modules.find(m => m.id === moduleId);
+    if (actualModule) {
+      router.push(`/module/${actualModule.id}`);
+    }
+  };
   
-  const [searchQuery, setSearchQuery] = useState('')
-  
-  // Filter modules based on search query and limit to 3
-  const filteredModules = allModules
-    .filter(module => 
-      module.title.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .slice(0, 3)
-  
-  const sectionRef = useRef(null)
+  // Filter modules based on search query
+  const filteredModules = modules.filter(module => 
+    module.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+    const sectionRef = useRef(null)
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 })
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="w-full" ref={sectionRef}>
+        <motion.div
+          className="relative mb-4"
+          initial={{ opacity: 0, y: 10 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="relative">
+            <Search className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <Input
+              type="text"
+              placeholder={t.searchPlaceholder}
+              className="pl-10 md:pl-12 pr-4 py-2 md:py-6 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm md:text-base"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </motion.div>
+        
+        <motion.div 
+          className="flex justify-between items-center mb-4 px-1"
+          initial={{ opacity: 0, y: -10 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <h2 className="text-xl md:text-2xl font-bold text-primary">{t.title}</h2>
+          <motion.a 
+            href="/module" 
+            className="text-gray-500 flex items-center hover:text-primary transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {t.seeAll} <ChevronRight className="h-4 w-4 ml-1" />
+          </motion.a>
+        </motion.div>
+        
+        <motion.div 
+          className="flex overflow-x-auto gap-4 -mx-4 px-4"
+          style={{ 
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none', 
+            WebkitOverflowScrolling: 'touch'
+          }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          {/* Loading skeleton */}
+          {[1, 2, 3].map((index) => (
+            <div key={index} className="w-[260px] md:w-[280px] flex-shrink-0 flex-grow-0 animate-pulse">
+              <Card className="shadow-sm p-0 flex flex-col overflow-hidden h-full">
+                <CardContent className="p-0 flex flex-col flex-1 w-full">
+                  <div className="flex flex-col h-full p-4">
+                    <div className="space-y-3 flex-shrink-0">
+                      <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+                      <div className="w-full aspect-square rounded-2xl bg-gray-200"></div>
+                    </div>
+                    <div className="mt-3 flex flex-col h-full">
+                      <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="mt-auto">
+                        <div className="h-2 bg-gray-200 rounded w-full"></div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full" ref={sectionRef}>
@@ -147,8 +230,7 @@ const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-      >
-        {filteredModules.map((module, index) => (
+      >        {filteredModules.map((module, index) => (
           <motion.div
             key={module.id}
             className="w-[260px] md:w-[280px] flex-shrink-0 flex-grow-0"
@@ -156,8 +238,9 @@ const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.5, delay: 0.1 * index }}
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            onClick={() => handleModuleClick(module.id)}
           >
-            <Card className="shadow-sm hover:shadow transition-all duration-300 p-0 flex flex-col overflow-hidden h-full">
+            <Card className="shadow-sm hover:shadow transition-all duration-300 p-0 flex flex-col overflow-hidden h-full cursor-pointer">
               <CardContent className="p-0 flex flex-col flex-1 w-full">
                 {/* Module card content */}
                 <div className="flex flex-col h-full p-4">
