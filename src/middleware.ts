@@ -9,6 +9,9 @@ export async function middleware(request: NextRequest) {
         request.nextUrl.pathname === "/signin" ||
         request.nextUrl.pathname === "/signup" ||
         request.nextUrl.pathname === "/about-us";
+    
+    const isAdminPage = request.nextUrl.pathname.startsWith("/admin");
+    
     // Skip middleware for auth pages
     if (isAuthPage) {
         return NextResponse.next();
@@ -25,6 +28,16 @@ export async function middleware(request: NextRequest) {
             // If /me is successful, we're authenticated
             if (response.data && response.data.success) {
                 console.log("Authentication successful via /me endpoint");
+                
+                // Additional check for admin pages
+                if (isAdminPage) {
+                    const user = response.data.data;
+                    if (!user.isAdmin) {
+                        console.log("Non-admin user trying to access admin page");
+                        return NextResponse.redirect(new URL("/", request.url));
+                    }
+                    console.log("Admin access granted");
+                }
             } else {
                 console.log("/me endpoint indicated auth failure");
                 return NextResponse.redirect(new URL("/signin", request.url));

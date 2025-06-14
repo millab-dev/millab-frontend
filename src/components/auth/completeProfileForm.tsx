@@ -42,6 +42,7 @@ const formSchema = z.object({
 
 export default function CompleteProfileForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isRedirecting, setIsRedirecting] = useState(false);
     const [calendarOpen, setCalendarOpen] = useState(false);
     const router = useRouter();
 
@@ -91,9 +92,7 @@ export default function CompleteProfileForm() {
             const data = await response.json();
 
             // Always dismiss the loading toast first
-            toast.dismiss(loadingToastId);
-
-            if (data.success) {
+            toast.dismiss(loadingToastId);            if (data.success) {
                 // Profile completion successful - use a new unique ID for success toast
                 const successToastId = "complete-profile-success-" + Date.now();
                 toast.success("Profile completed successfully!", {
@@ -101,6 +100,9 @@ export default function CompleteProfileForm() {
                     description: "Redirecting to home page...",
                     duration: 3000,
                 });
+
+                // Set redirecting state
+                setIsRedirecting(true);
 
                 // Redirect to home page after 1.5 seconds
                 setTimeout(() => {
@@ -326,14 +328,14 @@ export default function CompleteProfileForm() {
                                         <FormMessage />
                                     </FormItem>
                                 )}
-                            />
-
-                            <Button
+                            />                            <Button
                                 type="submit"
                                 className="w-full py-5 mt-4"
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || isRedirecting}
                             >
-                                {isSubmitting
+                                {isRedirecting
+                                    ? "Redirecting..."
+                                    : isSubmitting
                                     ? "Completing Profile..."
                                     : "Complete Profile"}
                             </Button>
