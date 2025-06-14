@@ -6,8 +6,9 @@ import Image from "next/image";
 import star from "@/assets/star.svg";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { UserScore } from "@/actions/userScore";
 
-export default function FinalQuiz() {
+export default function FinalQuiz({ userScore } : { userScore: UserScore }) {
     return (
         <div className="min-h-screen bg-gray-50 p-4 font-jakarta py-12">
             <div className="max-w-4xl mx-auto">
@@ -27,7 +28,7 @@ export default function FinalQuiz() {
                         <p className="text-lg mb-2 opacity-90">
                             You&apos;ve scored...
                         </p>
-                        <h2 className="text-5xl font-bold mb-3">320 points</h2>
+                        <h2 className="text-5xl font-bold mb-3">{userScore.score} points</h2>
                         <p className="text-lg opacity-90 mb-6">
                             Can you beat your own record?
                         </p>
