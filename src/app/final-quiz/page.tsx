@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   description: "Final Quiz - Millab",
 };
 
+export const dynamic = "force-dynamic";
 
 export default async function page() {
   let userScore: UserScore | null = null;
