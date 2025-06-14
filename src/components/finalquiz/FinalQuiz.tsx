@@ -7,6 +7,7 @@ import star from "@/assets/star.svg";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { UserScore } from "@/actions/userScore";
+import Link from "next/link";
 
 export default function FinalQuiz({ userScore } : { userScore: UserScore }) {
     return (
@@ -73,6 +74,7 @@ export default function FinalQuiz({ userScore } : { userScore: UserScore }) {
                 <div className="space-y-4">
                     {/* Beginner */}
                     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 cursor-pointer group">
+                <Link href="/final-quiz/beginner">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="p-2 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
@@ -103,10 +105,12 @@ export default function FinalQuiz({ userScore } : { userScore: UserScore }) {
                                 </svg>
                             </div>
                         </div>
+                    </Link>
                     </div>
 
                     {/* Intermediate */}
                     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 cursor-pointer group">
+                        <Link href="/final-quiz/intermediate">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="p-2 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
@@ -137,10 +141,12 @@ export default function FinalQuiz({ userScore } : { userScore: UserScore }) {
                                 </svg>
                             </div>
                         </div>
+                        </Link>
                     </div>
 
                     {/* Advanced */}
                     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 cursor-pointer group">
+                        <Link href="/final-quiz/advanced">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="p-2 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
@@ -171,6 +177,7 @@ export default function FinalQuiz({ userScore } : { userScore: UserScore }) {
                                 </svg>
                             </div>
                         </div>
+                        </Link>
                     </div>
                 </div>
             </div>
