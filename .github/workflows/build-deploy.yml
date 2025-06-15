@@ -1,4 +1,4 @@
-name: Deploy to Kubernetes via pendeploy-handal API
+name: Deploy to Kubernetes via pendeploy-simple API
 
 on:
   push:
@@ -15,15 +15,21 @@ jobs:
           curl -X POST \
             -H "Content-Type: application/json" \
             -d '{
-              "repoUrl": "https://github.com/${{ github.repository }}",
-              "branch": "${{ github.ref_name }}",
-              "commitId": "${{ github.sha }}"
+              "githubUrl": "https://github.com/${{ github.repository }}",
+              "env": {
+                "IMAGE_REGISTRY": "localhost:5000/millab-frontend:${{ github.sha }}",
+                "NEXT_PUBLIC_API_URL": "https://millab-backend.up.railway.app",
+                "NODE_ENV": "production",
+                "NEXT_TELEMETRY_DISABLED": "1",
+                "NEXT_FORCE_DOWNLOAD_BINARY": "1"
+              }
             }' \
-            https://api.millab-kubernetes.isacitra.com/api/deployments
+            https://api.millab-kubernetes.isacitra.com/create-deployment
         
       - name: Deployment Details
         run: |
-          echo "Deployment request sent to pendeploy-handal API"
+          echo "Deployment request sent to pendeploy-simple API"
           echo "Repository: ${{ github.repository }}"
           echo "Branch: ${{ github.ref_name }}"
           echo "Commit: ${{ github.sha }}"
+          echo "Image: localhost:5000/millab-frontend:${{ github.sha }}"

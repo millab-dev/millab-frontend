@@ -22,18 +22,20 @@ spec:
     spec:
       containers:
       - name: millab-frontend
-        image: ${APP_IMAGE}
+        image: ${IMAGE_REGISTRY}
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
           name: http
         env:
         - name: NEXT_PUBLIC_API_URL
-          value: "https://millab-backend.up.railway.app"
+          value: "${NEXT_PUBLIC_API_URL}"
         - name: NODE_ENV
-          value: "production"
+          value: "${NODE_ENV}"
         - name: NEXT_TELEMETRY_DISABLED
-          value: "1"
+          value: "${NEXT_TELEMETRY_DISABLED}"
+        - name: NEXT_FORCE_DOWNLOAD_BINARY
+          value: "${NEXT_FORCE_DOWNLOAD_BINARY}"
         resources:
           requests:
             cpu: 200m
