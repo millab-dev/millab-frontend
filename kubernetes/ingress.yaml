@@ -4,14 +4,11 @@ metadata:
   name: millab-frontend
   namespace: default
   annotations:
-    kubernetes.io/ingress.class: "traefik"
-    # Proper Traefik v2 annotations (sesuai Harbor config yang working)
-    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/redirect-entry-point: https
-    traefik.ingress.kubernetes.io/redirect-permanent: "true"
-    # Cert-manager untuk auto SSL
+    # EXACT COPY dari pendeploy-handal yang WORKING
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+    traefik.ingress.kubernetes.io/redirect-scheme: https
 spec:
   tls:
   - hosts:
