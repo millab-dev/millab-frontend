@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: millab-frontend
+  namespace: default
+  labels:
+    app: millab-frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: millab-frontend
+  ports:
+  - port: 80
+    targetPort: 8080
+    name: http

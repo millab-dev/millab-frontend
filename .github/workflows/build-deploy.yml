@@ -1,0 +1,29 @@
+name: Deploy to Kubernetes via pendeploy-handal API
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Untuk memicu workflow secara manual dari UI GitHub
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Trigger Deployment API
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{
+              "repoUrl": "https://github.com/${{ github.repository }}",
+              "branch": "${{ github.ref_name }}",
+              "commitId": "${{ github.sha }}"
+            }' \
+            https://api.millab-kubernetes.isacitra.com/api/deployments
+        
+      - name: Deployment Details
+        run: |
+          echo "Deployment request sent to pendeploy-handal API"
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"

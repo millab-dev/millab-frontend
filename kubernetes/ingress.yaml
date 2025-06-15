@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: millab-frontend
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    # HTTP ke HTTPS redirect
+    traefik.ingress.kubernetes.io/redirect-scheme: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+    # Menggunakan cert-manager untuk SSL
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - millabindonesia.com
+    secretName: millab-frontend-tls
+  rules:
+  - host: millabindonesia.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: millab-frontend
+            port:
+              number: 80
