@@ -14,9 +14,20 @@ spec:
   tls:
   - hosts:
     - millabindonesia.com
+    - millab.isacitra.com
     secretName: millab-frontend-tls
   rules:
   - host: millabindonesia.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: millab-frontend
+            port:
+              number: 80
+  - host: millab.isacitra.com
     http:
       paths:
       - path: /
