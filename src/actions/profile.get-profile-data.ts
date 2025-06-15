@@ -10,6 +10,7 @@ export const getProfileData = async () => {
             error: string | undefined
             data: Partial<User> | undefined
         } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error:any) {
         return {
             success: false,
