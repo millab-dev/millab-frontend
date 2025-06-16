@@ -7,8 +7,7 @@ metadata:
     # EXACT COPY dari pendeploy-handal yang WORKING
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     kubernetes.io/ingress.class: "traefik"
-    traefik.ingress.kubernetes.io/redirect-permanent: "true"
-    traefik.ingress.kubernetes.io/redirect-scheme: https
+    traefik.ingress.kubernetes.io/redirect-to-https: "true"
 spec:
   tls:
   - hosts:
