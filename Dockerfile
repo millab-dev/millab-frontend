@@ -14,7 +14,7 @@ RUN npm install lightningcss
 COPY . .
 
 # Set environment variables
-ENV NEXT_PUBLIC_API_URL=https://millab-backend.up.railway.app
+ENV NEXT_PUBLIC_API_URL=https://api.millabindonesia.com
 ENV NODE_ENV=production
 
 # Enable SWC binary download for Linux x64 GNU
