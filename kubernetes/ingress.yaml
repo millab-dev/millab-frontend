@@ -1,8 +1,7 @@
-# Step 1: Bikin Middleware dulu
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
-  name: redirect-to-https
+  name: https-redirect-v2
   namespace: default
 spec:
   redirectScheme:
@@ -10,7 +9,6 @@ spec:
     permanent: true
 
 ---
-# Step 2: Ingress dengan middleware
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -19,8 +17,7 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     kubernetes.io/ingress.class: "traefik"
-    # Pakai middleware yang udah dibuat
-    traefik.ingress.kubernetes.io/middlewares: "default-redirect-to-https@kubernetescrd"
+    traefik.ingress.kubernetes.io/middlewares: "default-https-redirect-v2@kubernetescrd"
 spec:
   tls:
   - hosts:
