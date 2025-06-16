@@ -1,13 +1,26 @@
+# Step 1: Bikin Middleware dulu
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-to-https
+  namespace: default
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+
+---
+# Step 2: Ingress dengan middleware
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: millab-frontend
   namespace: default
   annotations:
-    # EXACT COPY dari pendeploy-handal yang WORKING
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     kubernetes.io/ingress.class: "traefik"
-    traefik.ingress.kubernetes.io/redirect-to-https: "true"
+    # Pakai middleware yang udah dibuat
+    traefik.ingress.kubernetes.io/middlewares: "default-redirect-to-https@kubernetescrd"
 spec:
   tls:
   - hosts:
