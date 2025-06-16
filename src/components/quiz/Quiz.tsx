@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import QuizQuestion from "./QuizQuestion";
 
 import QuizSummary from "./QuizSummary";
 import QuizNavigation from "./QuizNavigation";
+import { Quiz as QuizType } from "@/actions/quiz.service";
+import { addUserScore } from "@/actions/userScore.add-score";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 export interface QuizOption {
     id: string;
@@ -27,136 +31,73 @@ export interface QuizAnswer {
     points: number;
 }
 
-type QuizView = "question" | "results" | "summary" | "navigation";
+type QuizView = "question" | "summary" | "navigation";
 
-export default function Quiz() {
+interface QuizProps {
+    quiz: QuizType;
+    userId: string;
+    urlBase: string;
+}
+
+export default function Quiz({ quiz, userId, urlBase }: QuizProps) {
     const router = useRouter();
-    const params = useParams();
-    const moduleId = params.id as string;
 
-    // Mock quiz data - in real app this would come from API
-    const quizData: QuizQuestionData[] = [
-        {
-            id: 1,
-            question:
-                "Who among the following doesn't have the record of playing the most World Cup?",
-            points: 1,
-            options: [
-                {
-                    id: "A",
-                    text: "Online video is delivered over the internet to computers or mobile devices, it's inherently digital.",
-                    isCorrect: false,
-                },
-                {
-                    id: "B",
-                    text: "Online video is delivered over the internet to computers or mobile devices, it's inherently digital.",
-                    isCorrect: false,
-                },
-                {
-                    id: "C",
-                    text: "Online video is delivered over the internet to computers or mobile devices, it's inherently digital.",
-                    isCorrect: false,
-                },
-                {
-                    id: "D",
-                    text: "Online video is delivered over the internet to computers or mobile devices, it's inherently digital.",
-                    isCorrect: true,
-                },
-            ],
-        },
-        {
-            id: 2,
-            question: "What is the main purpose of media literacy?",
-            points: 1,
-            options: [
-                {
-                    id: "A",
-                    text: "To learn how to use social media platforms effectively.",
-                    isCorrect: false,
-                },
-                {
-                    id: "B",
-                    text: "To develop critical thinking skills about media content.",
-                    isCorrect: true,
-                },
-                {
-                    id: "C",
-                    text: "To become a professional journalist or media creator.",
-                    isCorrect: false,
-                },
-                {
-                    id: "D",
-                    text: "To understand technical aspects of media production.",
-                    isCorrect: false,
-                },
-            ],
-        },
-        {
-            id: 3,
-            question:
-                "Which of the following is NOT a characteristic of reliable news sources?",
-            points: 1,
-            options: [
-                {
-                    id: "A",
-                    text: "Clear authorship and publication date",
-                    isCorrect: false,
-                },
-                {
-                    id: "B",
-                    text: "Sensational headlines designed to get clicks",
-                    isCorrect: true,
-                },
-                {
-                    id: "C",
-                    text: "Multiple sources and fact-checking",
-                    isCorrect: false,
-                },
-                {
-                    id: "D",
-                    text: "Editorial transparency and corrections policy",
-                    isCorrect: false,
-                },
-            ],
-        },
-        {
-            id: 4,
-            question:
-                "What is the best way to verify information found online?",
-            points: 1,
-            options: [
-                {
-                    id: "A",
-                    text: "Check if it has many likes and shares",
-                    isCorrect: false,
-                },
-                {
-                    id: "B",
-                    text: "Cross-reference with multiple reliable sources",
-                    isCorrect: true,
-                },
-                {
-                    id: "C",
-                    text: "Look for emotional language in the content",
-                    isCorrect: false,
-                },
-                {
-                    id: "D",
-                    text: "Check if it confirms your existing beliefs",
-                    isCorrect: false,
-                },
-            ],
-        },
-    ];
+    // Map questions to add id and points if not present (for compatibility)
+    const quizData = quiz.questions.map((q, idx) => ({
+        id: idx + 1,
+        question: q.question,
+        options: q.options.map((opt, oidx) => ({
+            id: String.fromCharCode(65 + oidx), // 'A', 'B', ...
+            text: opt.option,
+            isCorrect: opt.isCorrect,
+        })),
+        points: 1, // Default to 1 point per question, adjust if needed
+    }));
 
     const [currentView, setCurrentView] = useState<QuizView>("question");
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState<QuizAnswer[]>([]);
+    const [hasLoaded, setHasLoaded] = useState(false);
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const [showResults, setShowResults] = useState(false);
     const currentQuestion = quizData[currentQuestionIndex];
     const totalQuestions = quizData.length;
     const totalPoints = answers.reduce((sum, a) => sum + a.points, 0);
+
+    // Find answer for current question
+    const currentAnswer = answers.find(
+        (a) => a.questionId === currentQuestion.id
+    );
+
+    // Sync selectedAnswer and showResults with currentAnswer and currentQuestionIndex
+    useEffect(() => {
+        if (currentAnswer) {
+            setSelectedAnswer(currentAnswer.selectedOptionId);
+            setShowResults(true);
+        } else {
+            setSelectedAnswer(null);
+            setShowResults(false);
+        }
+    }, [currentQuestionIndex, answers, currentAnswer]);
+
+    // Load answers from localStorage on mount
+    useEffect(() => {
+        const saved = localStorage.getItem(`quiz-answers-${quiz.id}`);
+        if (saved) {
+            setAnswers(JSON.parse(saved));
+        }
+        setHasLoaded(true);
+    }, [quiz.id]);
+
+    // Save answers to localStorage whenever they change
+    useEffect(() => {
+        if (!hasLoaded) return; // Don't save until after loading
+        localStorage.setItem(
+            `quiz-answers-${quiz.id}`,
+            JSON.stringify(answers)
+        );
+    }, [answers, quiz.id, hasLoaded]);
+
     const handleAnswerSelect = (optionId: string) => {
         if (!showResults) {
             setSelectedAnswer(optionId);
@@ -178,32 +119,47 @@ export default function Quiz() {
             points: isCorrect ? currentQuestion.points : 0,
         };
 
-        setAnswers((prev) => [...prev, answer]);
+        setAnswers((prev) => {
+            // Update if already answered, else add
+            const existing = prev.find(
+                (a) => a.questionId === currentQuestion.id
+            );
+            if (existing) {
+                return prev.map((a) =>
+                    a.questionId === currentQuestion.id ? answer : a
+                );
+            } else {
+                return [...prev, answer];
+            }
+        });
         setShowResults(true);
     };
 
-    const handleNextQuestion = () => {
+    const handleNextQuestion = async () => {
         if (currentQuestionIndex < totalQuestions - 1) {
             setCurrentQuestionIndex((prev) => prev + 1);
-            setSelectedAnswer(null);
-            setShowResults(false);
         } else {
-            setCurrentView("summary");
+            localStorage.removeItem(`quiz-answers-${quiz.id}`);
+            try {
+                addUserScore(userId as string, totalPoints);
+                toast.success(`You scored ${totalPoints} points!`);
+                setCurrentView("summary");
+            } catch (error: unknown) {
+                toast.error("Failed to add score", {
+                    description: error instanceof AxiosError ? error.response?.data.message : "Unknown error",
+                });
+            }
         }
     };
 
     const handlePrevQuestion = () => {
         if (currentQuestionIndex > 0) {
             setCurrentQuestionIndex((prev) => prev - 1);
-            setSelectedAnswer(null);
-            setShowResults(false);
-            // Remove the last answer if going back
-            setAnswers((prev) => prev.slice(0, -1));
         }
     };
 
     const handleBackToModule = () => {
-        router.push(`/module/${moduleId}`);
+        router.push(urlBase);
     };
 
     const handleShowNavigation = () => {
@@ -244,7 +200,6 @@ export default function Quiz() {
                 totalPoints={totalPoints}
                 onBackToModule={handleBackToModule}
                 onRetakeQuiz={handleRetakeQuiz}
-                onShowNavigation={handleShowNavigation}
             />
         );
     }
@@ -264,6 +219,7 @@ export default function Quiz() {
                 onBackToModule={handleBackToModule}
                 canGoNext={showResults}
                 canGoPrev={currentQuestionIndex > 0}
+                onShowNavigation={handleShowNavigation}
             />
         </>
     );

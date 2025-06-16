@@ -1,4 +1,4 @@
-import { getUserScore, UserScore } from "@/actions/userScore";
+import { getUserScore, UserScore } from "@/actions/userScore.get-score";
 import { getProfileData } from "@/actions/profile.get-profile-data";
 import Navbar from "@/components/core/Navbar";
 import FinalQuiz from "@/components/finalquiz/FinalQuiz";

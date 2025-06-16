@@ -6,7 +6,7 @@ import Image from "next/image";
 import star from "@/assets/star.svg";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { UserScore } from "@/actions/userScore";
+import { UserScore } from "@/actions/userScore.get-score";
 import Link from "next/link";
 
 export default function FinalQuiz({ userScore } : { userScore: UserScore }) {
