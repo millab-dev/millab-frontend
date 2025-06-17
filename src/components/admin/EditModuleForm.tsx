@@ -357,9 +357,7 @@ export default function EditModuleForm() {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
-
-                  <FormField
+                  />                  <FormField
                     control={form.control}
                     name="difficulty"
                     render={({ field }) => (
@@ -380,15 +378,14 @@ export default function EditModuleForm() {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
-
-                  <FormField
+                  />                  <FormField
                     control={form.control}
                     name="order"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Module Order*</FormLabel>
-                        <FormControl>                          <Input
+                        <FormControl>
+                          <Input
                             type="number"
                             min="1"
                             value={field.value?.toString() || ""}
@@ -769,8 +766,7 @@ export default function EditModuleForm() {
                                   />
                                   <span>False</span>
                                 </div>
-                              </div>
-                            ) : (
+                              </div>                            ) : (
                               <div className="space-y-2">
                                 {form.watch(`quiz.questions.${questionIndex}.options`).map((option, optionIndex) => (
                                   <div key={optionIndex} className="flex items-center space-x-2">
@@ -780,21 +776,23 @@ export default function EditModuleForm() {
                                       checked={form.watch(`quiz.questions.${questionIndex}.correctAnswer`) === optionIndex}
                                       onChange={() => form.setValue(`quiz.questions.${questionIndex}.correctAnswer`, optionIndex)}
                                     />
-                                    <FormField
-                                      control={form.control}
-                                      name={`quiz.questions.${questionIndex}.options.${optionIndex}`}
-                                      render={({ field }) => (
-                                        <FormItem className="flex-1">
-                                          <FormControl>
-                                            <Input 
-                                              placeholder={`Option ${optionIndex + 1}`}
-                                              {...field} 
-                                            />
-                                          </FormControl>
-                                          <FormMessage />
-                                        </FormItem>
-                                      )}
-                                    />
+                                    <div className="flex-1">
+                                      <FormField
+                                        control={form.control}
+                                        name={`quiz.questions.${questionIndex}.options.${optionIndex}`}
+                                        render={({ field }) => (
+                                          <FormItem>
+                                            <FormControl>
+                                              <Input 
+                                                placeholder={`Option ${optionIndex + 1}`}
+                                                {...field} 
+                                              />
+                                            </FormControl>
+                                            <FormMessage />
+                                          </FormItem>
+                                        )}
+                                      />
+                                    </div>
                                   </div>
                                 ))}
                               </div>

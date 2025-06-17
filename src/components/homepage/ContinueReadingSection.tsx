@@ -65,12 +65,10 @@ const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps
         }
       );
 
-      const data = await response.json();
-
-      if (data.success && data.data.length > 0) {
+      const data = await response.json();      if (data.success && data.data.length > 0) {
         // Transform backend modules to frontend format
         const transformedModules: Module[] = data.data.map((state: any) => ({
-          id: parseInt(state.module.id),
+          id: state.module.id, // Keep as string to avoid NaN
           title: `Modul ${state.module.order}: ${state.module.title}`,
           progress: state.module.progress?.completionPercentage || 0,
           category: state.module.difficulty === 'Easy' ? 'beginner' : 
@@ -80,9 +78,11 @@ const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps
           quiz: state.module.quiz
         }));
         setModules(transformedModules);
-        setHasStartedReading(true);
-      } else {
-        // User hasn't started reading any modules
+        setHasStartedReading(true);      } else {
+        // User hasn't started reading any modules or not authenticated
+        if (data.error === "Authentication required") {
+          console.log("User not authenticated for reading state");
+        }
         setHasStartedReading(false);
       }
     } catch (error) {
@@ -93,7 +93,7 @@ const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps
     }
   };
 
-  const handleModuleClick = (moduleId: number) => {
+  const handleModuleClick = (moduleId: string | number) => {
     router.push(`/module/${moduleId}`);
   };
   const sectionRef = useRef(null)
