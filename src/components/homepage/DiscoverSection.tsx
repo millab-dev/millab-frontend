@@ -248,6 +248,7 @@ const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
         initial={{ opacity: 0, y: 10 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
         transition={{ duration: 0.5 }}
+        id="discover-section"
       >
         <div className="relative">
           <Search className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -278,7 +279,8 @@ const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
         </motion.a>
       </motion.div>
       
-      <motion.div 
+      <motion.div
+        id="module-list"
         className="flex overflow-x-auto gap-4 -mx-4 px-4"
         style={{ 
           scrollbarWidth: 'none',

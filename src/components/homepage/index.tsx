@@ -1,16 +1,21 @@
-import Navbar from "../core/Navbar"
+"use client"
+
 import InformationSection from "./InformationSection"
 import BottomSheetSection from "./BottomSheetSection"
 import BottomNavbar from "../core/BottomNavbar"
+import { useNextStep } from 'nextstepjs';
+import { useEffect } from "react";
 
 const Homepage = () => {
+
+    const { startNextStep } = useNextStep();
+
+    useEffect(() => {
+        startNextStep("mainTour");
+    }, [startNextStep]);
+
     return (
         <>
-            
-            <div className="hidden md:block">
-                <Navbar/>
-            </div>
-            
             <div className="flex flex-col min-h-screen bg-background relative overflow-x-hidden">
 
                 {/* Mobile background */}
