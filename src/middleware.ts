@@ -9,24 +9,37 @@ export async function middleware(request: NextRequest) {
         request.nextUrl.pathname === "/signin" ||
         request.nextUrl.pathname === "/signup" ||
         request.nextUrl.pathname === "/about-us";
+    
+    const isAdminPage = request.nextUrl.pathname.startsWith("/admin");
+    
     // Skip middleware for auth pages
     if (isAuthPage) {
         return NextResponse.next();
     }
 
     try {
-        // Use only the refresh endpoint for both authentication and cookie refresh
-        console.log("Using refresh endpoint for authentication...");
+        // Use the /me endpoint to check if user is authenticated
+        console.log("Checking authentication via /me endpoint...");
         let response;
         try {
-            response = await axiosServer.get("/api/v1/auth/refresh");
-            console.log("Auth refresh status:", response.status);
+            response = await axiosServer.get("/api/v1/auth/me");
+            console.log("Auth check status:", response.status);
             
-            // If refresh is successful, we're authenticated
+            // If /me is successful, we're authenticated
             if (response.data && response.data.success) {
-                console.log("Authentication successful via refresh endpoint");
+                console.log("Authentication successful via /me endpoint");
+                
+                // Additional check for admin pages
+                if (isAdminPage) {
+                    const user = response.data.data;
+                    if (!user.isAdmin) {
+                        console.log("Non-admin user trying to access admin page");
+                        return NextResponse.redirect(new URL("/", request.url));
+                    }
+                    console.log("Admin access granted");
+                }
             } else {
-                console.log("Refresh endpoint indicated auth failure");
+                console.log("/me endpoint indicated auth failure");
                 return NextResponse.redirect(new URL("/signin", request.url));
             }
         } catch (authError) {
@@ -38,7 +51,7 @@ export async function middleware(request: NextRequest) {
         // Create NextResponse and forward cookies header from API response
         const nextResponse = NextResponse.next();
         
-        // Get cookies directly from the refresh response
+        // Get cookies directly from the /me response (in case backend refreshes tokens)
         const cookies = response.headers?.['set-cookie'];
         console.log("Response headers: ", response.headers);
         console.log("Cookies exists:", !!cookies);
