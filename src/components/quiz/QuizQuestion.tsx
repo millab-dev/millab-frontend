@@ -121,11 +121,11 @@ export default function QuizQuestion({
                         <div className="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
                             {currentQuestionNumber}
                         </div>
-                    </div>
-                    {/* Question */}
-                    <h1 className="text-xl font-semibold text-center mb-12 text-gray-800 leading-relaxed px-4">
-                        {question.question}
-                    </h1>
+                    </div>                    {/* Question */}
+                    <div 
+                        className="text-xl font-semibold text-center mb-12 text-gray-800 leading-relaxed px-4 prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: question.question }}
+                    />
                     {/* Options */}
                     <div className="space-y-4 mb-12">
                         {question.options.map((option) => (
@@ -148,8 +148,7 @@ export default function QuizQuestion({
                                     onMouseLeave={() =>
                                         !showResults && setHoveredOption(null)
                                     }
-                                >
-                                    <div
+                                >                                    <div
                                         className={`
                                             w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm
                                             ${getOptionCircleStyle(option)}
@@ -157,9 +156,10 @@ export default function QuizQuestion({
                                     >
                                         {option.id}
                                     </div>
-                                    <span className="flex-1">
-                                        {option.text}
-                                    </span>
+                                    <div 
+                                        className="flex-1 prose prose-sm max-w-none"
+                                        dangerouslySetInnerHTML={{ __html: option.text }}
+                                    />
                                 </div>
                             </div>
                         ))}

@@ -11,9 +11,17 @@ jobs:
     
     steps:
       - name: Trigger Deployment API
+        env:
+          PENDEPLOY_API_KEY: ${{ secrets.API_KEY }}
         run: |
+          # Check if API key is set
+          if [ -z "$PENDEPLOY_API_KEY" ]; then
+            echo "❌ ERROR: PENDEPLOY_API_KEY is not set in GitHub secrets"
+            exit 1
+          fi
           curl -X POST \
             -H "Content-Type: application/json" \
+            -H "X-API-Key: $PENDEPLOY_API_KEY" \
             -d '{
               "githubUrl": "https://github.com/${{ github.repository }}",
               "env": {

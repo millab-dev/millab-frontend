@@ -63,7 +63,7 @@ export type CarouselTranslationsType = {
 
 // Define base module type
 export interface BaseModule {
-  id: number;
+  id: string | number;
   title: string;
   progress: number;
   category: ModuleCategory;
