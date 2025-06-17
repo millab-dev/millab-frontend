@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, RotateCcw, List } from "lucide-react";
+import { ArrowLeft, RotateCcw} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuizQuestionData, QuizAnswer } from "./Quiz";
 import cloud from "@/assets/cloudPatternBlue.svg";
@@ -11,7 +11,6 @@ interface QuizSummaryProps {
     totalPoints: number;
     onBackToModule: () => void;
     onRetakeQuiz: () => void;
-    onShowNavigation: () => void;
 }
 
 export default function QuizSummary({
@@ -20,7 +19,6 @@ export default function QuizSummary({
     totalPoints,
     onBackToModule,
     onRetakeQuiz,
-    onShowNavigation,
 }: QuizSummaryProps) {
     const totalQuestions = quizData.length;
     const correctAnswers = answers.filter(a => a.isCorrect).length;
@@ -63,14 +61,6 @@ export default function QuizSummary({
                         <ArrowLeft size={20} />
                     </Button>
 
-                    <Button
-                        variant="outline"
-                        onClick={onShowNavigation}
-                        className="bg-blue-500 text-white px-4 py-2 rounded-xl font-medium flex items-center gap-2 hover:bg-blue-600"
-                    >
-                        <List size={16} />
-                        List of Questions
-                    </Button>
                 </div>
 
                 {/* Performance Summary */}
@@ -111,7 +101,6 @@ export default function QuizSummary({
                 <div className="space-y-4 mb-8">
                     {quizData.map((question, index) => {
                         const answer = answers.find(a => a.questionId === question.id);
-                        const isCorrect = answer?.isCorrect || false;
                         const points = answer?.points || 0;
 
                         return (
@@ -196,7 +185,7 @@ export default function QuizSummary({
                         onClick={onBackToModule}
                         className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium"
                     >
-                        Back to Module
+                        Go Back
                     </Button>
                 </div>
             </div>

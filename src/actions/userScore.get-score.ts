@@ -1,5 +1,6 @@
 import axiosServer from "@/lib/axios.server";
 
+
 export interface UserScore {
     userId: string;
     score: number;
@@ -8,10 +9,11 @@ export interface UserScore {
 }
 
 export async function getUserScore(userId: string): Promise<UserScore> {
-    try {
-        const response = await axiosServer.get(`/api/v1/user-scores/${userId}`);
-        return response.data.data as UserScore;
-    } catch (error) {
-        throw error;
+        try {
+            const response = await axiosServer.get(`/api/v1/user-scores/${userId}`);
+            return response.data.data as UserScore;
+        } catch (error) {
+            throw error;
+        }
     }
-}
+    
