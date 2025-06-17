@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${plusJakartaSans.variable} bg-background antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${plusJakartaSans.variable} bg-background antialiased font-jakarta`}
       >
         <NextTopLoader showSpinner={false} />
         <Toaster position="top-center" richColors />

@@ -310,7 +310,7 @@ const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
                         style={{ 
                           backgroundColor: 
                             module.category === "beginner" ? "#218E44" : 
-                            module.category === "intermediate" ? "#FBAD18" : "#EF5BA1" 
+                            module.category === "intermediate" ? "#FBAD18" : "#471B16" 
                         }}
                       >
                         {t.categories[module.category as ModuleCategory]}
