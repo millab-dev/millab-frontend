@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: millab-frontend
+  namespace: default
+  labels:
+    app: millab-frontend
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: millab-frontend
+  template:
+    metadata:
+      labels:
+        app: millab-frontend
+    spec:
+      containers:
+      - name: millab-frontend
+        image: ${IMAGE_REGISTRY}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: NEXT_PUBLIC_API_URL
+          value: "${NEXT_PUBLIC_API_URL}"
+        - name: NODE_ENV
+          value: "${NODE_ENV}"
+        - name: NEXT_TELEMETRY_DISABLED
+          value: "${NEXT_TELEMETRY_DISABLED}"
+        - name: NEXT_FORCE_DOWNLOAD_BINARY
+          value: "${NEXT_FORCE_DOWNLOAD_BINARY}"
+        resources:
+          requests:
+            cpu: 200m
+            memory: 384Mi
+          limits:
+            cpu: 800m
+            memory: 768Mi
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5

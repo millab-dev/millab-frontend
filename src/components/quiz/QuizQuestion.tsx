@@ -19,6 +19,7 @@ interface QuizQuestionProps {
     onBackToModule: () => void;
     canGoNext: boolean;
     canGoPrev: boolean;
+    onShowNavigation: () => void;
 }
 
 export default function QuizQuestion({
@@ -33,6 +34,7 @@ export default function QuizQuestion({
     onPrevQuestion,
     onBackToModule,
     canGoPrev,
+    onShowNavigation,
 }: QuizQuestionProps) {
     const [hoveredOption, setHoveredOption] = useState<string | null>(null);
 
@@ -89,7 +91,7 @@ export default function QuizQuestion({
         <div
             className="min-h-screen bg-[#F8F8F8] sm:p-4 font-jakarta bg-repeat bg-[length:600px] lg:bg-[length:800px]"
             style={{
-                backgroundImage: `url(${cloud.src})`,         
+                backgroundImage: `url(${cloud.src})`,
             }}
         >
             <div className="max-w-2xl mx-auto">
@@ -104,7 +106,10 @@ export default function QuizQuestion({
                         <ArrowLeft size={20} />
                     </Button>
 
-                    <div className="bg-blue-500 text-white px-4 py-2 rounded-xl font-medium flex items-center gap-2">
+                    <div
+                        className="bg-blue-500 text-white px-4 py-2 rounded-xl font-medium flex items-center gap-2 cursor-pointer hover:bg-blue-600"
+                        onClick={onShowNavigation}
+                    >
                         <List size={16} />
                         {currentQuestionNumber} of {totalQuestions}
                     </div>
