@@ -99,7 +99,7 @@ export default function LoginForm() {
             setIsGoogleLoading(true);
             
             // Redirect to backend Google OAuth endpoint
-            window.location.href = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/auth/google/redirect`;
+            window.location.href = `https://api.millabindonesia.com/api/v1/auth/google/redirect`;
             
         } catch (error: any) {
             console.error("Google Sign-In error:", error);
