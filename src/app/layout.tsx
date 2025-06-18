@@ -23,6 +23,9 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "MILBoard",
   description: "Created by MILLab for Media Literacy",
+  icons: {
+    icon: '/icon.svg',
+  },
 };
 
 const steps : Tour[] = [

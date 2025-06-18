@@ -3,7 +3,8 @@
 import React, { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { SectionProps, connectWithUsSectionTranslations } from './types'
-import { FaInstagram, FaLinkedin, FaEnvelope } from 'react-icons/fa'
+import { FaInstagram, FaLinkedin } from 'react-icons/fa'
+import { SiGmail } from 'react-icons/si'
 
 const ConnectWithUsSection: React.FC<SectionProps> = ({ language = 'id' }) => {
   const t = connectWithUsSectionTranslations[language]
@@ -26,7 +27,7 @@ const ConnectWithUsSection: React.FC<SectionProps> = ({ language = 'id' }) => {
     {
       label: t.labels.email,
       value: t.contactInfo.email,
-      icon: <FaEnvelope className="text-gray-400 text-5xl" />,
+      icon: <SiGmail className="text-[#EA4335] text-5xl" />,
       link: `mailto:${t.contactInfo.email}`
     }
   ]
