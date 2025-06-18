@@ -57,9 +57,8 @@ const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps
   }, []);
 
   const fetchUserReadingState = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/reading-state`,
+    try {      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/reading-state/last-accessed`,
         {
           credentials: "include",
         }

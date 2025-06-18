@@ -55,7 +55,7 @@ const FinalTestSection = ({ language = 'id' }: FinalTestSectionProps) => {
             {/* Overlay content */}
             <div className="absolute inset-0 z-10 flex flex-col justify-center text-white p-6 md:p-8">
               <motion.h3 
-                className="text-2xl md:text-3xl font-medium mb-2"
+                className="text-lg md:text-3xl font-medium mb-2"
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
@@ -63,7 +63,7 @@ const FinalTestSection = ({ language = 'id' }: FinalTestSectionProps) => {
                 {t.readyText}
               </motion.h3>
               <motion.div 
-                className="text-base md:text-xl hover:underline transition-all"
+                className="text-sm md:text-xl hover:underline transition-all"
                 initial={{ opacity: 0, y: 10 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
                 transition={{ duration: 0.6, delay: 0.5 }}

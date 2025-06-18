@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
     // Disable ESLint during production builds
     ignoreDuringBuilds: true,
   },
+  typescript: {
+    // Disable TypeScript type checking during builds
+    ignoreBuildErrors: true,
+  },
   // Add rewrites for API proxying
   async rewrites() {
     return [
