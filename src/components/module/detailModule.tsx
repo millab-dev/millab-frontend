@@ -6,6 +6,7 @@ import cloud from "@/assets/cloudPattern.svg";
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import axiosClient from "@/lib/axios.client";
 
 interface Module {
     id: string;
@@ -64,15 +65,9 @@ export default function DetailModule() {
         }
     }, [id]);    const fetchModule = async () => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/${id}`,
-                {
-                    credentials: "include",
-                }
-            );
-
-            const data = await response.json();
-
+            const response = await axiosClient.get(`/api/v1/modules/${id}`);
+            const data = response.data;
+            
             if (data.success) {
                 setModule(data.data);
                 // Module access is automatically tracked on the backend when fetching module details

@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import Navbar from "../core/Navbar";
+import axiosClient from "@/lib/axios.client";
 
 interface Module {
     id: string;
@@ -65,14 +66,8 @@ export default function ListModule() {
 
     const fetchModules = async () => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/`,
-                {
-                    credentials: "include",
-                }
-            );
-
-            const data = await response.json();
+            const response = await axiosClient.get('/api/v1/modules/');
+            const data = response.data;
 
             if (data.success) {
                 setModules(data.data);

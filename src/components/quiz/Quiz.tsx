@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import QuizQuestion from "./QuizQuestion";
 import QuizSummary from "./QuizSummary";
 import QuizNavigation from "./QuizNavigation";
+import axiosClient from "@/lib/axios.client";
 
 export interface QuizOption {
     id: string;
@@ -105,14 +106,8 @@ export default function Quiz() {
 
     const fetchModuleData = async () => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/${moduleId}`,
-                {
-                    credentials: "include",
-                }
-            );
-
-            const data = await response.json();
+            const response = await axiosClient.get(`/api/v1/modules/${moduleId}`);
+            const data = response.data;
 
             if (data.success) {
                 setModule(data.data);
@@ -131,7 +126,8 @@ export default function Quiz() {
             router.push(`/module/${moduleId}`);
         } finally {
             setLoading(false);
-        }    };
+        }
+    };
 
     // Transform database quiz questions into UI format
     const transformQuizQuestions = (dbQuestions: DatabaseQuizQuestion[]): QuizQuestionData[] => {
@@ -147,7 +143,9 @@ export default function Quiz() {
                     isCorrect: optionIndex === dbQuestion.correctAnswer
                 }))
             }));
-    };    // Use quiz data from module or fallback to mock data
+    };
+
+    // Use quiz data from module or fallback to mock data
     const quizData: QuizQuestionData[] = module?.quiz?.questions 
         ? transformQuizQuestions(module.quiz.questions)
         : [
@@ -240,22 +238,12 @@ export default function Quiz() {
 
     const submitQuizScore = async (score: number) => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/${moduleId}/progress/quiz`,
-                {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        score: score,
-                        completed: true
-                    }),
-                }
-            );
+            const response = await axiosClient.post(`/api/v1/modules/${moduleId}/progress/quiz`, {
+                score: score,
+                completed: true
+            });
 
-            const data = await response.json();
+            const data = response.data;
 
             if (data.success) {
                 // Update module progress locally
@@ -404,7 +392,6 @@ export default function Quiz() {
                 totalPoints={totalPoints}
                 onBackToModule={handleBackToModule}
                 onRetakeQuiz={handleRetakeQuiz}
-                onShowNavigation={handleShowNavigation}
             />
         );
     }
@@ -423,6 +410,7 @@ export default function Quiz() {
             onBackToModule={handleBackToModule}
             canGoNext={showResults}
             canGoPrev={currentQuestionIndex > 0}
+            onShowNavigation={handleShowNavigation}
         />
     );
 }

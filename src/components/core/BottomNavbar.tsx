@@ -19,7 +19,7 @@ const BottomNavbar = () => {
   const navItems = [
     {
       name: "Home",
-      path: "/",
+      path: "/app",
       icon: "/book-half.svg",
       activeIcon: "/book-half-active.svg"
     },

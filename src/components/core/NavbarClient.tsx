@@ -157,7 +157,7 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
                       onClick={toggleMilboardMenu}
                       className="flex items-center space-x-1 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
                     >
-                      <span>MilBoard</span>
+                      <span>MILBoard</span>
                       <ChevronDown size={14} className={`transition-transform duration-200 ${isMilboardMenuOpen ? 'rotate-180' : ''}`} />
                     </button>
                     
@@ -247,7 +247,7 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
                       onClick={toggleMilboardMobileMenu}
                       className="flex items-center justify-between w-full px-4 py-3 rounded-md text-base font-medium text-gray-700 hover:text-primary transition-colors duration-200 mt-2"
                     >
-                      <span>MilBoard</span>
+                      <span>MILBoard</span>
                       <ChevronDown 
                         size={16} 
                         className={`transition-transform duration-200 ${isMilboardMobileMenuOpen ? 'rotate-180' : ''}`} 

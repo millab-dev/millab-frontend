@@ -10,6 +10,7 @@ import rabbit from "@/assets/rabbitBook.svg";
 import { useRouter, useParams } from "next/navigation";
 import { Check, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import axiosClient from "@/lib/axios.client";
 
 interface Module {
     id: string;
@@ -73,14 +74,8 @@ export default function SectionModule() {
 
     const fetchModuleData = async () => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/${moduleId}`,
-                {
-                    credentials: "include",
-                }
-            );
-
-            const data = await response.json();
+            const response = await axiosClient.get(`/api/v1/modules/${moduleId}`);
+            const data = response.data;
 
             if (data.success) {
                 setModule(data.data);
@@ -108,18 +103,8 @@ export default function SectionModule() {
         }
     };    const markSectionAsCompleted = async () => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/${moduleId}/sections/${sectionId}/complete`,
-                {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            const data = await response.json();
+            const response = await axiosClient.post(`/api/v1/modules/${moduleId}/sections/${sectionId}/complete`);
+            const data = response.data;
 
             if (data.success) {
                 setIsMarkedAsDone(true);
