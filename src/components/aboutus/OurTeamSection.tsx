@@ -74,9 +74,9 @@ const OurTeamSection: React.FC<SectionProps> = ({ language = 'id' }) => {
             <div 
               className={`overflow-hidden transition-all duration-500 ease-in-out
                 ${activeIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} 
-                group-hover:max-h-96 group-hover:opacity-100`}
+                 group-hover:opacity-100`}
             >
-              <p className="text-gray-700 text-center text-sm max-w-[250px] mt-4 mb-6 px-3 py-2 bg-gray-50 rounded-md">
+              <p className="text-gray-700 text-center text-xs md:text-sm max-w-[250px] mt-4 mb-6 px-3 py-2 bg-gray-50 rounded-md">
                 {member.description}
               </p>
             </div>
