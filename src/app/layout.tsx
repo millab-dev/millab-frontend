@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     title: "MILBoard",
     description: "Created by MILLab for Media Literacy",
   icons: {
-    icon: '/icon.svg',
+    icon: '/icon.png',
   },
 };
 
