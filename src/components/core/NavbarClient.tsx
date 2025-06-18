@@ -78,7 +78,7 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
           <div className="flex-shrink-0 transition-all duration-300">
             <Link href="/">
               <Image 
-                src={authLogo} 
+                src="/millab-logo.svg" 
                 alt="Mill Lab Logo" 
                 width={150} 
                 height={50} 

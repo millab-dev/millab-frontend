@@ -65,7 +65,7 @@ export type TeamSectionTranslationsType = {
 // Our Team Section translations
 export const teamSectionTranslations: TeamSectionTranslationsType = {
   id: {
-    title: "Tim Millab Indonesia",
+    title: "Tim MIL Lab Indonesia",
     teamMembers: [
       {
         imageUrl: "/member/rafi.png",
@@ -106,7 +106,7 @@ export const teamSectionTranslations: TeamSectionTranslationsType = {
     ]
   },
   en: {
-    title: "Millab Indonesia Team",
+    title: "MIL Lab Indonesia Team",
     teamMembers: [
       {
         imageUrl: "/member/rafi.png",
@@ -179,11 +179,58 @@ export type AwardSectionTranslationsType = {
 // Award Section translations
 export const awardSectionTranslations: AwardSectionTranslationsType = {
   id: {
-    title: "Penghargaan & Pengakuan",
-    description: "Beberapa penghargaan dan pengakuan yang telah kami terima atas dedikasi dan hasil kerja kami selama bertahun-tahun."
+    title: "Rekognisi MIL Lab Indonesia",
+    description: "MIL Lab Indonesia dengan bangga meraih kemenangan dalam UNESCO Youth Hackathon 2024 melalui inovasi kami, 'MILBoard', dan telah mendapatkan peliputan lebih dari 40 media nasional dan internasional."
   },
   en: {
-    title: "Awards & Recognition",
-    description: "Some of the awards and recognition we've received for our dedication and work output over the years."
+    title: "MIL Lab Indonesia Recognition",
+    description: "MIL Lab Indonesia proudly won the UNESCO Youth Hackathon 2024 with our innovation, 'MILBoard', and has received coverage from more than 40 national and international media outlets."
+  }
+};
+
+// Define Connect With Us Section translations structure
+export type ConnectWithUsSectionTranslationsType = {
+  [key: string]: {
+    title: string;
+    contactInfo: {
+      instagram: string;
+      linkedin: string;
+      email: string;
+    };
+    labels: {
+      instagram: string;
+      linkedin: string;
+      email: string;
+    };
+  };
+};
+
+// Connect With Us Section translations
+export const connectWithUsSectionTranslations: ConnectWithUsSectionTranslationsType = {
+  id: {
+    title: "Terhubung dengan Kami",
+    contactInfo: {
+      instagram: "@millabindonesia",
+      linkedin: "MIL Lab Indonesia",
+      email: "millabindonesia@gmail.com"
+    },
+    labels: {
+      instagram: "Instagram",
+      linkedin: "LinkedIn",
+      email: "Email"
+    }
+  },
+  en: {
+    title: "Connect with Us",
+    contactInfo: {
+      instagram: "@millabindonesia",
+      linkedin: "MIL Lab Indonesia",
+      email: "millabindonesia@gmail.com"
+    },
+    labels: {
+      instagram: "Instagram",
+      linkedin: "LinkedIn",
+      email: "Email"
+    }
   }
 };

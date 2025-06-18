@@ -2,6 +2,7 @@
 import BottomSheetSection from "./BottomSheetSection"
 import DesktopCardContent from "./DesktopCardContent"
 import Navbar from "../core/Navbar"
+import AboutUsHeader from "./AboutUsHeader"
 import { aboutUsTranslations, SectionProps } from "./types"
 
 interface AboutUsProps {
@@ -46,11 +47,7 @@ const AboutUs = ({ language = 'id' }: AboutUsProps) => {
                 {/* Content layout */}
                 <div className="relative z-10 w-full">
                     {/* Top section with heading */}
-                    <div className="h-[8rem] w-full">
-                        <div className="h-full flex items-center justify-center">
-                            <h1 className="text-4xl md:text-5xl font-bold text-white text-center">{t.pageTitle}</h1>
-                        </div>
-                    </div>
+                    <AboutUsHeader language={language} />
                     
                     {/* Mobile: Bottom sheet layout */}
                     <div className="md:hidden">

@@ -5,6 +5,7 @@ import MillabSection from './MillabSection'
 import OurTeamSection from './OurTeamSection'
 import WhatHaveWeMade from './WhatHaveWeMade'
 import AwardSection from './AwardSection'
+import ConnectWithUsSection from './ConnectWithUsSection'
 import { SectionProps } from './types'
 
 const BottomSheetSection = ({ language = 'id' }: SectionProps) => {
@@ -31,16 +32,18 @@ const BottomSheetSection = ({ language = 'id' }: SectionProps) => {
         
         <hr className="my-4 border-t-2 border-gray-300" />
         
-        {/* What Have We Made section */}
-        <div className="mt-4">
-          <WhatHaveWeMade language={language} />
-        </div>
-        
-        <hr className="my-4 border-t-2 border-gray-300" />
+
         
         {/* Award section */}
         <div className="mt-4">
           <AwardSection language={language} />
+        </div>
+        
+        <hr className="my-4 border-t-2 border-gray-300" />
+        
+        {/* Connect With Us section */}
+        <div className="mt-4">
+          <ConnectWithUsSection language={language} />
         </div>
       </div>
     </motion.div>
