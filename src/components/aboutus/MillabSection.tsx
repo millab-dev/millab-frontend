@@ -23,11 +23,11 @@ const MillabSection = ({ language = 'id' }: SectionProps) => {
           </div>
           <h2 className="text-2xl font-bold mb-3">{t.title}</h2>
           <div 
-            className="text-base text-gray-700 mb-4"
+            className="text-base text-gray-700 mb-4 text-justify"
             dangerouslySetInnerHTML={{ __html: t.description1 }}
           />
           <div 
-            className="text-base text-gray-700"
+            className="text-base text-gray-700 text-justify"
             dangerouslySetInnerHTML={{ __html: t.description2 }}
           />
         </motion.div>
