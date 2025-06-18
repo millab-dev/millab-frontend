@@ -35,16 +35,16 @@ export type MillabSectionTranslationsType = {
 export const millabSectionTranslations: MillabSectionTranslationsType = {
   id: {
     title: "MIL Lab Indonesia",
-    description1: "Millab Indonesia adalah Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam posuere sollicitudin nunc. Vestibulum vel pretium erat. Aenean euismod finibus leo, quis semper dolor. Nulla vulputate nulla eget orci lobortis, vitae egestas erat sodales. Sed accumsan commodo pulvinar. Nunc et eros nec ante condimentum posuere.",
-    description2: "Suspendisse ac risus at ante finibus feugiat quis vel massa. Quisque venenatis, felis ac suscipit viverra, nisi sem aliquam enim, ac scelerisque lorem nulla ac mi. Sed et ante eu orci tincidunt lobortis. Morbi consequat, urna vel tempor porta, metus felis mattis leo, faucibus viverra justo arcu ut ligula. Donec rhoncus accumsan nunc.",
-    logoAlt: "Mill Lab Logo",
+    description1: "<b>MIL Lab</b> atau <b>Media and Information Literacy Lab</b> adalah ruang belajar yang dipimpin oleh pemuda, dibangun pada tahun 2024 sebagai tempat bagi setiap anak muda untuk berekspresi, bertumbuh, dan mengikuti generasi yang cerdas dan kreatif mengembangkan dunia! Kami percaya bahwa kesempatan untuk mencerdaskan dan membuat kesetaraan adalah bobot penting dari proses pembelajaran yang bermakna. Sebagai laboratorium ide dari pusat kolaborasi, <b>MIL Lab</b> mendorong pendidikan literasi media yang partisipatif dan inovatif untuk melawan disinformasi, kekerasan digital, dan bias informasi. Di sinilah perjalanan menuju masa depan yang lebih cerdas dan melek media dimulai bersama.",
+    description2: "Dipandu oleh nilai-nilai inti kami yang terangkum dalam akronim <b>MIL</b>, kami secara aktif <b>Memotivasi Perubahan</b> dengan menyatukan masyarakat untuk mengkoordinasikan aksi dan menginspirasi kesadaran. Kami berkomitmen pada <b>Inklusivitas</b> dengan menciptakan lingkungan yang aman dan suportif di mana setiap individu memiliki kesempatan yang setara untuk berkembang. Seluruh upaya kami digerakkan oleh <b>Lentera Ilmu</b>, semangat untuk menumbuhkan rasa ingin tahu, merayakan eksplorasi intelektual, dan membangun pengetahuan bersama.",
+    logoAlt: "MIL Lab Logo",
     imageAlt: "MIL Lab Logo",
   },
   en: {
     title: "MIL Lab Indonesia",
-    description1: "Millab Indonesia is Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam posuere sollicitudin nunc. Vestibulum vel pretium erat. Aenean euismod finibus leo, quis semper dolor. Nulla vulputate nulla eget orci lobortis, vitae egestas erat sodales. Sed accumsan commodo pulvinar. Nunc et eros nec ante condimentum posuere.",
-    description2: "Suspendisse ac risus at ante finibus feugiat quis vel massa. Quisque venenatis, felis ac suscipit viverra, nisi sem aliquam enim, ac scelerisque lorem nulla ac mi. Sed et ante eu orci tincidunt lobortis. Morbi consequat, urna vel tempor porta, metus felis mattis leo, faucibus viverra justo arcu ut ligula. Donec rhoncus accumsan nunc.",
-    logoAlt: "Mill Lab Logo",
+    description1: "<b>MIL Lab</b> or <b>Media and Information Literacy Lab</b> is a youth-led learning space, established in 2024 as a place for every young person to express, grow, and join a smart and creative generation developing the world! We believe that opportunities for education and creating equality are essential weights in meaningful learning processes. As an idea laboratory and collaboration hub, <b>MIL Lab</b> promotes participatory and innovative media literacy education to combat disinformation, digital violence, and information bias. This is where the journey toward a smarter and more media-literate future begins together.",
+    description2: "Guided by our core values summarized in the acronym <b>MIL</b>, we actively <b>Motivate Change</b> by bringing communities together to coordinate action and inspire awareness. We are committed to <b>Inclusivity</b> by creating a safe and supportive environment where every individual has equal opportunity to develop. All our efforts are driven by the <b>Light of Knowledge</b> (<b>Lentera Ilmu</b>), a spirit to nurture curiosity, celebrate intellectual exploration, and build knowledge together.",
+    logoAlt: "MIL Lab Logo",
     imageAlt: "MIL Lab Logo",
   }
 };
@@ -65,7 +65,7 @@ export type TeamSectionTranslationsType = {
 // Our Team Section translations
 export const teamSectionTranslations: TeamSectionTranslationsType = {
   id: {
-    title: "Tim Kami",
+    title: "Tim Millab Indonesia",
     teamMembers: [
       {
         imageUrl: "/member/rafi.png",
@@ -106,7 +106,7 @@ export const teamSectionTranslations: TeamSectionTranslationsType = {
     ]
   },
   en: {
-    title: "Our Team",
+    title: "Millab Indonesia Team",
     teamMembers: [
       {
         imageUrl: "/member/rafi.png",

@@ -45,11 +45,11 @@ const OurTeamSection: React.FC<SectionProps> = ({ language = 'id' }) => {
             custom={index}
             whileHover={{ y: -5 }}
           >
-            <div className="h-40 w-40 sm:h-48 sm:w-48 mb-6 overflow-hidden rounded-full transition-all duration-300">
+            <div className="h-auto mb-6 transition-all duration-300" style={{ maxWidth: "180px" }}>
               <motion.img
                 src={member.imageUrl}
                 alt={member.name}
-                className="w-full h-full object-cover"
+                className="w-full aspect-[300/280] object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
                 whileHover={{ scale: 1.15 }}
                 transition={{ type: "spring", stiffness: 300, damping: 15 }}
               />
