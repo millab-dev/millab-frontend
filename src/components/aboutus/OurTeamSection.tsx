@@ -23,7 +23,7 @@ const OurTeamSection: React.FC<SectionProps> = ({ language = 'id' }) => {
   const t = teamSectionTranslations[language];
 
   return (
-    <section className="py-12 px-4 max-w-screen-xl mx-auto">
+    <section className="pt-12 pb-12 md:pt-12 md:pb-12 px-4 max-w-screen-xl mx-auto">
       <motion.h2 
         className="text-2xl md:text-4xl font-bold mb-12 text-center"
         initial={{ opacity: 0, y: -20 }}

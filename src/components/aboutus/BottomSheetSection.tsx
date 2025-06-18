@@ -26,7 +26,7 @@ const BottomSheetSection = ({ language = 'id' }: SectionProps) => {
         <hr className="my-4 border-t-2 border-gray-300" />
         
         {/* Team section */}
-        <div className="mt-4">
+        <div className="">
           <OurTeamSection language={language} />
         </div>
         
@@ -35,14 +35,14 @@ const BottomSheetSection = ({ language = 'id' }: SectionProps) => {
 
         
         {/* Award section */}
-        <div className="mt-4">
+        <div className="">
           <AwardSection language={language} />
         </div>
         
         <hr className="my-4 border-t-2 border-gray-300" />
         
         {/* Connect With Us section */}
-        <div className="mt-4">
+        <div className="">
           <ConnectWithUsSection language={language} />
         </div>
       </div>
