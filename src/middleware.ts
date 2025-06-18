@@ -100,6 +100,6 @@ export const config = {
          * - Any files with image extensions
          * - public folder
          */
-        "/((?!api|_next/static|_next/image|_next/data|favicon.ico|member|.*\.png|.*\.jpg|.*\.jpeg|.*\.gif|.*\.svg|public).*)",
+        "/((?!api|_next/static|_next/image|favicon.ico|member|.*\.png|.*\.jpg|.*\.jpeg|.*\.gif|.*\.svg|public).*)",
     ],
 };
