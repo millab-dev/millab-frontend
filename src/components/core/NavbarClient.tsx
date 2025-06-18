@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import authLogo from "@/assets/authLogo.svg";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { navbarTranslations } from "./types";
 
@@ -24,17 +24,36 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
   // Get translations based on language
   const t = navbarTranslations[language];
   
-  // Filter navigation items based on login status
-  const navItems = isLoggedIn 
+  const isAboutUsPage = pathname === "/about-us";
+  const [isMilboardMenuOpen, setIsMilboardMenuOpen] = useState(false);
+  const milboardMenuRef = useRef<HTMLDivElement>(null);
+
+  // Dropdown items for MilBoard based on login status
+  const milboardItems = isLoggedIn
     ? [
         { name: t.navItems[0].name, path: t.navItems[0].path }, // Home
         { name: t.navItems[1].name, path: t.navItems[1].path }, // Module
         { name: t.navItems[2].name, path: t.navItems[2].path }, // Final Quiz
         { name: t.navItems[3].name, path: t.navItems[3].path }, // Profile
-        { name: t.navItems[4].name, path: t.navItems[4].path }, // About Us
       ]
     : [
-        { name: t.navItems[4].name, path: t.navItems[4].path }, // About Us
+        { name: t.navItems[5].name, path: t.navItems[5].path }, // Sign In
+        { name: t.navItems[6].name, path: t.navItems[6].path }, // Sign Up
+      ];
+
+  // Filter navigation items based on login status and current page
+  const navItems = isLoggedIn
+    ? [
+        { name: t.navItems[0].name, path: t.navItems[0].path }, // Home
+        { name: t.navItems[1].name, path: t.navItems[1].path }, // Module
+        { name: t.navItems[2].name, path: t.navItems[2].path }, // Final Quiz
+        { name: t.navItems[3].name, path: t.navItems[3].path }, // Profile
+        // Only show About Us if not on /about-us page
+        ...(!isAboutUsPage ? [{ name: t.navItems[4].name, path: t.navItems[4].path }] : []), // About Us
+      ]
+    : [
+        // Only show About Us if not on /about-us page
+        ...(!isAboutUsPage ? [{ name: t.navItems[4].name, path: t.navItems[4].path }] : []), // About Us
         { name: t.navItems[5].name, path: t.navItems[5].path }, // Sign In
         { name: t.navItems[6].name, path: t.navItems[6].path }, // Sign Up
       ];
@@ -50,14 +69,33 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
       }
     };
     
+    const handleClickOutside = (event: MouseEvent) => {
+      if (milboardMenuRef.current && !milboardMenuRef.current.contains(event.target as Node)) {
+        setIsMilboardMenuOpen(false);
+      }
+    };
+    
     window.addEventListener('scroll', handleScroll);
+    document.addEventListener('mousedown', handleClickOutside);
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+  
+  // Close MilBoard menu when changing routes
+  useEffect(() => {
+    setIsMilboardMenuOpen(false);
+  }, [pathname]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+    setIsMilboardMenuOpen(false); // Close milboard menu if mobile menu is toggled
+  };
+
+  const toggleMilboardMenu = () => {
+    setIsMilboardMenuOpen(!isMilboardMenuOpen);
   };
 
   return (
@@ -90,15 +128,62 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center">
             <div className={`flex items-center space-x-6 border border-gray-200 rounded-md px-6 ${scrolled ? 'py-1.5' : 'py-2'} shadow-sm transition-all duration-300`}>
-            {navItems.map((item) => (
-              <Link
-                href={item.path}
-                key={item.name}
-                className={`text-sm font-medium ${pathname === item.path ? "text-primary" : "text-gray-700 hover:text-primary"} transition-colors duration-200`}
-              >
-                {item.name}
-              </Link>
-            ))}
+              {/* Regular navigation items */}
+              {navItems.map((item) => (
+                <Link
+                  href={item.path}
+                  key={item.name}
+                  className={`text-sm font-medium ${pathname === item.path ? "text-primary" : "text-gray-700 hover:text-primary"} transition-colors duration-200`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              
+              {/* Show "Tentang Kami" on about-us page */}
+              {isAboutUsPage && (
+                <Link
+                  href="/about-us"
+                  className={`text-sm font-medium text-primary transition-colors duration-200`}
+                >
+                  {t.navItems[4].name}
+                </Link>
+              )}
+              
+              {/* MilBoard dropdown only on about-us page */}
+              {isAboutUsPage && (
+                <div className="relative" ref={milboardMenuRef}>
+                  <button 
+                    onClick={toggleMilboardMenu}
+                    className="flex items-center space-x-1 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+                  >
+                    <span>MilBoard</span>
+                    <ChevronDown size={14} className={`transition-transform duration-200 ${isMilboardMenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {/* Dropdown Menu */}
+                  <AnimatePresence>
+                    {isMilboardMenuOpen && (
+                      <motion.div 
+                        className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {milboardItems.map((item) => (
+                          <Link
+                            key={item.name}
+                            href={item.path}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary"
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
             </div>
           </div>
 
@@ -142,6 +227,36 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
                   {item.name}
                 </Link>
               ))}
+              
+              {/* Show "Tentang Kami" on about-us page */}
+              {isAboutUsPage && (
+                <Link
+                  href="/about-us"
+                  className="block px-4 py-3 rounded-md text-base font-medium text-primary bg-gray-50 transition-colors duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {t.navItems[4].name}
+                </Link>
+              )}
+              
+              {/* MilBoard menu items on about-us page */}
+              {isAboutUsPage && (
+                <>
+                  <div className="px-4 py-2 font-medium text-gray-800 border-t border-gray-100 mt-2">
+                    MilBoard
+                  </div>
+                  {milboardItems.map((item) => (
+                    <Link
+                      href={item.path}
+                      key={item.name}
+                      className="block px-6 py-3 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </>
+              )}
             </div>
           </div>
         </motion.div>
