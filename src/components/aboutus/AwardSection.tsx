@@ -72,7 +72,7 @@ const AwardSection: React.FC<SectionProps> = ({ language = 'id' }) => {
             className="text-gray-600 mb-6 md:mb-0"
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ delay: 0.6, duration: 0.7 }
+            transition={{ delay: 0.6, duration: 0.7 }}
           >
             <p className="text-base md:text-lg text-justify">{t.description}</p>
           </motion.div>
