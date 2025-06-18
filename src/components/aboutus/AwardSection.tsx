@@ -13,7 +13,7 @@ const recognitionMedia = [
     alt: 'UNESCO Youth Hackathon 2024 Award'
   },
   {
-    imageUrl: '/documentation-2.jpg', 
+    imageUrl: '/doc-2.png', 
     alt: 'UNESCO Youth Hackathon 2024 Award'
   },
 ]
@@ -74,7 +74,7 @@ const AwardSection: React.FC<SectionProps> = ({ language = 'id' }) => {
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ delay: 0.6, duration: 0.7 }}
           >
-            <p className="text-lg text-justify">{t.description}</p>
+            <p className="text-base md:text-lg text-justify">{t.description}</p>
           </motion.div>
         </motion.div>
         
