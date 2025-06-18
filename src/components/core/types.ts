@@ -17,7 +17,7 @@ export type NavbarTranslationsType = {
 export const navbarTranslations: NavbarTranslationsType = {
   id: {
     navItems: [
-      { name: "Beranda", path: "/" },
+      { name: "Beranda", path: "/app" },
       { name: "Modul", path: "/module" },
       { name: "Kuis Akhir", path: "/final-quiz" },
       { name: "Profil", path: "/profile" },
@@ -28,7 +28,7 @@ export const navbarTranslations: NavbarTranslationsType = {
   },
   en: {
     navItems: [
-      { name: "Home", path: "/" },
+      { name: "Home", path: "/app" },
       { name: "Module", path: "/module" },
       { name: "Final Quiz", path: "/final-quiz" },
       { name: "Profile", path: "/profile" },

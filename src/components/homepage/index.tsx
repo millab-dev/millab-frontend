@@ -1,61 +1,122 @@
-import Navbar from "../core/Navbar"
-import InformationSection from "./InformationSection"
-import BottomSheetSection from "./BottomSheetSection"
-import BottomNavbar from "../core/BottomNavbar"
+"use client";
+
+import { NextStep, NextStepProvider, Tour,} from "nextstepjs";
+
+import HomepageContent from "./OnboardingOverlay";
 
 const Homepage = () => {
+
+    const steps: Tour[] = [
+        {
+            tour: "mainTour",
+            steps: [
+                {
+                    icon: "👋",
+                    title: "Semakin aktif, semakin tinggi levelmu!",
+                    content:
+                        "Kumpulkan XP dari membaca modul dan menjawab kuis untuk naik level",
+                    selector: "#streak-progress",
+                    side: "bottom",
+                    showControls: true,
+                    showSkip: true,
+                },
+                {
+                    icon: "👋",
+                    title: "Belajar sambil seru-seruan!",
+                    content:
+                        "Temukan fakta menarik dan inspiratif seputar literasi media & digital setiap kali kamu membuka aplikasi.",
+                    selector: "#fyi",
+                    side: "bottom",
+                    showControls: true,
+                    showSkip: true,
+                },
+                {
+                    icon: "👋",
+                    title: "Mulai belajar dari dasar",
+                    content:
+                        "Temukan berbagai modul belajar berdasarkan level (Beginner, Intermediate, Advance) yang dirancang untuk membantumu belajar secara bertahap.",
+                    selector: "#discover-section",
+                    side: "bottom",
+                    showControls: true,
+                    showSkip: true,
+                },
+                {
+                    icon: "👋",
+                    title: "Lihat semua modul",
+                    content:
+                        "Akses daftar lengkap modul yang tersedia dan pilih topik yang paling kamu minati.",
+                    selector: "#module-list",
+                    side: "top",
+                    showControls: true,
+                    showSkip: true,
+                },
+                {
+                    icon: "👋",
+                    title: "Lanjutkan dari yang terakhir",
+                    content:
+                        "Kembali ke modul yang sebelumnya kamu baca tanpa harus mencari dari awal. Praktis dan efisien!",
+                    selector: "#continue-reading",
+                    side: "bottom",
+                    showControls: true,
+                    showSkip: true,
+                },
+                {
+                    icon: "👋",
+                    title: "Siap uji kemampuanmu?",
+                    content:
+                        "Setelah menyelesaikan modul, ikuti kuis akhir untuk mengukur pemahamanmu dan kumpulkan poin tambahan.",
+                    selector: "#final-quiz",
+                    side: "top",
+                    showControls: true,
+                    showSkip: true,
+                },
+                {
+                    icon: "👋",
+                    title: "Panduan penggunaan versi web",
+                    content:
+                        "Pelajari cara menggunakan MilBoard dari situs web dengan mudah dan efektif.",
+                    selector: "#guide-website",
+                    side: "top",
+                    showControls: true,
+                    showSkip: true,
+                },
+                {
+                    icon: "👋",
+                    title: "Gunakan MilBoard secara offline",
+                    content:
+                        "Ikuti petunjuk penggunaan untuk produk offline seperti board game atau modul cetak agar pengalaman belajarmu tetap maksimal meski tanpa internet.",
+                    selector: "#guide-offlineProduct",
+                    side: "top",
+                    showControls: true,
+                    showSkip: true,
+                },
+                // {
+                //   icon: "👋",
+                //   title: "Pindai Challenge Card milikmu",
+                //   content: "Gunakan kamera untuk memindai kode QR di kartu tantangan MilBoard dan akses modul terkait.",
+                //   selector: "#scan",
+                //   side: "top",
+                //   showControls: true,
+                //   showSkip: true
+                // },
+            ],
+        },
+    ];
+
     return (
         <>
-            
-            <div className="hidden md:block">
-                <Navbar/>
-            </div>
-            
-            <div className="flex flex-col min-h-screen bg-background relative overflow-x-hidden">
-
-                {/* Mobile background */}
-                <div className="fixed inset-0 z-0 bg-primary md:hidden"
-                    style={{
-                        backgroundImage: "url('/batik-bg-4.svg')",
-                        backgroundRepeat: "repeat",
-                        backgroundSize: "auto auto",
-                        backgroundPosition: "top left"
-                    }}
-                />
-                
-                {/* Desktop background with scaling options */}
-                <div className="fixed inset-0 z-0 bg-primary hidden md:block">
-                    <div className="absolute inset-0 w-full h-full overflow-hidden">
-                        <div 
-                            className="w-[1536px] h-full mx-auto"
-                            style={{
-                                backgroundImage: "url('/batik-bg-4.svg')",
-                                backgroundRepeat: "repeat",
-                                backgroundSize: "cover",
-                                backgroundPosition: "center"
-                            }}
-                        />
-                    </div>
-                </div>
-            
-                {/* Content layout */}
-                <div className="relative z-10 w-full">
-                    {/* Top section with information */}
-                    <div className="h-[14.43rem] md:h-[16.43rem] w-full">
-                        <div className="h-full flex items-center">
-                            <InformationSection/>
-                        </div>
-                    </div>
-                    
-                    {/* Bottom sheet with rounded top corners and animations */}
-                    <BottomSheetSection />
-                </div>
-            </div>
-            <div className="md:hidden">
-            <BottomNavbar/>
-            </div>
+            <NextStepProvider>
+                <NextStep steps={steps} onComplete={() => {
+                    localStorage.setItem("completedTour", "true");
+                }}
+                onSkip={() => {
+                    localStorage.setItem("completedTour", "true");
+                }}>
+                    <HomepageContent />
+                </NextStep>
+            </NextStepProvider>
         </>
-    )
-}
+    );
+};
 
-export default Homepage
+export default Homepage;

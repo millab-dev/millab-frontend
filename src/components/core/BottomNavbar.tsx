@@ -60,7 +60,7 @@ const BottomNavbar = () => {
             onMouseLeave={() => setIsHovering("")}
           >
             {item.isPrimary ? (
-                <div className="relative w-full h-full flex justify-center">
+                <div className="relative w-full h-full flex justify-center" id="scan">
                   <div 
                     id="nav-container-scan" 
                     className="bg-primary flex flex-col items-center justify-between py-4 absolute bottom-0 

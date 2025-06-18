@@ -60,6 +60,7 @@ const GuidelinesSection = ({ language = 'id' }: GuidelinesSectionProps) => {
         {guidelines.map((item, index) => (
           <motion.div
             key={item.id}
+            id={`guide-${item.key}`}
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.5, delay: 0.1 * index }}

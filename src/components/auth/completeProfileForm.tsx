@@ -106,7 +106,7 @@ export default function CompleteProfileForm() {
 
                 // Redirect to home page after 1.5 seconds
                 setTimeout(() => {
-                    router.push("/");
+                    router.push("/app");
                 }, 1500);
             } else {
                 // Profile completion failed - use a new unique ID for error toast

@@ -1,4 +1,5 @@
-import Quiz from "@/components/quiz/Quiz";
+
+import Quiz from "@/components/finalquiz/Quiz";
 import Navbar from "@/components/core/Navbar";
 import { quizService } from "@/actions/quiz.service";
 import { AxiosError } from "axios";

@@ -14,7 +14,7 @@ const FinalTestSection = ({ language = 'id' }: FinalTestSectionProps) => {
   const t = finalTestTranslations[language];
   
   return (
-    <div className="w-full " ref={sectionRef}>
+    <div className="w-full " ref={sectionRef} id="final-quiz">
       <motion.h2 
         className="text-xl md:text-2xl font-bold mb-4 px-1 text-primary"
         initial={{ opacity: 0, y: -10 }}

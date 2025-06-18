@@ -24,7 +24,7 @@ class QuizService {
     async getQuizByDifficulty(difficulty: string) : Promise<Quiz> {
         try {
             const response = await axiosService.get(`/api/v1/quizzes/difficulty/${difficulty}`);
-            return response.data.data[response.data.data.length - 1] as Quiz;
+            return response.data.data[0] as Quiz;
         } catch (error) {
             throw error;
         }

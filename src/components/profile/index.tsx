@@ -25,7 +25,7 @@ const ProfilePage = async ({ section = 'settings', language = 'id' }: ProfilePag
   return (
     <>
       {/* Navbar only visible on md screens and above - outside main container */}
-      <div className="hidden md:block">
+      <div className="block">
         <Navbar/>
       </div>
       

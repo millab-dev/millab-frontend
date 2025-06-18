@@ -5,6 +5,14 @@ import axiosServer from "./lib/axios.server";
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
+
+    console.log("middleware")
+    // Check if the path is the root - handle it first
+    if(request.nextUrl.pathname === '/') {
+        console.log("Redirecting to about-us page...");
+        return NextResponse.redirect(new URL('/about-us', request.url));
+    }
+    
     const isAuthPage =
         request.nextUrl.pathname === "/signin" ||
         request.nextUrl.pathname === "/signup" ||
@@ -34,7 +42,7 @@ export async function middleware(request: NextRequest) {
                     const user = response.data.data;
                     if (!user.isAdmin) {
                         console.log("Non-admin user trying to access admin page");
-                        return NextResponse.redirect(new URL("/", request.url));
+                        return NextResponse.redirect(new URL("/app", request.url));
                     }
                     console.log("Admin access granted");
                 }
@@ -79,13 +87,19 @@ export async function middleware(request: NextRequest) {
 export const config = {
     matcher: [
         /*
-         * Match all request paths except for the ones starting with:
+         * Match root path explicitly
+         */
+        
+        /*
+         * Match all other request paths except for the ones starting with:
          * - api (API routes)
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
+         * - member/ (team member images)
+         * - Any files with image extensions
          * - public folder
          */
-        "/((?!api|_next/static|_next/image|favicon.ico|public).*)",
+        "/((?!api|_next/static|_next/image|favicon.ico|member|.*\.png|.*\.jpg|.*\.jpeg|.*\.gif|.*\.svg|public).*)",
     ],
 };

@@ -85,7 +85,7 @@ export default function LoginForm() {
 
             if (data.success) {
                 toast.success("Login berhasil!");
-                router.push("/");
+                router.push("/app");
             } else {
                 toast.error(data.error || "Login gagal");
             }        } catch (error) {

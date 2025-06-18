@@ -7,6 +7,7 @@ import MillabSection from './MillabSection'
 import OurTeamSection from './OurTeamSection'
 import WhatHaveWeMade from './WhatHaveWeMade'
 import AwardSection from './AwardSection'
+import ConnectWithUsSection from './ConnectWithUsSection'
 import { SectionProps } from './types'
 
 const DesktopCardContent: React.FC<SectionProps> = ({ language = 'id' }) => {
@@ -29,14 +30,15 @@ const DesktopCardContent: React.FC<SectionProps> = ({ language = 'id' }) => {
           
           <hr className="my-5 border-t-2 border-gray-300" />
           
+          
           <div className="mt-5">
-            <WhatHaveWeMade language={language} />
+            <AwardSection language={language} />
           </div>
           
           <hr className="my-5 border-t-2 border-gray-300" />
           
           <div className="mt-5">
-            <AwardSection language={language} />
+            <ConnectWithUsSection language={language} />
           </div>
         </CardContent>
       </Card>

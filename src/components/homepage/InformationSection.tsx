@@ -59,6 +59,7 @@ const InformationSection = ({ language = 'id' }: SectionProps) => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.4 }}
+                    id="streak-progress"
                 >
                     {/* Streak and Points: row in both mobile and desktop */}
                     <motion.div 

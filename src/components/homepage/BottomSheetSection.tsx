@@ -30,7 +30,9 @@ const BottomSheetSection = () => {
         <DiscoverSection />
 
          {/* Continue Reading section */}
-         <ContinueReadingSection />
+         <div id="continue-reading">
+           <ContinueReadingSection />
+         </div>
 
           {/* Final Test section */}
         <FinalTestSection />
