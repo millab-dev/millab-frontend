@@ -98,10 +98,10 @@ export const teamSectionTranslations: TeamSectionTranslationsType = {
         description: "Dwiky adalah software engineer dengan latar belakang Ilmu Komputer yang berfokus menjawab iden seperti BEM UI, Makarapreneur, dan Lucas Djaja dalam mewujudkan inovasi digital melalui pengembangan aplikasi untuk menyelesaikan berbagai isu."
       },
       {
-        imageUrl: "https://randomuser.me/api/portraits/women/79.jpg",
+        imageUrl: "/member/irene.png",
         name: "Medeline Irene Tanjung",
         role: "Finance and Creative",
-        description: "Irene memiliki keahlian dalam manajemen keuangan dan kreativitas desain. Dengan latar belakang ekonomi, ia menggabungkan pemikiran analitis dengan pendekatan kreatif untuk menciptakan solusi yang inovatif bagi klien."
+        description: "Medeline memiliki latar belakang Ilmu Kesejahteraan Sosial, dengan berbagai pengalaman dan pencapaian di bidang pengembangan masyarakat, ESG, dan pembangunan berkelanjutan."
       }
     ]
   },
@@ -139,10 +139,10 @@ export const teamSectionTranslations: TeamSectionTranslationsType = {
         description: "Dwiky is a software engineer with a Computer Science background who focuses on addressing ideas from organizations like BEM UI, Makarapreneur, and Lucas Djaja by creating digital innovations through application development to solve various issues."
       },
       {
-        imageUrl: "https://randomuser.me/api/portraits/women/79.jpg",
+        imageUrl: "/member/irene.png",
         name: "Medeline Irene Tanjung",
         role: "Finance and Creative",
-        description: "Irene has expertise in financial management and creative design. With an economics background, she combines analytical thinking with creative approaches to develop innovative solutions for clients."
+        description: "Medeline has a background in Social Welfare Science, with various experiences and achievements in community development, ESG, and sustainable development."
       }
     ]
   }
