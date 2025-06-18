@@ -63,7 +63,7 @@ const WhatHaveWeMade: React.FC<SectionProps> = ({ language = 'id' }) => {
         {/* Content */}
         <div className="w-full md:flex-1">
           <motion.h2 
-            className="text-2xl md:text-3xl font-bold mb-4 text-center md:text-left"
+            className="text-2xl md:text-4xl font-bold mb-4 text-center md:text-left"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -92,7 +92,7 @@ const WhatHaveWeMade: React.FC<SectionProps> = ({ language = 'id' }) => {
               <motion.div 
                 key={index} 
                 className="bg-white rounded-xl shadow-md p-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:bg-blue-50/30 group"
-                variants={itemVariants}
+                variants={itemVariants as any}
                 whileHover={{ scale: 1.03 }}
               >
                 <div className="flex flex-col items-center">

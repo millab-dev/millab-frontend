@@ -21,7 +21,7 @@ const MillabSection = ({ language = 'id' }: SectionProps) => {
           <div className="md:hidden flex justify-center mb-4">
             <Image src={authLogo} alt={t.logoAlt} width={120} height={40} className="h-16 w-auto" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 hidden md:block">{t.title}</h2>
+          <h2 className="text-2xl md:text-4xl font-bold mb-4 hidden md:block">{t.title}</h2>
           <p className="text-base md:text-lg text-gray-700 mb-6">
             <span className="md:hidden font-bold">{t.title} </span> {t.description1}
           </p>
