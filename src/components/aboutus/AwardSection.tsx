@@ -49,7 +49,7 @@ const AwardSection: React.FC<SectionProps> = ({ language = 'id' }) => {
   return (
     <div className="py-12 px-4 md:px-8 max-w-7xl mx-auto">
       <motion.h2 
-        className="text-3xl md:text-4xl font-bold text-center mb-3"
+        className="text-2xl md:text-4xl font-bold text-center mb-3"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}

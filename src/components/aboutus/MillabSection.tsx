@@ -10,7 +10,7 @@ const MillabSection = ({ language = 'id' }: SectionProps) => {
   const t = millabSectionTranslations[language];
   return (
     <div className="w-full pb-10 md:pb-12 pt-8 md:pt-6">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+      <div className="flex flex-col md:flex-row items-start justify-between gap-8">
         {/* Text content */}
         <motion.div 
           className="md:w-7/12 pr-4"
@@ -21,13 +21,15 @@ const MillabSection = ({ language = 'id' }: SectionProps) => {
           <div className="md:hidden flex justify-center mb-4">
             <Image src={authLogo} alt={t.logoAlt} width={120} height={40} className="h-16 w-auto" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 hidden md:block">{t.title}</h2>
-          <p className="text-base md:text-lg text-gray-700 mb-6">
-            <span className="md:hidden font-bold">{t.title} </span> {t.description1}
-          </p>
-          <p className="text-base md:text-lg text-gray-700">
-            {t.description2}
-          </p>
+          <h2 className="text-2xl md:text-4xl font-bold mb-4">{t.title}</h2>
+          <div 
+            className="text-base md:text-lg text-gray-700 mb-6"
+            dangerouslySetInnerHTML={{ __html: t.description1 }}
+          />
+          <div 
+            className="text-base md:text-lg text-gray-700"
+            dangerouslySetInnerHTML={{ __html: t.description2 }}
+          />
         </motion.div>
         
         {/* Image - hidden on mobile */}

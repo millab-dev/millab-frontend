@@ -4,19 +4,6 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { SectionProps, teamSectionTranslations } from './types'
 
-// Images for team members (these remain the same regardless of language)
-const teamImages = [
-  'https://randomuser.me/api/portraits/men/1.jpg',
-  'https://randomuser.me/api/portraits/women/2.jpg',
-  'https://randomuser.me/api/portraits/men/3.jpg',
-  'https://randomuser.me/api/portraits/women/4.jpg',
-  'https://randomuser.me/api/portraits/men/5.jpg',
-  'https://randomuser.me/api/portraits/women/6.jpg',
-  'https://randomuser.me/api/portraits/men/7.jpg',
-  'https://randomuser.me/api/portraits/women/8.jpg',
-  'https://randomuser.me/api/portraits/men/9.jpg',
-]
-
 // Animation variants for team member cards
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -34,16 +21,11 @@ const cardVariants = {
 const OurTeamSection: React.FC<SectionProps> = ({ language = 'id' }) => {
   // Get translations based on language
   const t = teamSectionTranslations[language];
-  
-  // Combine translations with images
-  const teamMembers = t.teamMembers.map((member, index) => ({
-    ...member,
-    image: teamImages[index]
-  }));
+
   return (
-    <div className="pt-4 pb-10 md:pt-8 md:pb-8 px-4 md:px-8 max-w-7xl mx-auto">
+    <section className="py-12 px-4 max-w-screen-xl mx-auto">
       <motion.h2 
-        className="text-3xl md:text-4xl font-bold text-center mb-3"
+        className="text-2xl md:text-4xl font-bold mb-12 text-center"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -51,40 +33,40 @@ const OurTeamSection: React.FC<SectionProps> = ({ language = 'id' }) => {
         {t.title}
       </motion.h2>
       
-      <motion.p 
-        className="text-center md:text-lg text-gray-600 mb-10 max-w-3xl mx-auto"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
-      >
-        {t.description}
-      </motion.p>
-      
-      <div className="flex flex-wrap justify-center gap-x-2 gap-y-6 sm:gap-x-6 sm:gap-y-8 md:gap-x-8 md:gap-y-10 mx-auto">
-        {teamMembers.map((member, index) => (
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 md:px-8">
+        {t.teamMembers.map((member, index) => (
           <motion.div
             key={index}
-            className="bg-white rounded-xl shadow-md p-5 flex flex-col items-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:bg-blue-50/30 group w-[45%] sm:w-[160px] md:w-48 lg:w-52"
-            variants={cardVariants}
+            className="group relative flex flex-col items-center transition-all duration-300"
+            variants={cardVariants as any}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-50px" }}
             custom={index}
-            whileHover={{ scale: 1.03 }}
+            whileHover={{ y: -5 }}
           >
-            <div className="h-24 w-24 md:h-32 md:w-32 mb-4 overflow-hidden rounded-full">
-              <img
-                src={member.image}
+            <div className="h-auto mb-6 transition-all duration-300" style={{ maxWidth: "180px" }}>
+              <motion.img
+                src={member.imageUrl}
                 alt={member.name}
-                className="w-full h-full object-cover"
+                className="w-full aspect-[300/280] object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                whileHover={{ scale: 1.15 }}
+                transition={{ type: "spring", stiffness: 300, damping: 15 }}
               />
             </div>
-            <h3 className="font-semibold text-base sm:text-lg text-center">{member.name}</h3>
-            <p className="text-gray-500 text-xs sm:text-sm text-center">{member.role}</p>
+            <h3 className="font-semibold text-lg text-center transition-colors duration-300 group-hover:text-primary">{member.name}</h3>
+            <p className="text-gray-600 text-sm md:text-base text-center mb-1">{member.role}</p>
+            
+            {/* Description that appears on hover */}
+            <div className="overflow-hidden max-h-0 group-hover:max-h-96 transition-all duration-500 ease-in-out">
+              <p className="text-gray-700 text-center text-sm max-w-[250px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-100 mt-2 mb-4">
+                {member.description}
+              </p>
+            </div>
           </motion.div>
         ))}
       </div>
-    </div>
+    </section>
   )
 }
 
