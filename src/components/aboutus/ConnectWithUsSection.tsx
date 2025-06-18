@@ -26,7 +26,7 @@ const ConnectWithUsSection: React.FC<SectionProps> = ({ language = 'id' }) => {
     {
       label: t.labels.email,
       value: t.contactInfo.email,
-      icon: <FaEnvelope className="text-black text-5xl" />,
+      icon: <FaEnvelope className="text-gray-500 text-5xl" />,
       link: `mailto:${t.contactInfo.email}`
     }
   ]
