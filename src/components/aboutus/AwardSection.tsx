@@ -13,8 +13,8 @@ const recognitionMedia = [
     alt: 'UNESCO Youth Hackathon 2024 Award'
   },
   {
-    imageUrl: '/documentation-2.JPG', 
-    alt: 'MIL Lab UNESCO Youth Hackathon 2024 Award'
+    imageUrl: '/documentation-2.jpg', 
+    alt: 'UNESCO Youth Hackathon 2024 Award'
   },
 ]
 
