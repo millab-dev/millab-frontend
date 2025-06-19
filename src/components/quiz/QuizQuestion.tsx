@@ -125,8 +125,7 @@ export default function QuizQuestion({
                     <div 
                         className="text-xl font-semibold text-center mb-12 text-gray-800 leading-relaxed px-4 prose prose-sm max-w-none"
                         dangerouslySetInnerHTML={{ __html: question.question }}
-                    />
-                    {/* Options */}
+                    />                    {/* Options */}
                     <div className="space-y-4 mb-12">
                         {question.options.map((option) => (
                             <div key={option.id} className="relative">
@@ -148,7 +147,8 @@ export default function QuizQuestion({
                                     onMouseLeave={() =>
                                         !showResults && setHoveredOption(null)
                                     }
-                                >                                    <div
+                                >
+                                    <div
                                         className={`
                                             w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm
                                             ${getOptionCircleStyle(option)}
@@ -164,6 +164,26 @@ export default function QuizQuestion({
                             </div>
                         ))}
                     </div>
+
+                    {/* Explanation Section */}
+                    {showResults && question.explanation && (
+                        <div className="mb-8 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                            <div className="flex items-start gap-3">
+                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold text-blue-900 mb-2">Explanation</h4>
+                                    <div 
+                                        className="text-blue-800 prose prose-sm max-w-none"
+                                        dangerouslySetInnerHTML={{ __html: question.explanation }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     {/* Navigation Buttons */}
                     <div className="flex gap-4">
                         <Button

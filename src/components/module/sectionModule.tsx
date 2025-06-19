@@ -11,12 +11,15 @@ import { useRouter, useParams } from "next/navigation";
 import { Check, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import axiosClient from "@/lib/axios.client";
+import { awardSectionXP } from "@/utils/progressionApi";
 
 interface Module {
     id: string;
     title: string;
     description: string;
     order: number;
+    difficulty: 'Easy' | 'Intermediate' | 'Advanced';
+    pdfUrl?: string;
     sections: ModuleSection[];
     quiz: ModuleQuiz;
     isActive: boolean;
@@ -29,7 +32,6 @@ interface ModuleSection {
     content: string;
     duration: string;
     order: number;
-    pdfUrl?: string;
     isActive: boolean;
 }
 
@@ -39,7 +41,6 @@ interface ModuleQuiz {
     description: string;
     duration: string;
     totalQuestions: number;
-    passingScore: number;
     isActive: boolean;
 }
 
@@ -103,12 +104,12 @@ export default function SectionModule() {
         }
     };    const markSectionAsCompleted = async () => {
         try {
+            // Mark section as completed in existing system
             const response = await axiosClient.post(`/api/v1/modules/${moduleId}/sections/${sectionId}/complete`);
             const data = response.data;
 
             if (data.success) {
                 setIsMarkedAsDone(true);
-                toast.success("Section completed successfully!");
                 
                 // Update the module progress locally
                 if (module) {
@@ -116,6 +117,32 @@ export default function SectionModule() {
                         ...module,
                         progress: data.data
                     });
+                }                // Award XP through progression system
+                if (module?.difficulty) {
+                    console.log('Attempting to award XP for section:', sectionId, 'difficulty:', module.difficulty);
+                    try {
+                        const progressionResult = await awardSectionXP(sectionId, module.difficulty);
+                        console.log('Progression result:', progressionResult);
+                        
+                        if (progressionResult.success) {
+                            if (progressionResult.message) {
+                                toast.success(progressionResult.message, {
+                                    duration: 4000,
+                                });
+                            } else {
+                                toast.success("Section completed successfully! XP awarded.");
+                            }
+                        } else {
+                            console.error('XP award failed:', progressionResult.error);
+                            toast.warning(progressionResult.error || "Section completed, but XP award failed");
+                        }
+                    } catch (xpError) {
+                        console.error('Error awarding XP:', xpError);
+                        toast.warning("Section completed, but XP award failed");
+                    }
+                } else {
+                    console.log('No module difficulty found, skipping XP award');
+                    toast.success("Section completed successfully!");
                 }
             } else {
                 toast.error(data.error || "Failed to mark section as completed");

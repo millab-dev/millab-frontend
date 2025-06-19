@@ -308,11 +308,10 @@ const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
                     {/* Level badge */}
                     <div>
                       <span 
-                        className="text-xs  py-1 px-2.5 rounded-md text-white"
-                        style={{ 
+                        className="text-xs  py-1 px-2.5 rounded-md text-white"                        style={{ 
                           backgroundColor: 
                             module.category === "beginner" ? "#218E44" : 
-                            module.category === "intermediate" ? "#FBAD18" : "#471B16" 
+                            module.category === "intermediate" ? "#FBAD18" : "#DC2626" 
                         }}
                       >
                         {t.categories[module.category as ModuleCategory]}

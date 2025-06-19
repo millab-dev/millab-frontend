@@ -9,7 +9,7 @@ export interface ProfileComponentProps {
 // Define translations for the Leaderboard component
 export interface LeaderboardTranslations {
   title: string;
-  xpLabel: string;
+  pointsLabel: string;
   youLabel: string;
   gapIndicator: string;
 }
@@ -17,13 +17,13 @@ export interface LeaderboardTranslations {
 export const leaderboardTranslations: Record<Language, LeaderboardTranslations> = {
   id: {
     title: 'Papan Peringkat',
-    xpLabel: 'xp',
+    pointsLabel: 'point',
     youLabel: 'Kamu',
     gapIndicator: '•••',
   },
   en: {
     title: 'Leaderboard',
-    xpLabel: 'xp',
+    pointsLabel: 'point',
     youLabel: 'You',
     gapIndicator: '•••',
   }
@@ -35,7 +35,7 @@ export interface ProfileHeaderTranslations {
   followingLabel: string;
   coursesFinishedLabel: string;
   editProfileButton: string;
-  xpLabel: string;
+  pointsLabel: string;
   nameLabel: string;
   birthplaceLabel: string;
   phoneLabel: string;
@@ -50,7 +50,7 @@ export const profileHeaderTranslations: Record<Language, ProfileHeaderTranslatio
     followingLabel: 'Mengikuti',
     coursesFinishedLabel: 'Kursus Selesai',
     editProfileButton: 'Edit Profil',
-    xpLabel: 'xp',
+    pointsLabel: 'point',
     nameLabel: 'NAMA',
     birthplaceLabel: 'TEMPAT LAHIR',
     phoneLabel: 'TELEPON',
@@ -63,7 +63,7 @@ export const profileHeaderTranslations: Record<Language, ProfileHeaderTranslatio
     followingLabel: 'Following',
     coursesFinishedLabel: 'Courses Finished',
     editProfileButton: 'Edit Profile',
-    xpLabel: 'xp',
+    pointsLabel: 'point',
     nameLabel: 'NAME',
     birthplaceLabel: 'BIRTHPLACE',
     phoneLabel: 'PHONE',

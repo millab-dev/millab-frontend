@@ -120,8 +120,7 @@ export default function QuizSummary({
                                             className="font-medium text-gray-800 mb-3 text-sm prose prose-sm max-w-none"
                                             dangerouslySetInnerHTML={{ __html: question.question }}
                                         />
-                                        
-                                        {/* Answer Options */}
+                                          {/* Answer Options */}
                                         <div className="space-y-2">
                                             {question.options.map((option) => {
                                                 const isSelected = answer?.selectedOptionId === option.id;
@@ -153,7 +152,8 @@ export default function QuizSummary({
                                                     <div key={option.id}>
                                                         <div className="text-xs text-gray-600 mb-1">
                                                             {labelText} {iconText}
-                                                        </div>                                                        <div className={`p-3 rounded-lg ${bgColor} ${textColor} text-sm`}>
+                                                        </div>
+                                                        <div className={`p-3 rounded-lg ${bgColor} ${textColor} text-sm`}>
                                                             <div className="flex items-center gap-2">
                                                                 <span className="font-semibold">{option.id}</span>
                                                                 <div 
@@ -166,6 +166,26 @@ export default function QuizSummary({
                                                 );
                                             })}
                                         </div>
+
+                                        {/* Explanation */}
+                                        {question.explanation && (
+                                            <div className="mt-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                                                <div className="flex items-start gap-2">
+                                                    <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <h5 className="text-sm font-semibold text-blue-900 mb-1">Explanation</h5>
+                                                        <div 
+                                                            className="text-sm text-blue-800 prose prose-sm max-w-none"
+                                                            dangerouslySetInnerHTML={{ __html: question.explanation }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronRight, FileText } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -50,23 +50,27 @@ const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasStartedReading, setHasStartedReading] = useState(false);
+  const [expectedModuleCount, setExpectedModuleCount] = useState(3); // Track expected number of modules
   
   // Fetch user's last accessed modules
   useEffect(() => {
     fetchUserReadingState();
   }, []);
-
   const fetchUserReadingState = async () => {
-    try {      const response = await fetch(
+    try {      
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/reading-state/last-accessed`,
         {
           credentials: "include",
         }
       );
 
-      const data = await response.json();      if (data.success && data.data.length > 0) {
+      const data = await response.json();      
+      
+      let accessedModules: Module[] = [];
+        if (data.success && data.data.length > 0) {
         // Transform backend modules to frontend format
-        const transformedModules: Module[] = data.data.map((state: any) => ({
+        accessedModules = data.data.map((state: any) => ({
           id: state.module.id, // Keep as string to avoid NaN
           title: `Modul ${state.module.order}: ${state.module.title}`,
           progress: state.module.progress?.completionPercentage || 0,
@@ -76,8 +80,17 @@ const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps
           sections: state.module.sections,
           quiz: state.module.quiz
         }));
-        setModules(transformedModules);
-        setHasStartedReading(true);      } else {
+        setHasStartedReading(true);
+      }
+      
+      // Only show modules from user's reading history, no homepage supplements
+      const finalCount = Math.min(accessedModules.length, 3);
+      setExpectedModuleCount(finalCount);
+      setModules(accessedModules.slice(0, 3));
+      
+      if (accessedModules.length > 0) {
+        setHasStartedReading(true);
+      } else {
         // User hasn't started reading any modules or not authenticated
         if (data.error === "Authentication required") {
           console.log("User not authenticated for reading state");
@@ -96,9 +109,7 @@ const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps
     router.push(`/module/${moduleId}`);
   };
   const sectionRef = useRef(null)
-  const isInView = useInView(sectionRef, { once: true, amount: 0.2 })
-
-  // Show loading state
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 })  // Show loading state
   if (loading) {
     return (
       <div className="w-full" ref={sectionRef}>
@@ -110,23 +121,32 @@ const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps
         >
           <h2 className="text-xl md:text-2xl font-bold text-primary">{t.title}</h2>
         </motion.div>
-        
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          className="flex overflow-x-auto gap-4 -mx-4 px-4"
+          style={{ 
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none', 
+            WebkitOverflowScrolling: 'touch'
+          }}
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          {/* Loading skeleton */}
-          {[1, 2].map((index) => (
-            <div key={index} className="animate-pulse">
-              <Card className="shadow-sm p-0">
-                <CardContent className="p-4 flex items-center gap-4">
-                  <div className="rounded-lg w-20 h-20 bg-gray-200 flex-shrink-0"></div>
-                  <div className="flex flex-col flex-1 space-y-2">
-                    <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-2 bg-gray-200 rounded w-full"></div>
+        >          {/* Loading skeleton - dynamic count based on expected modules */}          {Array.from({ length: expectedModuleCount }, (_, index) => (
+            <div key={index + 1} className="w-[260px] md:w-[280px] flex-shrink-0 flex-grow-0 animate-pulse">
+              <Card className="shadow-sm p-0 flex flex-col overflow-hidden h-full">
+                <CardContent className="p-0 flex flex-col flex-1 w-full">
+                  <div className="flex flex-col h-full p-4">
+                    <div className="space-y-3 flex-shrink-0">
+                      <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+                      <div className="w-full aspect-square rounded-2xl bg-gray-200"></div>
+                    </div>
+                    <div className="mt-3 flex flex-col h-full">
+                      <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="mt-auto">
+                        <div className="h-2 bg-gray-200 rounded w-full"></div>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -136,9 +156,8 @@ const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps
       </div>
     );
   }
-
-  // Show empty state if user hasn't started reading
-  if (!hasStartedReading) {
+  // Show empty state if no modules available
+  if (!hasStartedReading || modules.length === 0) {
     return (
       <div className="w-full" ref={sectionRef}>
         <motion.div 
@@ -180,9 +199,8 @@ const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="text-xl md:text-2xl font-bold text-primary">{t.title}</h2>
-        <motion.a 
-          href="/history" 
+        <h2 className="text-xl md:text-2xl font-bold text-primary">{t.title}</h2>        <motion.a 
+          href="/module" 
           className="text-gray-500 flex items-center hover:text-primary transition-colors"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -190,61 +208,81 @@ const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps
           {t.seeAll} <ChevronRight className="h-4 w-4 ml-1" />
         </motion.a>
       </motion.div>
-      
-      <motion.div 
-        className="grid grid-cols-1 md:grid-cols-2 gap-4"
+        <motion.div 
+        className="flex overflow-x-auto gap-4 -mx-4 px-4"
+        style={{ 
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none', 
+          WebkitOverflowScrolling: 'touch'
+        }}
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-      >
-        {modules.map((module, index) => (
+      >        {modules.map((module, index) => (
           <motion.div
             key={module.id}
+            className="w-[260px] md:w-[280px] flex-shrink-0 flex-grow-0 cursor-pointer"
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.5, delay: 0.1 * index }}
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
             onClick={() => handleModuleClick(module.id)}
-            className="cursor-pointer"
           >
-            <Card className="shadow-sm hover:shadow transition-all duration-300 p-0">
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="rounded-lg w-20 h-20 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                  <div 
-                    style={{ background: 'linear-gradient(to right, #0077D4, #4CB0FF)' }} 
-                    className="w-full h-full flex items-center justify-center"
-                  >
-                    <FileText className="text-white w-10 h-10" />
-                  </div>
-                </div>
-                
-                <div className="flex flex-col flex-1">
-                  {/* Level badge */}
-                  <div className="mb-1.5">
-                    <span 
-                      className="text-xs py-1 px-2.5 rounded-md text-white"
-                      style={{ 
-                        backgroundColor: 
-                          module.category === "beginner" ? "#218E44" : 
-                          module.category === "intermediate" ? "#FBAD18" : "#EF5BA1" 
-                      }}
-                    >
-                      {t.categories[module.category as ModuleCategory]}
-                    </span>
+            <Card className="shadow-sm hover:shadow transition-all duration-300 p-0 flex flex-col overflow-hidden h-full cursor-pointer">
+              <CardContent className="p-0 flex flex-col flex-1 w-full">
+                {/* Module card content */}
+                <div className="flex flex-col h-full p-4">
+                  <div className="space-y-3 flex-shrink-0">
+                    {/* Level badge */}
+                    <div>
+                      <span 
+                        className="text-xs py-1 px-2.5 rounded-md text-white"                        style={{ 
+                          backgroundColor: 
+                            module.category === "beginner" ? "#218E44" : 
+                            module.category === "intermediate" ? "#FBAD18" : "#DC2626" 
+                        }}
+                      >
+                        {module.category === "beginner" ? "Mudah" : 
+                         module.category === "intermediate" ? "Menengah" : "Sulit"}
+                      </span>
+                    </div>
+                    
+                    {/* Icon contained within the card with rounded corners */}
+                    <div className="w-full">
+                      <div className="aspect-square rounded-2xl overflow-hidden">
+                        <div 
+                          style={{ background: 'linear-gradient(to right, #0077D4, #4CB0FF)' }} 
+                          className="w-full h-full flex items-center justify-center"
+                        >
+                          <motion.img 
+                            src="/scroll-text.svg" 
+                            alt="Module" 
+                            className="w-16 h-16" 
+                            whileHover={{ scale: 1.1 }}
+                            transition={{ duration: 0.2 }}
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
-                  <h3 className="text-sm md:text-base font-semibold text-primary mb-2 truncate">{module.title}</h3>
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 flex-1 bg-gray-200 rounded-full overflow-hidden">
-                      <motion.div 
-                        className="h-full" 
-                        style={{ backgroundColor: '#EF5BA1' }}
-                        initial={{ width: 0 }}
-                        animate={isInView ? { width: `${module.progress}%` } : { width: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 + (0.1 * index) }}
-                      />
+                  {/* Title and progress information */}
+                  <div className="mt-3 flex flex-col h-full">
+                    <h3 className="text-sm md:text-base font-semibold text-primary mb-2 line-clamp-2">{module.title}</h3>
+                    <div className="mt-auto">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 flex-1 bg-gray-200 rounded-full overflow-hidden">
+                          <motion.div 
+                            className="h-full" 
+                            style={{ backgroundColor: '#EF5BA1' }}
+                            initial={{ width: 0 }}
+                            animate={isInView ? { width: `${module.progress}%` } : { width: 0 }}
+                            transition={{ duration: 0.8, delay: 0.2 + (0.1 * index) }}
+                          />
+                        </div>
+                        <span className="text-xs text-gray-500">{module.progress}%</span>
+                      </div>
                     </div>
-                    <span className="text-xs text-gray-500">{module.progress}%</span>
                   </div>
                 </div>
               </CardContent>

@@ -29,7 +29,6 @@ const sectionSchema = z.object({
   content: z.string().min(1, "Section content is required"),
   duration: z.coerce.number().min(1, "Section duration must be at least 1 minute"),
   order: z.coerce.number().min(1, "Section order must be at least 1"),
-  pdfUrl: z.string().optional(),
   isActive: z.boolean(),
 });
 
@@ -60,6 +59,7 @@ const moduleSchema = z.object({
     errorMap: () => ({ message: "Please select a difficulty level" })
   }),
   order: z.coerce.number().min(1, "Module order must be at least 1"),
+  pdfUrl: z.string().optional(),
   sections: z.array(sectionSchema).min(1, "Must have at least one section"),
   quiz: quizSchema,
   isActive: z.boolean(),
@@ -73,6 +73,7 @@ interface Module {
   description: string;
   difficulty: 'Easy' | 'Intermediate' | 'Advanced';
   order: number;
+  pdfUrl?: string;
   sections: ModuleSection[];
   quiz: ModuleQuiz;
   isActive: boolean;
@@ -86,7 +87,6 @@ interface ModuleSection {
   content: string;
   duration: string;
   order: number;
-  pdfUrl?: string;
   isActive: boolean;
 }
 
@@ -171,22 +171,21 @@ export default function EditModuleForm() {
 
       if (data.success) {
         const module = data.data.find((m: Module) => m.id === moduleId);
-        if (module) {
-          // Reset form with module data
+        if (module) {          // Reset form with module data
           form.reset({
             title: module.title,
             description: module.description,
             difficulty: module.difficulty,
             order: module.order,
+            pdfUrl: module.pdfUrl || "",
             sections: module.sections.map((section: ModuleSection) => ({
               id: section.id,
               title: section.title,
               content: section.content,
               duration: parseInt(section.duration.replace(" min", "")) || 5,
               order: section.order,
-              pdfUrl: section.pdfUrl || "",
               isActive: section.isActive,
-            })),            quiz: {
+            })),quiz: {
               id: module.quiz.id,
               title: module.quiz.title,
               description: module.quiz.description,
@@ -292,14 +291,12 @@ export default function EditModuleForm() {
     } finally {
       setIsSubmitting(false);
     }
-  };
-  const addSection = () => {
+  };  const addSection = () => {
     append({
       title: "",
       content: "",
       duration: 5,
       order: fields.length + 1,
-      pdfUrl: "",
       isActive: true,
     });
   };
@@ -395,6 +392,18 @@ export default function EditModuleForm() {
                             }}
                             onFocus={(e) => e.target.select()}
                           />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />                  <FormField
+                    control={form.control}
+                    name="pdfUrl"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Module PDF URL (Optional)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="https://example.com/module-document.pdf" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -519,23 +528,7 @@ export default function EditModuleForm() {
                             <FormMessage />
                           </FormItem>
                         )}
-                      />
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name={`sections.${index}.pdfUrl`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>PDF URL (Optional)</FormLabel>
-                              <FormControl>
-                                <Input placeholder="https://example.com/document.pdf" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
+                      />                      <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                         <FormField
                           control={form.control}
                           name={`sections.${index}.isActive`}

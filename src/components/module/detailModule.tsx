@@ -14,6 +14,7 @@ interface Module {
     description: string;
     difficulty: 'Easy' | 'Intermediate' | 'Advanced';
     order: number;
+    pdfUrl?: string;
     sections: ModuleSection[];
     quiz: ModuleQuiz;
     isActive: boolean;
@@ -26,7 +27,6 @@ interface ModuleSection {
     content: string;
     duration: string;
     order: number;
-    pdfUrl?: string;
     isActive: boolean;
 }
 
@@ -144,13 +144,16 @@ export default function DetailModule() {
                                 <span className="text-primary text-md font-bold">
                                     Module {module.order}
                                 </span>
-                            </div>
-                            <Button
+                            </div>                            <Button
                                 variant="ghost"
                                 size="icon"
-                                className="text-primary"                                onClick={() => {
-                                    // TODO: Implement download functionality
-                                    toast.info("Fitur unduh segera hadir!");
+                                className="text-primary"
+                                onClick={() => {
+                                    if (module.pdfUrl) {
+                                        window.open(module.pdfUrl, '_blank');
+                                    } else {
+                                        toast.info("Tidak ada PDF yang tersedia untuk modul ini");
+                                    }
                                 }}
                             >
                                 <Download size={22} />
@@ -244,21 +247,16 @@ export default function DetailModule() {
                                             <div className="text-xs text-gray-400">
                                                 {section.duration}
                                             </div>
-                                        </div>
-                                        <Button
+                                        </div>                                        <Button
                                             variant="ghost"
                                             size="icon"
                                             className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg cursor-pointer"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                if (section.pdfUrl) {
-                                                    window.open(section.pdfUrl, '_blank');
-                                                } else {
-                                                    toast.info("No PDF available for this section");
-                                                }
+                                                router.push(`/module/${id}/${section.id}`);
                                             }}
                                         >
-                                            <Download size={20} />
+                                            <FileText size={20} />
                                         </Button>
                                     </div>
                                 </div>

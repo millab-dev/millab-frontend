@@ -7,6 +7,7 @@ import QuizQuestion from "./QuizQuestion";
 import QuizSummary from "./QuizSummary";
 import QuizNavigation from "./QuizNavigation";
 import axiosClient from "@/lib/axios.client";
+import { awardQuizRewards } from "@/utils/progressionApi";
 
 export interface QuizOption {
     id: string;
@@ -19,6 +20,7 @@ export interface QuizQuestionData {
     question: string;
     options: QuizOption[];
     points: number;
+    explanation?: string;
 }
 
 export interface QuizAnswer {
@@ -44,6 +46,7 @@ interface Module {
     title: string;
     description: string;
     order: number;
+    difficulty: 'Easy' | 'Intermediate' | 'Advanced';
     sections: ModuleSection[];
     quiz: ModuleQuiz;
     isActive: boolean;
@@ -66,7 +69,6 @@ interface ModuleQuiz {
     description: string;
     duration: string;
     totalQuestions: number;
-    passingScore: number;
     questions: DatabaseQuizQuestion[];
     isActive: boolean;
 }
@@ -127,9 +129,7 @@ export default function Quiz() {
         } finally {
             setLoading(false);
         }
-    };
-
-    // Transform database quiz questions into UI format
+    };    // Transform database quiz questions into UI format
     const transformQuizQuestions = (dbQuestions: DatabaseQuizQuestion[]): QuizQuestionData[] => {
         return dbQuestions
             .sort((a, b) => a.order - b.order)
@@ -137,6 +137,7 @@ export default function Quiz() {
                 id: index + 1,
                 question: dbQuestion.question,
                 points: 1,
+                explanation: dbQuestion.explanation,
                 options: dbQuestion.options.map((option, optionIndex) => ({
                     id: String.fromCharCode(65 + optionIndex), // A, B, C, D
                     text: option,
@@ -234,10 +235,9 @@ export default function Quiz() {
 
     const currentQuestion = quizData[currentQuestionIndex];
     const totalQuestions = quizData.length;
-    const totalPoints = answers.reduce((sum, a) => sum + a.points, 0);
-
-    const submitQuizScore = async (score: number) => {
+    const totalPoints = answers.reduce((sum, a) => sum + a.points, 0);    const submitQuizScore = async (score: number) => {
         try {
+            // Submit score to existing endpoint
             const response = await axiosClient.post(`/api/v1/modules/${moduleId}/progress/quiz`, {
                 score: score,
                 completed: true
@@ -253,13 +253,36 @@ export default function Quiz() {
                         progress: data.data
                     });
                 }
-                
-                const passed = score >= (module?.quiz.passingScore || 70);
-                toast.success(
-                    passed 
-                        ? `Quiz completed! You scored ${score}% and passed!`
-                        : `Quiz completed! You scored ${score}%. You need ${module?.quiz.passingScore || 70}% to pass.`
-                );
+
+                // Award XP and points through progression system
+                if (module?.quiz?.id && module?.difficulty) {
+                    const correctAnswers = answers.filter(a => a.isCorrect).length;
+                    const attemptNumber = (module.progress?.quizAttempts || 0) + 1;
+                    const isFirstAttempt = attemptNumber === 1;
+
+                    const progressionResult = await awardQuizRewards(
+                        module.quiz.id,
+                        module.difficulty,
+                        correctAnswers, // Use correct answers instead of percentage for points
+                        totalQuestions,
+                        attemptNumber,
+                        isFirstAttempt
+                    );
+
+                    if (progressionResult.success && progressionResult.message) {
+                        toast.success(progressionResult.message, {
+                            duration: 4000,
+                        });
+                    } else {
+                        toast.success(`Quiz completed! You scored ${score}%`, {
+                            duration: 3000,
+                        });
+                    }
+                } else {
+                    toast.success(`Quiz completed! You scored ${score}%`, {
+                        duration: 3000,
+                    });
+                }
             } else {
                 toast.error(data.error || "Failed to submit quiz score");
             }
@@ -292,9 +315,7 @@ export default function Quiz() {
 
         setAnswers((prev) => [...prev, answer]);
         setShowResults(true);
-    };
-
-    const handleNextQuestion = () => {
+    };    const handleNextQuestion = async () => {
         if (currentQuestionIndex < totalQuestions - 1) {
             setCurrentQuestionIndex((prev) => prev + 1);
             setSelectedAnswer(null);
@@ -302,8 +323,12 @@ export default function Quiz() {
         } else {
             // Calculate final score and submit
             const finalScore = Math.round((totalPoints / totalQuestions) * 100);
-            submitQuizScore(finalScore);
-            setCurrentView("summary");
+            await submitQuizScore(finalScore);
+            
+            // Add delay to show the success toast before transitioning
+            setTimeout(() => {
+                setCurrentView("summary");
+            }, 2000); // 2 second delay
         }
     };
 

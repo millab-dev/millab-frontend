@@ -2,10 +2,105 @@
 import { Zap, Gem } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { SectionProps, informationTranslations } from './types'
+import { useState, useEffect } from 'react'
+
+interface UserProgression {
+  currentExp: number
+  level: number
+  expForNextLevel: number
+  totalExpForNextLevel: number
+  dayStreak: number
+  progressPercentage: number
+  points: number
+  rank: number
+}
+
+interface User {
+  name: string
+  username: string
+  // other user fields...
+}
 
 const InformationSection = ({ language = 'id' }: SectionProps) => {
     // Get translations based on language
     const t = informationTranslations[language];
+    
+    const [user, setUser] = useState<User | null>(null)
+    const [progression, setProgression] = useState<UserProgression | null>(null)
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetchUserData()
+    }, [])
+
+    const fetchUserData = async () => {
+        try {
+            // Fetch user progression data
+            const progressionResponse = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/progression/me`,
+                { credentials: "include" }
+            )
+            
+            if (progressionResponse.ok) {
+                const progressionData = await progressionResponse.json()
+                if (progressionData.success) {
+                    setProgression(progressionData.data)
+                }
+            }
+
+            // Fetch user profile data
+            const userResponse = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/auth/me`,
+                { credentials: "include" }
+            )
+            
+            if (userResponse.ok) {
+                const userData = await userResponse.json()
+                if (userData.success) {
+                    setUser(userData.data)
+                }
+            }        } catch (error) {
+            console.error('Error fetching user data:', error)
+            // Set default values for demo purposes
+            setUser({ name: 'Mimi', username: 'Mimi' })
+            setProgression({
+                currentExp: 12,
+                level: 1,
+                expForNextLevel: 108,                totalExpForNextLevel: 120,
+                dayStreak: 1,
+                progressPercentage: 10,
+                points: 235,
+                rank: 401
+            })
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const getUserDisplayName = () => {
+        if (loading) return 'Loading...'
+        if (!user || !user.username) return 'Mimi!'
+        
+        // Use username for display in homepage
+        return `${user.username}!`
+    }
+
+    const getProgressData = () => {
+        if (loading || !progression) {
+            return {
+                level: 1,
+                currentExp: 0,
+                totalExpForNextLevel: 120,
+                progressPercentage: 0,
+                dayStreak: 1,
+                points: 0
+            }
+        }
+        return progression
+    }
+
+    const progressData = getProgressData()
+
     return (
         <motion.div 
             className="px-4 pt-6 w-full mx-auto max-w-6xl"
@@ -49,7 +144,7 @@ const InformationSection = ({ language = 'id' }: SectionProps) => {
                         transition={{ duration: 0.5, delay: 0.5 }}
                     >
                         <p className="text-base md:text-3xl font-semibold">{t.welcomeBack}</p>
-                        <h2 className="text-3xl md:text-6xl font-bold">Mimi!</h2>
+                        <h2 className="text-3xl md:text-6xl font-bold">{getUserDisplayName()}</h2>
                     </motion.div>
                 </motion.div>
 
@@ -74,7 +169,9 @@ const InformationSection = ({ language = 'id' }: SectionProps) => {
                             whileTap={{ scale: 0.95 }}
                         >
                             <Zap size={18} className="text-primary mr-1.5" />
-                            <span className="font-semibold text-primary text-sm">1 Day Streak</span>
+                            <span className="font-semibold text-primary text-sm">
+                                {progressData.dayStreak} Day Streak
+                            </span>
                         </motion.div>
                         
                         <motion.div 
@@ -83,7 +180,7 @@ const InformationSection = ({ language = 'id' }: SectionProps) => {
                             whileTap={{ scale: 0.95 }}
                         >
                             <Gem size={18} className="mr-1" />
-                            <span className="font-semibold text-sm">235</span>
+                            <span className="font-semibold text-sm">{progressData.points}</span>
                         </motion.div>
                     </motion.div>
                     
@@ -101,13 +198,15 @@ const InformationSection = ({ language = 'id' }: SectionProps) => {
                                     backgroundColor: '#EF5BA1'
                                 }}
                                 initial={{ width: '0%' }}
-                                animate={{ width: '10%' }}
+                                animate={{ width: `${progressData.progressPercentage}%` }}
                                 transition={{ duration: 1, delay: 0.8 }}
                             />
                         </div>
                         <div className="flex justify-between mt-2 md:mt-3 text-xs md:text-sm">
-                            <span className="font-semibold text-white">Level 1</span>
-                            <span className="font-semibold text-white">0/120 xp</span>
+                            <span className="font-semibold text-white">Level {progressData.level}</span>
+                            <span className="font-semibold text-white">
+                                {progressData.currentExp}/{progressData.totalExpForNextLevel} xp
+                            </span>
                         </div>
                     </motion.div>
                 </motion.div>

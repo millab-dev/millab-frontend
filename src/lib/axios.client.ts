@@ -3,8 +3,7 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-    // Gunakan path relatif sehingga request akan dikirim ke domain frontend
-    // dan di-proxy oleh Next.js rewrites ke backend
+    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
     withCredentials: true,
 })
 export default axiosClient;

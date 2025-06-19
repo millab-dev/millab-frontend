@@ -38,8 +38,7 @@ export function useAuth() {
 
       if (data.success && data.data) {
         setUser(data.data);
-        
-        // Check if profile is incomplete
+          // Check if profile is incomplete
         const incomplete = !data.data.username || 
                           !data.data.gender || 
                           !data.data.birthplace || 

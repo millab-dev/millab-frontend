@@ -46,7 +46,7 @@ export default function AdminDashboard() {
         setStats({
           totalModules: modules.length,
           activeModules: modules.filter((m: any) => m.isActive).length,
-          totalUsers: 0, // TODO: Implement user count if needed
+          totalUsers: data.totalUsers || 0, // Assuming totalUsers is part of the response
           totalSections: totalSections,
         });
       }
@@ -56,7 +56,6 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
-
   const quickActions = [
     {
       title: "Create Module",
@@ -71,6 +70,13 @@ export default function AdminDashboard() {
       icon: Settings,
       action: () => router.push("/admin/modules"),
       color: "bg-green-500",
+    },
+    {
+      title: "App Settings",
+      description: "Configure global application settings",
+      icon: Settings,
+      action: () => router.push("/admin/settings"),
+      color: "bg-orange-500",
     },
     {
       title: "View Public Site",
@@ -179,16 +185,6 @@ export default function AdminDashboard() {
               </div>
               <Button variant="outline" onClick={() => router.push("/")}>
                 Preview
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
-              <div>
-                <h3 className="font-medium text-purple-900">User Progress</h3>
-                <p className="text-sm text-purple-700">Track student progress through modules and quizzes</p>
-              </div>
-              <Button variant="outline" disabled>
-                Coming Soon
               </Button>
             </div>
           </CardContent>

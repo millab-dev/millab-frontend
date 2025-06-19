@@ -1,15 +1,63 @@
 
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Phone } from "lucide-react";
 import { motion } from 'framer-motion';
 import { ProfileComponentProps, additionalInformationTranslations } from './types';
 
+interface UserData {
+  email: string;
+  phoneNumber: string;
+}
+
 const AdditionalInformation: React.FC<ProfileComponentProps> = ({ language = 'id' }) => {
   // Get translations based on language
   const t = additionalInformationTranslations[language];
+  
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/auth/me`,
+        { credentials: "include" }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setUserData({
+            email: result.data.email,
+            phoneNumber: result.data.phoneNumber
+          });
+        } else {
+          setFallbackData();
+        }
+      } else {
+        setFallbackData();
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setFallbackData();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const setFallbackData = () => {
+    setUserData({
+      email: 'user@example.com',
+      phoneNumber: '+628884620475'
+    });
+  };
+
   return (
     <motion.div 
       className="w-full max-w-5xl mx-auto mt-4"
@@ -47,7 +95,9 @@ const AdditionalInformation: React.FC<ProfileComponentProps> = ({ language = 'id
               >
                 <Mail className="h-5 w-5 text-primary mr-3" />
               </motion.div>
-              <span className="text-gray-700 text-sm md:text-base font-semibold">dienfitriani@gmail.com</span>
+              <span className="text-gray-700 text-sm md:text-base font-semibold">
+                {loading ? 'Loading...' : (userData?.email || 'user@example.com')}
+              </span>
             </motion.div>
             
             {/* Phone Information */}
@@ -64,7 +114,9 @@ const AdditionalInformation: React.FC<ProfileComponentProps> = ({ language = 'id
               >
                 <Phone className="h-5 w-5 text-primary mr-3" />
               </motion.div>
-              <span className="text-gray-700 text-sm md:text-base font-semibold">+628884620475</span>
+              <span className="text-gray-700 text-sm md:text-base font-semibold">
+                {loading ? 'Loading...' : (userData?.phoneNumber || '+628884620475')}
+              </span>
             </motion.div>
             </div>
           </CardContent>

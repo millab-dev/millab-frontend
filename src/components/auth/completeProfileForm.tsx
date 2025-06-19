@@ -53,9 +53,7 @@ export default function CompleteProfileForm({ language = 'id' }: CompleteProfile
     const router = useRouter();
     
     // Get translations based on language
-    const t = completeProfileTranslations[language];
-
-    const form = useForm<z.infer<typeof formSchema>>({
+    const t = completeProfileTranslations[language];    const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
@@ -65,7 +63,7 @@ export default function CompleteProfileForm({ language = 'id' }: CompleteProfile
             socialization: "",
             phone: "",
         },
-    });    async function onSubmit(values: z.infer<typeof formSchema>) {
+    });async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsSubmitting(true);
         
         // Create a unique toast ID for the loading notification
@@ -74,8 +72,7 @@ export default function CompleteProfileForm({ language = 'id' }: CompleteProfile
         // Show initial loading toast
         toast.loading(t.completing, { id: loadingToastId });
         
-        try {
-            // Mapping data form to API format
+        try {            // Mapping data form to API format
             const profileData = {
                 name: values.name,
                 username: values.username,

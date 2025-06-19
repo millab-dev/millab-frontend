@@ -35,7 +35,6 @@ interface ModuleQuiz {
   description: string;
   duration: string;
   totalQuestions: number;
-  passingScore: number;
   isActive: boolean;
 }
 
@@ -139,9 +138,9 @@ export default function AdminModuleList() {
       </div>
     );
   }
-
   return (
-    <div className="min-h-screen bg-gray-50 p-8 font-jakarta">      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-8 font-jakarta">
+      <div className="max-w-6xl mx-auto">
         {/* Back Button */}
         <Button
           variant="ghost"
@@ -210,11 +209,9 @@ export default function AdminModuleList() {
                       <div 
                         className="text-gray-600 mt-1 prose prose-sm max-w-none"
                         dangerouslySetInnerHTML={{ __html: module.description }}
-                      />
-                      <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                      />                      <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
                         <span>{module.sections.length} sections</span>
                         <span>Quiz: {module.quiz.totalQuestions} questions</span>
-                        <span>Passing score: {module.quiz.passingScore}%</span>
                       </div>
                     </div>
 
