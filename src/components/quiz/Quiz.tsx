@@ -7,6 +7,7 @@ import QuizQuestion from "./QuizQuestion";
 import QuizSummary from "./QuizSummary";
 import QuizNavigation from "./QuizNavigation";
 import axiosClient from "@/lib/axios.client";
+import { awardQuizRewards } from "@/utils/progressionApi";
 
 export interface QuizOption {
     id: string;
@@ -45,6 +46,7 @@ interface Module {
     title: string;
     description: string;
     order: number;
+    difficulty: 'Easy' | 'Intermediate' | 'Advanced';
     sections: ModuleSection[];
     quiz: ModuleQuiz;
     isActive: boolean;
@@ -235,6 +237,7 @@ export default function Quiz() {
     const totalQuestions = quizData.length;
     const totalPoints = answers.reduce((sum, a) => sum + a.points, 0);    const submitQuizScore = async (score: number) => {
         try {
+            // Submit score to existing endpoint
             const response = await axiosClient.post(`/api/v1/modules/${moduleId}/progress/quiz`, {
                 score: score,
                 completed: true
@@ -250,10 +253,36 @@ export default function Quiz() {
                         progress: data.data
                     });
                 }
-                
-                toast.success(`Quiz completed! You scored ${score}%`, {
-                    duration: 3000, // Show for 3 seconds
-                });
+
+                // Award XP and points through progression system
+                if (module?.quiz?.id && module?.difficulty) {
+                    const correctAnswers = answers.filter(a => a.isCorrect).length;
+                    const attemptNumber = (module.progress?.quizAttempts || 0) + 1;
+                    const isFirstAttempt = attemptNumber === 1;
+
+                    const progressionResult = await awardQuizRewards(
+                        module.quiz.id,
+                        module.difficulty,
+                        correctAnswers, // Use correct answers instead of percentage for points
+                        totalQuestions,
+                        attemptNumber,
+                        isFirstAttempt
+                    );
+
+                    if (progressionResult.success && progressionResult.message) {
+                        toast.success(progressionResult.message, {
+                            duration: 4000,
+                        });
+                    } else {
+                        toast.success(`Quiz completed! You scored ${score}%`, {
+                            duration: 3000,
+                        });
+                    }
+                } else {
+                    toast.success(`Quiz completed! You scored ${score}%`, {
+                        duration: 3000,
+                    });
+                }
             } else {
                 toast.error(data.error || "Failed to submit quiz score");
             }

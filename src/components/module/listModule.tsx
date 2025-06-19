@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import Navbar from "../core/Navbar";
 import axiosClient from "@/lib/axios.client";
+import { downloadAllPdf } from "@/utils/settingsApi";
 
 interface Module {
     id: string;
@@ -17,6 +18,7 @@ interface Module {
     description: string;
     difficulty: 'Easy' | 'Intermediate' | 'Advanced';
     order: number;
+    pdfUrl?: string;
     sections: ModuleSection[];
     quiz: ModuleQuiz;
     isActive: boolean;
@@ -29,7 +31,6 @@ interface ModuleSection {
     content: string;
     duration: string;
     order: number;
-    pdfUrl?: string;
     isActive: boolean;
 }
 
@@ -83,9 +84,16 @@ export default function ListModule() {
 
     const handleModuleClick = (id: string) => {
         router.push(`/module/${id}`);
-    };    const downloadAllModules = () => {
-        // TODO: Implement download all functionality
-        toast.info("Fitur unduh semua segera hadir!");
+    };    const downloadAllModules = async () => {
+        try {
+            const success = await downloadAllPdf();
+            if (!success) {
+                toast.info("Fitur unduh semua belum dikonfigurasi");
+            }
+        } catch (error) {
+            console.error("Error downloading all modules:", error);
+            toast.error("Gagal mengunduh semua modul");
+        }
     };
 
     if (loading) {
@@ -202,15 +210,17 @@ export default function ListModule() {
                                                     {progress}% selesai
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <Button
+                                        </div>                                        <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg cursor-pointer"                                            onClick={(e) => {
+                                            className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg cursor-pointer"
+                                            onClick={(e) => {
                                                 e.stopPropagation();
-                                                // TODO: Implement individual module download
-                                                toast.info("Unduh modul segera hadir!");
+                                                if (module.pdfUrl) {
+                                                    window.open(module.pdfUrl, '_blank');
+                                                } else {
+                                                    toast.info("Tidak ada PDF yang tersedia untuk modul ini");
+                                                }
                                             }}
                                         >
                                             <Download size={20} />

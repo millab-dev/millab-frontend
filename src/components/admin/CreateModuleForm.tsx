@@ -33,7 +33,6 @@ const sectionSchema = z.object({
   content: z.string().min(1, "Section content is required"),
   duration: z.coerce.number().min(1, "Duration must be at least 1 minute"),
   order: z.coerce.number().min(0, "Order must be positive"),
-  pdfUrl: z.string().optional(),
   isActive: z.boolean(),
 });
 
@@ -62,6 +61,7 @@ const moduleSchema = z.object({
     errorMap: () => ({ message: "Please select a difficulty level" })
   }),
   order: z.coerce.number().min(1, "Order must be positive"),
+  pdfUrl: z.string().optional(),
   sections: z.array(sectionSchema).min(1, "Must have at least one section"),
   quiz: quizSchema,
   isActive: z.boolean(),
@@ -72,21 +72,20 @@ type ModuleFormData = z.infer<typeof moduleSchema>;
 export default function CreateModuleForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  
-  const form = useForm<ModuleFormData>({
+    const form = useForm<ModuleFormData>({
     resolver: zodResolver(moduleSchema),
     defaultValues: {
       title: "",
       description: "",
       difficulty: "Easy" as const,
       order: 1,
+      pdfUrl: "",
       sections: [
         {
           title: "",
           content: "",
           duration: 5,
           order: 1,
-          pdfUrl: "",
           isActive: true,
         },
       ],
@@ -187,14 +186,12 @@ export default function CreateModuleForm() {
       setIsSubmitting(false);
     }
   };
-
   const addSection = () => {
     append({
       title: "",
       content: "",
       duration: 5,
       order: fields.length + 1,
-      pdfUrl: "",
       isActive: true,
     });
   };
@@ -409,23 +406,7 @@ export default function CreateModuleForm() {
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name={`sections.${index}.pdfUrl`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>PDF URL (Optional)</FormLabel>
-                            <FormControl>
-                              <Input placeholder="https://example.com/document.pdf" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
+                    />                    <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
                         name={`sections.${index}.isActive`}

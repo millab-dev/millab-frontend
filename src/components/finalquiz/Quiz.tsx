@@ -8,6 +8,7 @@ import QuizSummary from "./QuizSummary";
 import QuizNavigation from "./QuizNavigation";
 import { Quiz as QuizType } from "@/actions/quiz.service";
 import { addUserScore } from "@/actions/userScore.add-score";
+import { awardFinalQuizRewards } from "@/utils/progressionApi";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 
@@ -37,9 +38,10 @@ interface QuizProps {
     quiz: QuizType;
     userId: string;
     urlBase: string;
+    isFirstAttempt?: boolean; // Track if this is the first attempt
 }
 
-export default function Quiz({ quiz, userId, urlBase }: QuizProps) {
+export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true }: QuizProps) {
     const router = useRouter();
 
     // Map questions to add id and points if not present (for compatibility)
@@ -133,18 +135,34 @@ export default function Quiz({ quiz, userId, urlBase }: QuizProps) {
             }
         });
         setShowResults(true);
-    };
-
-    const handleNextQuestion = async () => {
+    };    const handleNextQuestion = async () => {
         if (currentQuestionIndex < totalQuestions - 1) {
             setCurrentQuestionIndex((prev) => prev + 1);
         } else {
             localStorage.removeItem(`quiz-answers-${quiz.id}`);
             try {
+                // Add score to existing system
                 addUserScore(userId as string, totalPoints);
-                toast.success(`You scored ${totalPoints} points!`);
+
+                // Award XP and points through progression system
+                const progressionResult = await awardFinalQuizRewards(
+                    quiz.id,
+                    totalPoints,
+                    totalQuestions,
+                    isFirstAttempt
+                );
+
+                if (progressionResult.success && progressionResult.message) {
+                    toast.success(progressionResult.message, {
+                        duration: 4000,
+                    });
+                } else {
+                    toast.success(`You scored ${totalPoints} points!`);
+                }
+
                 setCurrentView("summary");
             } catch (error: unknown) {
+                console.error("Error submitting final quiz:", error);
                 toast.error("Failed to add score", {
                     description: error instanceof AxiosError ? error.response?.data.message : "Unknown error",
                 });

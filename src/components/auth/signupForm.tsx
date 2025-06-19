@@ -67,9 +67,7 @@ export default function SignupForm({ language = 'id' }: SignupFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const [calendarOpen, setCalendarOpen] = useState(false);
-    const router = useRouter();
-
-    const form = useForm<z.infer<typeof formSchema>>({
+    const router = useRouter();    const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
@@ -92,8 +90,7 @@ export default function SignupForm({ language = 'id' }: SignupFormProps) {
         // Show initial loading toast
         toast.loading(t.creating, { id: loadingToastId });
         
-        try {
-            // Mapping data form ke format API
+        try {            // Mapping data form ke format API
             const registerData = {
                 name: values.name,
                 username: values.username,
@@ -214,8 +211,7 @@ export default function SignupForm({ language = 'id' }: SignupFormProps) {
                         <form
                             onSubmit={form.handleSubmit(onSubmit)}
                             className="space-y-4"
-                        >
-                            <FormField
+                        >                            <FormField
                                 control={form.control}
                                 name="name"
                                 render={({ field }) => (
@@ -228,8 +224,7 @@ export default function SignupForm({ language = 'id' }: SignupFormProps) {
                                             />
                                         </FormControl>
                                         <FormMessage />
-                                    </FormItem>
-                                )}
+                                    </FormItem>                                )}
                             />
 
                             <FormField

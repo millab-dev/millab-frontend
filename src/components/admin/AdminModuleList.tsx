@@ -138,9 +138,9 @@ export default function AdminModuleList() {
       </div>
     );
   }
-
   return (
-    <div className="min-h-screen bg-gray-50 p-8 font-jakarta">      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-8 font-jakarta">
+      <div className="max-w-6xl mx-auto">
         {/* Back Button */}
         <Button
           variant="ghost"
