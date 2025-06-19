@@ -84,9 +84,8 @@ const Leaderboard: React.FC<ProfileComponentProps> = ({ language = 'id' }) => {
             className="h-12 w-12 mr-2 flex-shrink-0"
           />
           <span className="text-sm md:text-base font-medium truncate">{entry.name}</span>
-        </div>
-        <div className="text-sm md:text-base text-gray-600 font-medium flex-shrink-0 w-[60px] text-right">
-          {entry.score} {t.xpLabel}
+        </div>        <div className="text-sm md:text-base text-gray-600 font-medium flex-shrink-0 w-[60px] text-right">
+          {entry.score} {t.pointsLabel}
         </div>
       </div>
     );
