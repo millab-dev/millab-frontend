@@ -66,7 +66,6 @@ interface ModuleQuiz {
     description: string;
     duration: string;
     totalQuestions: number;
-    passingScore: number;
     questions: DatabaseQuizQuestion[];
     isActive: boolean;
 }
@@ -234,9 +233,7 @@ export default function Quiz() {
 
     const currentQuestion = quizData[currentQuestionIndex];
     const totalQuestions = quizData.length;
-    const totalPoints = answers.reduce((sum, a) => sum + a.points, 0);
-
-    const submitQuizScore = async (score: number) => {
+    const totalPoints = answers.reduce((sum, a) => sum + a.points, 0);    const submitQuizScore = async (score: number) => {
         try {
             const response = await axiosClient.post(`/api/v1/modules/${moduleId}/progress/quiz`, {
                 score: score,
@@ -254,12 +251,9 @@ export default function Quiz() {
                     });
                 }
                 
-                const passed = score >= (module?.quiz.passingScore || 70);
-                toast.success(
-                    passed 
-                        ? `Quiz completed! You scored ${score}% and passed!`
-                        : `Quiz completed! You scored ${score}%. You need ${module?.quiz.passingScore || 70}% to pass.`
-                );
+                toast.success(`Quiz completed! You scored ${score}%`, {
+                    duration: 3000, // Show for 3 seconds
+                });
             } else {
                 toast.error(data.error || "Failed to submit quiz score");
             }
@@ -292,9 +286,7 @@ export default function Quiz() {
 
         setAnswers((prev) => [...prev, answer]);
         setShowResults(true);
-    };
-
-    const handleNextQuestion = () => {
+    };    const handleNextQuestion = async () => {
         if (currentQuestionIndex < totalQuestions - 1) {
             setCurrentQuestionIndex((prev) => prev + 1);
             setSelectedAnswer(null);
@@ -302,8 +294,12 @@ export default function Quiz() {
         } else {
             // Calculate final score and submit
             const finalScore = Math.round((totalPoints / totalQuestions) * 100);
-            submitQuizScore(finalScore);
-            setCurrentView("summary");
+            await submitQuizScore(finalScore);
+            
+            // Add delay to show the success toast before transitioning
+            setTimeout(() => {
+                setCurrentView("summary");
+            }, 2000); // 2 second delay
         }
     };
 

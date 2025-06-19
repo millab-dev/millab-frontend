@@ -84,7 +84,7 @@ export const discoverTranslations: TranslationsType = {
     categories: {
       beginner: "Pemula",
       intermediate: "Menengah",
-      advanced: "Lanjutan"
+      advanced: "Sulit"
     }
   },
   en: {
@@ -107,7 +107,7 @@ export const continueReadingTranslations: TranslationsType = {
     categories: {
       beginner: "Pemula",
       intermediate: "Menengah",
-      advanced: "Lanjutan"
+      advanced: "Sulit"
     }
   },
   en: {

@@ -39,7 +39,6 @@ interface ModuleQuiz {
     description: string;
     duration: string;
     totalQuestions: number;
-    passingScore: number;
     isActive: boolean;
 }
 
