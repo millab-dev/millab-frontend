@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import authLogo from "@/assets/authLogo.svg";
+import cloud from "@/assets/cloudPatternBlue.svg";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -40,11 +40,20 @@ const formSchema = z.object({
     phone: z.string().optional(),
 });
 
-export default function CompleteProfileForm() {
+import { completeProfileTranslations, Language } from "./types";
+
+interface CompleteProfileFormProps {
+    language?: Language;
+}
+
+export default function CompleteProfileForm({ language = 'id' }: CompleteProfileFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isRedirecting, setIsRedirecting] = useState(false);
     const [calendarOpen, setCalendarOpen] = useState(false);
     const router = useRouter();
+    
+    // Get translations based on language
+    const t = completeProfileTranslations[language];
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -63,7 +72,7 @@ export default function CompleteProfileForm() {
         const loadingToastId = "complete-profile-loading-" + Date.now();
         
         // Show initial loading toast
-        toast.loading("Completing your profile...", { id: loadingToastId });
+        toast.loading(t.completing, { id: loadingToastId });
         
         try {
             // Mapping data form to API format
@@ -95,9 +104,9 @@ export default function CompleteProfileForm() {
             toast.dismiss(loadingToastId);            if (data.success) {
                 // Profile completion successful - use a new unique ID for success toast
                 const successToastId = "complete-profile-success-" + Date.now();
-                toast.success("Profile completed successfully!", {
+                toast.success(language === 'id' ? "Profil berhasil dilengkapi!" : "Profile completed successfully!", {
                     id: successToastId,
-                    description: "Redirecting to home page...",
+                    description: language === 'id' ? "Mengalihkan ke halaman utama..." : "Redirecting to home page...",
                     duration: 3000,
                 });
 
@@ -111,9 +120,9 @@ export default function CompleteProfileForm() {
             } else {
                 // Profile completion failed - use a new unique ID for error toast
                 const errorToastId = "complete-profile-error-" + Date.now();
-                toast.error("Profile completion failed", {
+                toast.error(language === 'id' ? "Gagal melengkapi profil" : "Profile completion failed", {
                     id: errorToastId,
-                    description: data.error || "Something went wrong. Please try again.",
+                    description: data.error || (language === 'id' ? "Terjadi kesalahan. Silakan coba lagi." : "Something went wrong. Please try again."),
                     duration: 5000, // Keep error message visible for 5 seconds
                 });
             }
@@ -123,34 +132,39 @@ export default function CompleteProfileForm() {
             
             // Show error toast with a new unique ID
             const catchErrorToastId = "complete-profile-catch-error-" + Date.now();
-            toast.error("Error completing profile", {
+            toast.error(language === 'id' ? "Terjadi kesalahan saat melengkapi profil" : "Error completing profile", {
                 id: catchErrorToastId,
-                description: error instanceof Error ? error.message : "Unknown error occurred",
+                description: error instanceof Error ? error.message : (language === 'id' ? "Terjadi kesalahan yang tidak diketahui" : "Unknown error occurred"),
                 duration: 5000, // Keep error message visible for 5 seconds
             });
         } finally {
             setIsSubmitting(false);
         }
     }    return (
-        <div className="flex min-h-screen items-center justify-center font-jakarta my-8 mx-5 sm:mx-0">
-            <div className="w-full max-w-md">
-                <div className="flex items-center justify-center gap-2 mb-8">
+        <div 
+            className="flex min-h-screen pb-12 pt-8 items-center justify-center font-jakarta overflow-x-hidden bg-[#F8F8F8] bg-repeat bg-[length:600px] lg:bg-[length:800px]"
+            style={{
+                backgroundImage: `url(${cloud.src})`,
+            }}
+        >
+            <div className="w-full max-w-md px-4">
+                <div className="flex items-center justify-center gap-2 mb-4">
                     <Image
-                        src={authLogo}
+                        src="/millab-logo.svg"
                         alt="MIL Logo"
+                        width={200}
+                        height={200}
                         className="object-contain"
                     />
                 </div>
 
                 <div className="bg-white rounded-xl shadow-[0_0_10px_0_rgba(0,0,0,0.27)] p-8">
-                    <h1 className="text-4xl font-bold text-center mb-4">
-                        Complete Your Profile
+                    <h1 className="text-2xl font-bold tracking-tight text-center mb-2">
+                        {t.title}
                     </h1>
 
-                    <p className="text-center mb-8">
-                        Please complete your profile information
-                        <br />
-                        to continue using MilBoard.
+                    <p className="text-sm text-center text-muted-foreground mb-6">
+                        {t.welcome}
                     </p>
 
                     <Form {...form}>
@@ -162,10 +176,10 @@ export default function CompleteProfileForm() {
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Name*</FormLabel>
+                                        <FormLabel>{t.name}*</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Citra Lesmana"
+                                                placeholder="Isa Citra Buana"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -179,10 +193,10 @@ export default function CompleteProfileForm() {
                                 name="username"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Username*</FormLabel>
+                                        <FormLabel>{t.username}*</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="citrabelajarliterasi"
+                                                placeholder="isacitra"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -196,7 +210,7 @@ export default function CompleteProfileForm() {
                                 name="gender"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gender*</FormLabel>
+                                        <FormLabel>{t.gender}*</FormLabel>
                                         <FormControl>
                                             <RadioGroup
                                                 onValueChange={field.onChange}
@@ -209,7 +223,7 @@ export default function CompleteProfileForm() {
                                                         id="Female"
                                                     />
                                                     <label htmlFor="Female">
-                                                        Female
+                                                        {t.female}
                                                     </label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
@@ -218,7 +232,7 @@ export default function CompleteProfileForm() {
                                                         id="Male"
                                                     />
                                                     <label htmlFor="Male">
-                                                        Male
+                                                        {t.male}
                                                     </label>
                                                 </div>
                                             </RadioGroup>
@@ -233,7 +247,7 @@ export default function CompleteProfileForm() {
                                 name="birthplace"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Birthplace*</FormLabel>
+                                        <FormLabel>{t.birthplace}*</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Solo"
@@ -250,7 +264,7 @@ export default function CompleteProfileForm() {
                                 name="birthdate"
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col">
-                                        <FormLabel>Birthdate*</FormLabel>
+                                        <FormLabel>{t.birthdate}*</FormLabel>
                                         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                                             <PopoverTrigger asChild>
                                                 <FormControl>
@@ -262,7 +276,7 @@ export default function CompleteProfileForm() {
                                                         {field.value ? (
                                                             format(field.value, "PPP")
                                                         ) : (
-                                                            <span>Pick a date</span>
+                                                            <span>{language === 'id' ? "Pilih tanggal" : "Pick a date"}</span>
                                                         )}
                                                         <CalendarIcon className="ml-auto h-4 w-4 text-primary" />
                                                     </Button>
@@ -300,7 +314,7 @@ export default function CompleteProfileForm() {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            School/Socialization Location*
+                                            {t.socialization}*
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -318,7 +332,7 @@ export default function CompleteProfileForm() {
                                 name="phone"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Phone Number</FormLabel>
+                                        <FormLabel>{t.phone}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="08123456789"
@@ -334,10 +348,10 @@ export default function CompleteProfileForm() {
                                 disabled={isSubmitting || isRedirecting}
                             >
                                 {isRedirecting
-                                    ? "Redirecting..."
+                                    ? t.redirecting
                                     : isSubmitting
-                                    ? "Completing Profile..."
-                                    : "Complete Profile"}
+                                    ? t.completing
+                                    : t.completeProfile}
                             </Button>
                         </form>
                     </Form>

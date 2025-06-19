@@ -53,7 +53,6 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
           { name: t.navItems[1].name, path: t.navItems[1].path }, // Module
           { name: t.navItems[2].name, path: t.navItems[2].path }, // Final Quiz
           { name: t.navItems[3].name, path: t.navItems[3].path }, // Profile
-          { name: t.navItems[4].name, path: t.navItems[4].path }, // About Us
         ]
       : [
           { name: t.navItems[4].name, path: t.navItems[4].path }, // About Us

@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import authLogo from "@/assets/authLogo.svg";
+import cloud from "@/assets/cloudPatternBlue.svg";
+import { Language, signupTranslations } from "./types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -56,7 +57,12 @@ const formSchema = z.object({
     phone: z.string().optional(),
 });
 
-export default function SignupForm() {
+export interface SignupFormProps {
+    language?: Language;
+}
+
+export default function SignupForm({ language = 'id' }: SignupFormProps) {
+    const t = signupTranslations[language];
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -84,7 +90,7 @@ export default function SignupForm() {
         const loadingToastId = "signup-loading-" + Date.now();
         
         // Show initial loading toast
-        toast.loading("Creating your account...", { id: loadingToastId });
+        toast.loading(t.creating, { id: loadingToastId });
         
         try {
             // Mapping data form ke format API
@@ -100,6 +106,12 @@ export default function SignupForm() {
                 phoneNumber: values.phone || "",
             };
 
+            // Menampilkan notifikasi saat fetch berjalan
+            toast.info(language === 'id' ? "Sedang mendaftarkan akun..." : "Registering your account...", {
+                id: loadingToastId + "-info",
+                duration: 3000
+            });
+            
             // Direct fetch to API
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/auth/register`,
@@ -122,9 +134,9 @@ export default function SignupForm() {
             if (data.success) {
                 // Pendaftaran berhasil - use a new unique ID for success toast
                 const successToastId = "signup-success-" + Date.now();
-                toast.success("Registration successful", {
+                toast.success(language === 'id' ? "Pendaftaran berhasil" : "Registration successful", {
                     id: successToastId,
-                    description: "Your account has been created. Redirecting to login...",
+                    description: language === 'id' ? "Akun berhasil dibuat. Mengalihkan ke halaman login..." : "Your account has been created. Redirecting to login...",
                     duration: 3000,
                 });
 
@@ -135,9 +147,9 @@ export default function SignupForm() {
             } else {
                 // Pendaftaran gagal - use a new unique ID for error toast
                 const errorToastId = "signup-error-" + Date.now();
-                toast.error("Registration failed", {
+                toast.error(language === 'id' ? "Pendaftaran gagal" : "Registration failed", {
                     id: errorToastId,
-                    description: data.error || "Something went wrong. Please try again.",
+                    description: data.error || (language === 'id' ? "Terjadi kesalahan. Silakan coba lagi." : "Something went wrong. Please try again."),
                     duration: 5000, // Keep error message visible for 5 seconds
                 });
             }
@@ -147,9 +159,9 @@ export default function SignupForm() {
             
             // Show error toast with a new unique ID
             const catchErrorToastId = "signup-catch-error-" + Date.now();
-            toast.error("Error during registration", {
+            toast.error(language === 'id' ? "Terjadi kesalahan saat pendaftaran" : "Error during registration", {
                 id: catchErrorToastId,
-                description: error instanceof Error ? error.message : "Unknown error occurred",
+                description: error instanceof Error ? error.message : (language === 'id' ? "Terjadi kesalahan yang tidak diketahui" : "Unknown error occurred"),
                 duration: 5000, // Keep error message visible for 5 seconds
             });
         } finally {
@@ -166,31 +178,36 @@ export default function SignupForm() {
             
         } catch (error: any) {
             console.error("Google Sign-In error:", error);
-            toast.error("Google Sign-In failed. Please try again.");
+            toast.error(language === 'id' ? "Masuk dengan Google gagal. Silakan coba lagi." : "Google Sign-In failed. Please try again.");
             setIsGoogleLoading(false);
         }
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center font-jakarta my-8 mx-5 sm:mx-0">
-            <div className="w-full max-w-md">
-                <div className="flex items-center justify-center gap-2 mb-8">
+        <div 
+            className="flex min-h-screen pb-12 pt-8 items-center justify-center font-jakarta overflow-x-hidden bg-[#F8F8F8] bg-repeat bg-[length:600px] lg:bg-[length:800px]"
+            style={{
+                backgroundImage: `url(${cloud.src})`,
+            }}
+        >
+            <div className="w-full max-w-md px-4">
+                <div className="flex items-center justify-center gap-2 mb-4">
                     <Image
-                        src={authLogo}
+                        src="/millab-logo.svg"
                         alt="MIL Logo"
                         className="object-contain"
+                        height={200}
+                        width={200}
                     />
                 </div>
 
                 <div className="bg-white rounded-xl shadow-[0_0_10px_0_rgba(0,0,0,0.27)] p-8">
-                    <h1 className="text-4xl font-bold text-center mb-4">
-                        Sign Up
+                    <h1 className="text-2xl font-bold tracking-tight text-center mb-2">
+                        {t.title}
                     </h1>
 
-                    <p className="text-center mb-8">
-                        Sign up for free and start your
-                        <br />
-                        learning journey today.
+                    <p className="text-sm text-center text-muted-foreground mb-6">
+                        {t.welcome}
                     </p>
 
                     <Form {...form}>
@@ -203,10 +220,10 @@ export default function SignupForm() {
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Name*</FormLabel>
+                                        <FormLabel>{t.name}</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Citra Lesmana"
+                                                placeholder="Isa Citra Buana"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -220,10 +237,10 @@ export default function SignupForm() {
                                 name="username"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Username*</FormLabel>
+                                        <FormLabel>{t.username}</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="citrabelajarliterasi"
+                                                placeholder="isacitra"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -237,7 +254,7 @@ export default function SignupForm() {
                                 name="password"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Password*</FormLabel>
+                                        <FormLabel>{t.password}</FormLabel>
                                         <div className="relative">
                                             <FormControl>
                                                 <Input
@@ -278,7 +295,7 @@ export default function SignupForm() {
                                 name="gender"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gender*</FormLabel>
+                                        <FormLabel>{t.gender}</FormLabel>
                                         <FormControl>
                                             <RadioGroup
                                                 onValueChange={field.onChange}
@@ -291,7 +308,7 @@ export default function SignupForm() {
                                                         id="Female"
                                                     />
                                                     <label htmlFor="Female">
-                                                        Female
+                                                        {t.female}
                                                     </label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
@@ -300,7 +317,7 @@ export default function SignupForm() {
                                                         id="Male"
                                                     />
                                                     <label htmlFor="Male">
-                                                        Male
+                                                        {t.male}
                                                     </label>
                                                 </div>
                                             </RadioGroup>
@@ -315,7 +332,7 @@ export default function SignupForm() {
                                 name="birthplace"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Birthplace*</FormLabel>
+                                        <FormLabel>{t.birthplace}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Solo"
@@ -332,7 +349,7 @@ export default function SignupForm() {
                                 name="birthdate"
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col">
-                                        <FormLabel>Birthdate*</FormLabel>
+                                        <FormLabel>{t.birthdate}</FormLabel>
                                         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                                             <PopoverTrigger asChild>
                                                 <FormControl>
@@ -344,7 +361,7 @@ export default function SignupForm() {
                                                         {field.value ? (
                                                             format(field.value, "PPP")
                                                         ) : (
-                                                            <span>Pick a date</span>
+                                                            <span>{language === 'id' ? "Pilih tanggal" : "Pick a date"}</span>
                                                         )}
                                                         <CalendarIcon className="ml-auto h-4 w-4 text-primary" />
                                                     </Button>
@@ -400,7 +417,7 @@ export default function SignupForm() {
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Email*</FormLabel>
+                                        <FormLabel>{t.email}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="email"
@@ -418,7 +435,7 @@ export default function SignupForm() {
                                 name="phone"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Phone Number</FormLabel>
+                                        <FormLabel>{t.phone}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="08123456789"
@@ -436,8 +453,8 @@ export default function SignupForm() {
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting
-                                    ? "Creating Account..."
-                                    : "Sign Up"}
+                                    ? t.creating
+                                    : t.signUp}
                             </Button>
                         </form>
                     </Form>
@@ -449,7 +466,7 @@ export default function SignupForm() {
                             </div>
                             <div className="relative flex justify-center text-xs uppercase">
                                 <span className="bg-white px-2 text-muted-foreground">
-                                    Or continue with
+                                    {t.orContinueWith}
                                 </span>
                             </div>
                         </div>
@@ -462,7 +479,7 @@ export default function SignupForm() {
                             disabled={isGoogleLoading}
                         >
                             {isGoogleLoading ? (
-                                "Signing in with Google..."
+                                t.signingWithGoogle
                             ) : (
                                 <>
                                     <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
@@ -483,19 +500,19 @@ export default function SignupForm() {
                                             d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                                         />
                                     </svg>
-                                    Continue with Google
+                                    {t.continueWithGoogle}
                                 </>
                             )}
                         </Button>
                     </div>
 
                     <p className="text-center mt-6 text-muted-foreground font-medium">
-                        Already have an account?{" "}
+                        {t.alreadyHaveAccount}{" "}
                         <Link
                             href="/signin"
                             className="font-bold text-foreground"
                         >
-                            Sign In
+                            {t.signIn}
                         </Link>
                     </p>
                 </div>

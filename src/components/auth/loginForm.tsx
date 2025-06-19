@@ -2,13 +2,15 @@
 
 import Image from "next/image";
 import authLogo from "@/assets/authLogo.svg";
+import cloud from "@/assets/cloudPatternBlue.svg";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Language, loginTranslations } from "./types";
 import { z } from "zod";
 import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,12 +29,17 @@ const formSchema = z.object({
     password: z.string().min(1, "Password harus diisi"),
 });
 
-export default function LoginForm() {
+export interface LoginFormProps {
+    errorParam: string | null;
+    language?: Language;
+}
+
+export default function LoginForm({ errorParam, language = 'id' }: LoginFormProps) {
+    const t = loginTranslations[language];
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const router = useRouter();
-    const searchParams = useSearchParams();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -44,9 +51,8 @@ export default function LoginForm() {
 
     // Handle OAuth error messages
     useEffect(() => {
-        const error = searchParams.get('error');
-        if (error) {
-            switch (error) {
+        if (errorParam) {
+            switch (errorParam) {
                 case 'oauth_cancelled':
                     toast.error('Google sign-in was cancelled');
                     break;
@@ -59,12 +65,10 @@ export default function LoginForm() {
                 default:
                     toast.error('An error occurred. Please try again.');
             }
-            // Clear the error from URL
-            const url = new URL(window.location.href);
-            url.searchParams.delete('error');
-            window.history.replaceState({}, '', url.toString());
+            // Optionally clear the error from URL for better UX
+            // This is now handled server-side
         }
-    }, [searchParams]);
+    }, [errorParam]);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
@@ -109,27 +113,29 @@ export default function LoginForm() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center font-jakarta mx-5 sm:mx-0">
-            <div className="w-full max-w-md">
-                <div className="flex items-center justify-center gap-2 mb-8">
+        <div 
+            className="flex min-h-screen items-center justify-center font-jakarta overflow-x-hidden bg-[#F8F8F8] bg-repeat bg-[length:600px] lg:bg-[length:800px]"
+            style={{
+                backgroundImage: `url(${cloud.src})`,
+            }}>
+            <div className="w-full max-w-md px-4">
+                <div className="flex items-center justify-center gap-2 mb-4">
                     <Image
-                        src={authLogo}
+                        src={"/millab-logo.svg"}
                         alt="MIL Logo"
                         className="object-contain"
+                        height={200}
+                        width={200}
                     />
                 </div>
-
+                
                 <div className="bg-white rounded-xl shadow-[0_0_10px_0_rgba(0,0,0,0.27)] p-8">
-                    <h1 className="text-4xl font-bold text-center mb-4">
-                        Sign In
+                    <h1 className="text-2xl font-bold tracking-tight text-center mb-2">
+                        {t.title}
                     </h1>
-
-                    <p className="text-center mb-8">
-                        Welcome to MilBoard, please enter
-                        <br />
-                        your login details to continue learning.
+                    <p className="text-sm text-center text-muted-foreground mb-6 whitespace-pre-line">
+                        {t.welcome}
                     </p>
-
                     <Form {...form}>
                         <form
                             onSubmit={form.handleSubmit(onSubmit)}
@@ -140,7 +146,7 @@ export default function LoginForm() {
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Email</FormLabel>
+                                        <FormLabel>{t.email}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="user@example.com"
@@ -157,7 +163,7 @@ export default function LoginForm() {
                                 name="password"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Password</FormLabel>
+                                        <FormLabel>{t.password}</FormLabel>
                                         <div className="relative">
                                             <FormControl>
                                                 <Input
@@ -196,7 +202,7 @@ export default function LoginForm() {
                                 className="w-full py-5"
                                 disabled={isLoading}
                             >
-                                {isLoading ? "Loading..." : "Sign In"}
+                                {isLoading ? t.loading : t.signIn}
                             </Button>
                         </form>
                     </Form>
@@ -208,7 +214,7 @@ export default function LoginForm() {
                             </div>
                             <div className="relative flex justify-center text-xs uppercase">
                                 <span className="bg-white px-2 text-muted-foreground">
-                                    Or continue with
+                                    {t.orContinueWith}
                                 </span>
                             </div>
                         </div>
@@ -221,7 +227,7 @@ export default function LoginForm() {
                             disabled={isGoogleLoading}
                         >
                             {isGoogleLoading ? (
-                                "Signing in with Google..."
+                                t.signingWithGoogle
                             ) : (
                                 <>
                                     <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
@@ -242,19 +248,19 @@ export default function LoginForm() {
                                             d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                                         />
                                     </svg>
-                                    Continue with Google
+                                    {t.continueWithGoogle}
                                 </>
                             )}
                         </Button>
                     </div>
 
                     <p className="text-center mt-6 text-muted-foreground font-medium">
-                        Don&apos;t have an account?{" "}
+                        {t.dontHaveAccount}{" "}
                         <Link
                             href="/signup"
                             className="font-bold text-foreground"
                         >
-                            Sign Up
+                            {t.signUp}
                         </Link>
                     </p>
                 </div>
