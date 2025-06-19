@@ -4,9 +4,20 @@ import React, { useState, useEffect } from 'react';
 import { Camera, X } from 'lucide-react';
 import { IDetectedBarcode, Scanner as QrScanner } from '@yudiel/react-qr-scanner';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { Language, buttonTranslations, errorTranslations } from './types';
 
-const ScanCamera = () => {
-  const [cameraActive, setCameraActive] = useState(false);
+interface ScanCameraProps {
+  isActive: boolean;
+  setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
+  language?: Language;
+}
+
+const ScanCamera = ({ isActive, setIsActive, language = 'id' }: ScanCameraProps) => {
+  // Get translations based on language
+  const t = buttonTranslations[language];
+  const errorT = errorTranslations[language];
+  // Use the props instead of local state
   const [mounted, setMounted] = useState(false);
   const [scanResult, setScanResult] = useState('');
   const [error, setError] = useState('');
@@ -18,7 +29,7 @@ const ScanCamera = () => {
   }, []);
 
   const handleStartCamera = () => {
-    setCameraActive(true);
+    setIsActive(true);
     setError('');
   };
 
@@ -29,35 +40,96 @@ const ScanCamera = () => {
       const qrValue = decodedText[0].rawValue;
       setScanResult(qrValue);
       
-      // Navigate to module page with QR code ID
-      console.log(`QR Code detected, navigating to: /module/${qrValue}`);
-      router.push(`/module/${qrValue}`);
+      try {
+        // Check if QR value contains a domain structure with /module/
+        // This regex checks for various URL formats with or without protocol
+        const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\/[^\s]*)?$/;
+        const modulePathRegex = /\/module\/([a-zA-Z0-9_-]+)/;
+        
+        // Check if it looks like a URL (with or without http/https)
+        if (urlRegex.test(qrValue)) {
+          console.log('QR is a URL:', qrValue);
+          
+          // Ensure URL has protocol
+          let normalizedUrl = qrValue;
+          if (!qrValue.startsWith('http://') && !qrValue.startsWith('https://')) {
+            normalizedUrl = 'https://' + qrValue;
+          }
+          
+          // Try to extract moduleId from URL
+          const url = new URL(normalizedUrl);
+          const pathParts = url.pathname.split('/');
+          
+          // Check if it's a known module URL pattern
+          // Example: https://bit.ly/millab-module-123 or https://millab.id/module/123
+          const moduleIdIndex = pathParts.findIndex(part => 
+            part === 'module' || part.includes('millab-module')
+          );
+          
+          if (moduleIdIndex !== -1 && moduleIdIndex < pathParts.length - 1) {
+            // Extract the module ID from the path
+            const moduleId = pathParts[moduleIdIndex + 1];
+            console.log(`QR Code URL detected, extracted module ID: ${moduleId}`);
+            router.push(`/module/${moduleId}`);
+          } else if (url.searchParams.has('moduleId')) {
+            // Check if the URL has a moduleId query parameter
+            const moduleId = url.searchParams.get('moduleId');
+            console.log(`QR Code URL with query param detected, extracted module ID: ${moduleId}`);
+            router.push(`/module/${moduleId}`);
+          } else {
+            // If we can't extract moduleId from the URL, show error toast
+            toast.error('Tidak dapat menemukan ID modul dari QR code URL');
+            setIsActive(false);
+            setError('QR code URL tidak dikenal');
+          }
+        } else {
+          // Check for direct pattern of /module/ID without full URL
+          const modulePathMatch = qrValue.match(modulePathRegex);
+          if (modulePathMatch && modulePathMatch[1]) {
+            // Extract module ID directly from the path pattern
+            const moduleId = modulePathMatch[1];
+            console.log(`QR Code module path detected, extracted module ID: ${moduleId}`);
+            router.push(`/module/${moduleId}`);
+          } else {
+            // Assume QR value is a direct module ID
+            console.log(`QR Code detected, assuming direct module ID: ${qrValue}`);
+            router.push(`/module/${qrValue}`);
+          }
+        }
+      } catch (error) {
+        console.error('Error processing QR code:', error);
+        toast.error('Format QR code tidak valid');
+        setIsActive(false);
+        setError('Format QR code tidak valid');
+      }
     }
   };
 
   // Handle scan errors
   const onScanError = (errorMessage: any) => {
     console.error('QR scan error:', errorMessage);
-    let errorText = 'Failed to access camera. Please check permissions or try a different browser.';
+    let errorText = errorT.cameraError;
     
     // Check if it's an Error object with message property
     if (errorMessage instanceof Error) {
       errorText = `Camera error: ${errorMessage.message}`;
     }
     
+    // Display toast error
+    toast.error(errorText);
     setError(errorText);
   };
 
   return (
     <>
-      {!cameraActive ? (
+      {!isActive ? (
         <div 
-          className={`bg-white rounded-lg p-6 md:p-8 lg:p-10 mx-auto transition-all duration-500 ease-in-out transform
+          className={`rounded-lg p-6 md:p-8 lg:p-10 mx-auto transition-all duration-500 ease-in-out transform
             ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}
-            hover:shadow-md border border-blue-100 min-h-[280px] md:min-h-[320px] lg:min-h-[360px] flex flex-col justify-center`}
+            min-h-[280px] md:min-h-[320px] lg:min-h-[360px] flex flex-col justify-center`}
         >
           <div className="flex flex-col items-center justify-center space-y-8 md:space-y-12 lg:space-y-16 py-4 md:py-6 lg:py-8">
-            <div className="w-28 h-28 bg-primary/10 md:w-30 md:h-30 rounded-full flex items-center justify-center transition-all duration-300 ease-in-out hover:bg-blue-100 hover:scale-105 shadow-sm mx-auto">
+            <div className="w-28 h-28 bg-primary/20 md:w-30 md:h-30 rounded-full flex items-center justify-center transition-all duration-300 ease-in-out hover:bg-primary/30 hover:scale-105 shadow-md mx-auto backdrop-blur-sm">
               <Camera className="w-20 h-20 md:w-24 md:h-24 lg:w-24 lg:h-24 text-primary transition-transform duration-300 ease-in-out" />
             </div>
             <button
@@ -66,35 +138,35 @@ const ScanCamera = () => {
                 transition-all duration-300 ease-in-out hover:bg-primary/80 hover:shadow-lg 
                 active:transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
             >
-              Start Camera
+              {t.startCamera}
             </button>
           </div>
         </div>
       ) : error ? (
-        <div className="w-full max-w-md mx-auto aspect-square bg-white rounded-lg flex flex-col items-center justify-center transition-all duration-300 ease-in-out border border-gray-200 min-h-[280px] md:min-h-[320px] lg:min-h-[360px] shadow-sm">
+        <div className="w-full max-w-md mx-auto aspect-square bg-white/90 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center transition-all duration-300 ease-in-out min-h-[280px] md:min-h-[320px] lg:min-h-[360px] shadow-lg">
           <div className="text-center p-4">
             <p className="text-red-500 text-base md:text-lg">{error}</p>
             <button 
-              onClick={() => setCameraActive(false)}
-              className="mt-4 px-4 py-2 bg-primary/80 text-white rounded-md"
+              onClick={() => setIsActive(false)}
+              className="mt-4 px-5 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition-all duration-200 font-medium shadow-md"
             >
-              Try Again
+              {t.tryAgain}
             </button>
           </div>
         </div>
       ) : scanResult ? (
-        <div className="w-full md:max-w-sm mx-auto aspect-square bg-white rounded-lg flex flex-col items-center justify-center transition-all duration-300 ease-in-out border border-gray-200 shadow-sm">
-          <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent"></div>
+        <div className="w-full md:max-w-sm mx-auto aspect-square bg-white/90 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center transition-all duration-300 ease-in-out shadow-lg">
+          <div className="animate-spin rounded-full h-14 w-14 border-3 border-primary border-t-transparent"></div>
         </div>
       ) : (
-        <div className="w-full md:max-w-sm mx-auto aspect-square bg-white rounded-lg overflow-hidden shadow-sm relative">
+        <div className="w-full md:max-w-sm mx-auto aspect-square bg-white/95 rounded-lg overflow-hidden shadow-lg relative backdrop-blur-sm">
           {/* Close button */}
           <button 
-            onClick={() => setCameraActive(false)}
-            className="absolute top-3 right-3 z-10 bg-white rounded-full p-1 shadow-md hover:bg-gray-100 transition-all duration-200 ease-in-out"
+            onClick={() => setIsActive(false)}
+            className="absolute top-3 right-3 z-10 bg-white/80 backdrop-blur-sm rounded-full p-1.5 shadow-lg hover:bg-white transition-all duration-200 ease-in-out"
             aria-label="Close scanner"
           >
-            <X className="h-6 w-6 text-gray-700" />
+            <X className="h-6 w-6 text-primary" />
           </button>
 
           <QrScanner
