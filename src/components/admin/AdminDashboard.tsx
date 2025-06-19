@@ -181,16 +181,6 @@ export default function AdminDashboard() {
                 Preview
               </Button>
             </div>
-
-            <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
-              <div>
-                <h3 className="font-medium text-purple-900">User Progress</h3>
-                <p className="text-sm text-purple-700">Track student progress through modules and quizzes</p>
-              </div>
-              <Button variant="outline" disabled>
-                Coming Soon
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>

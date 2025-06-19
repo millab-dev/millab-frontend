@@ -19,6 +19,7 @@ export interface QuizQuestionData {
     question: string;
     options: QuizOption[];
     points: number;
+    explanation?: string;
 }
 
 export interface QuizAnswer {
@@ -126,9 +127,7 @@ export default function Quiz() {
         } finally {
             setLoading(false);
         }
-    };
-
-    // Transform database quiz questions into UI format
+    };    // Transform database quiz questions into UI format
     const transformQuizQuestions = (dbQuestions: DatabaseQuizQuestion[]): QuizQuestionData[] => {
         return dbQuestions
             .sort((a, b) => a.order - b.order)
@@ -136,6 +135,7 @@ export default function Quiz() {
                 id: index + 1,
                 question: dbQuestion.question,
                 points: 1,
+                explanation: dbQuestion.explanation,
                 options: dbQuestion.options.map((option, optionIndex) => ({
                     id: String.fromCharCode(65 + optionIndex), // A, B, C, D
                     text: option,
