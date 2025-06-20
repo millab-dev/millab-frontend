@@ -16,11 +16,9 @@ export async function GET(request: NextRequest) {
       hasRefreshToken: !!refreshToken
     });
 
-    // Create the response with redirect
-    const response = NextResponse.redirect(
-      `${process.env.FRONTEND_URL || 'http://localhost:3000'}${destination}`,
-      { status: 302 }
-    );
+    // Create the response with redirect - use relative URL since we're already on the same domain
+    const response = NextResponse.redirect(destination, { status: 302 });
+
 
     // Set tokens as cookies if they are present
     if (accessToken) {
