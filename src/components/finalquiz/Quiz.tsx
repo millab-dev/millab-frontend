@@ -11,6 +11,7 @@ import { addUserScore } from "@/actions/userScore.add-score";
 import { awardFinalQuizRewards } from "@/utils/progressionApi";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
+import { Language } from "./types";
 
 export interface QuizOption {
     id: string;
@@ -39,9 +40,10 @@ interface QuizProps {
     userId: string;
     urlBase: string;
     isFirstAttempt?: boolean; // Track if this is the first attempt
+    language?: Language;
 }
 
-export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true }: QuizProps) {
+export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, language = 'id' }: QuizProps) {
     const router = useRouter();
 
     // Map questions to add id and points if not present (for compatibility)
@@ -135,7 +137,9 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true }: Q
             }
         });
         setShowResults(true);
-    };    const handleNextQuestion = async () => {
+    };
+
+    const handleNextQuestion = async () => {
         if (currentQuestionIndex < totalQuestions - 1) {
             setCurrentQuestionIndex((prev) => prev + 1);
         } else {
@@ -206,6 +210,7 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true }: Q
                 answeredQuestions={answers.map((a) => a.questionId)}
                 onNavigateToQuestion={handleNavigateToQuestion}
                 onBack={() => setCurrentView("question")}
+                language={language}
             />
         );
     }
@@ -218,6 +223,7 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true }: Q
                 totalPoints={totalPoints}
                 onBackToModule={handleBackToModule}
                 onRetakeQuiz={handleRetakeQuiz}
+                language={language}
             />
         );
     }

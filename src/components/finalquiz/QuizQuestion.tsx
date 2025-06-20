@@ -111,7 +111,7 @@ export default function QuizQuestion({
                         onClick={onShowNavigation}
                     >
                         <List size={16} />
-                        {currentQuestionNumber} of {totalQuestions}
+                        {currentQuestionNumber} dari {totalQuestions}
                     </div>
                 </div>
 

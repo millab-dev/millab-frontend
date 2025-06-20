@@ -4,6 +4,7 @@ import { ArrowLeft, RotateCcw} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuizQuestionData, QuizAnswer } from "./Quiz";
 import cloud from "@/assets/cloudPatternBlue.svg";
+import { Language, quizSummaryTranslations } from "./types";
 
 interface QuizSummaryProps {
     quizData: QuizQuestionData[];
@@ -11,6 +12,7 @@ interface QuizSummaryProps {
     totalPoints: number;
     onBackToModule: () => void;
     onRetakeQuiz: () => void;
+    language?: Language;
 }
 
 export default function QuizSummary({
@@ -19,23 +21,26 @@ export default function QuizSummary({
     totalPoints,
     onBackToModule,
     onRetakeQuiz,
+    language = 'id',
 }: QuizSummaryProps) {
+    // Get translations based on language
+    const t = quizSummaryTranslations[language];
     const totalQuestions = quizData.length;
     const correctAnswers = answers.filter(a => a.isCorrect).length;
     const percentage = Math.round((correctAnswers / totalQuestions) * 100);
     
     const getPerformanceLevel = () => {
-        if (percentage >= 80) return "Expert Level";
-        if (percentage >= 60) return "Intermediate Level";
-        if (percentage >= 40) return "Beginner Level";
-        return "Needs Practice";
+        if (percentage >= 80) return t.performanceLevels.expert;
+        if (percentage >= 60) return t.performanceLevels.intermediate;
+        if (percentage >= 40) return t.performanceLevels.beginner;
+        return t.performanceLevels.needsPractice;
     };
 
     const getPerformanceMessage = () => {
-        if (percentage >= 80) return "Outstanding performance! You handled this quiz like a pro!";
-        if (percentage >= 60) return "Great job! You have a good understanding of the material.";
-        if (percentage >= 40) return "Good effort! Keep practicing to improve your skills.";
-        return "Don't worry! Review the material and try again.";
+        if (percentage >= 80) return t.performanceMessages.excellent;
+        if (percentage >= 60) return t.performanceMessages.good;
+        if (percentage >= 40) return t.performanceMessages.fair;
+        return t.performanceMessages.needsImprovement;
     };
 
     const getProgressColor = () => {
@@ -84,20 +89,21 @@ export default function QuizSummary({
                     <div className="flex justify-around text-center">
                         <div>
                             <div className="text-2xl font-bold text-gray-800">{correctAnswers}/{totalQuestions}</div>
-                            <div className="text-sm text-gray-600">Correct</div>
+                            <div className="text-sm text-gray-600">{t.stats.correct}</div>
                         </div>
                         <div>
                             <div className="text-2xl font-bold text-gray-800">{percentage}%</div>
-                            <div className="text-sm text-gray-600">Score</div>
+                            <div className="text-sm text-gray-600">{t.stats.score}</div>
                         </div>
                         <div>
                             <div className="text-2xl font-bold text-gray-800">{totalPoints}</div>
-                            <div className="text-sm text-gray-600">Points</div>
+                            <div className="text-sm text-gray-600">{t.stats.points}</div>
                         </div>
                     </div>
                 </div>
 
                 {/* Question Breakdown */}
+                <h2 className="text-lg font-bold mb-3 mt-10">{t.questionResults}</h2>
                 <div className="space-y-4 mb-8">
                     {quizData.map((question, index) => {
                         const answer = answers.find(a => a.questionId === question.id);
@@ -132,21 +138,30 @@ export default function QuizSummary({
                                                 let textColor = "";
                                                 let iconText = "";
 
-                                                if (isCorrectOption) {
-                                                    labelText = "Selected Correct Answer";
+                                                if (isSelected && isCorrectOption) {
+                                                    // User selected the correct answer
+                                                    labelText = t.answerLabels.selectedCorrect;
                                                     bgColor = "bg-green-500";
                                                     textColor = "text-white";
                                                     iconText = "✓";
-                                                } else if (isSelected) {
-                                                    labelText = "Selected Wrong Answer";
+                                                } else if (isSelected && !isCorrectOption) {
+                                                    // User selected a wrong answer
+                                                    labelText = t.answerLabels.selectedWrong;
                                                     bgColor = "bg-red-500";
                                                     textColor = "text-white";
                                                     iconText = "✗";
+                                                } else if (!isSelected && isCorrectOption) {
+                                                    // The correct answer that wasn't selected
+                                                    labelText = t.answerLabels.correctAnswer;
+                                                    bgColor = "bg-green-100";
+                                                    textColor = "text-green-700";
+                                                    iconText = "✓";
                                                 } else {
-                                                    labelText = "Unselected Answer";
+                                                    // An incorrect answer that wasn't selected
+                                                    labelText = t.answerLabels.unselected;
                                                     bgColor = "bg-gray-100";
                                                     textColor = "text-gray-500";
-                                                    iconText = "✗";
+                                                    iconText = "";
                                                 }
 
                                                 return (
@@ -179,13 +194,13 @@ export default function QuizSummary({
                         className="flex-1 h-12 text-blue-500 border-blue-500 hover:bg-blue-50 font-medium flex items-center justify-center gap-2"
                     >
                         <RotateCcw size={16} />
-                        Retake Quiz
+                        {t.actions.retakeQuiz}
                     </Button>
                     <Button
                         onClick={onBackToModule}
                         className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium"
                     >
-                        Go Back
+                        {t.actions.goBack}
                     </Button>
                 </div>
             </div>
