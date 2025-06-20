@@ -6,8 +6,15 @@ import ContinueReadingSection from './ContinueReadingSection'
 import DiscoverSection from './DiscoverSection'
 import GuidelinesSection from './GuidelinesSection'
 import FinalTestSection from './FinalTestSection'
+import { HomepageModulesData } from './types'
+import { ReadingStateData } from './types'
 
-const BottomSheetSection = () => {
+interface BottomSheetSectionProps {
+  readingStateData: ReadingStateData;
+  homepageModulesData: HomepageModulesData;
+}
+
+const BottomSheetSection = ({ readingStateData, homepageModulesData }: BottomSheetSectionProps) => {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.1 })
   
@@ -27,11 +34,11 @@ const BottomSheetSection = () => {
         <FeaturedImageSection />
        
         {/* Discover Modules section */}
-        <DiscoverSection />
+        <DiscoverSection initialModulesData={homepageModulesData} />
 
          {/* Continue Reading section */}
          <div id="continue-reading">
-           <ContinueReadingSection />
+           <ContinueReadingSection initialReadingStateData={readingStateData} />
          </div>
 
           {/* Final Test section */}

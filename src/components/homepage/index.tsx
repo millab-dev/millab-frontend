@@ -1,10 +1,19 @@
 "use client";
 
 import { NextStep, NextStepProvider, Tour,} from "nextstepjs";
+import { ReadingStateData } from "./types";
+import { UserData } from "./types";
+import { HomepageModulesData } from "./types";
 
 import HomepageContent from "./OnboardingOverlay";
 
-const Homepage = () => {
+interface HomepageProps {
+  readingStateData: ReadingStateData;
+  homepageModulesData: HomepageModulesData;
+  userData: UserData;
+}
+
+const Homepage = ({ readingStateData, homepageModulesData, userData }: HomepageProps) => {
 
     const steps: Tour[] = [
         {
@@ -112,7 +121,11 @@ const Homepage = () => {
                 onSkip={() => {
                     localStorage.setItem("completedTour", "true");
                 }}>
-                    <HomepageContent />
+                    <HomepageContent 
+                        readingStateData={readingStateData}
+                        homepageModulesData={homepageModulesData}
+                        userData={userData}
+                    />
                 </NextStep>
             </NextStepProvider>
         </>

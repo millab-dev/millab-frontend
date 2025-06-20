@@ -3,9 +3,17 @@ import BottomNavbar from "../core/BottomNavbar";
 import BottomSheetSection from "./BottomSheetSection";
 import InformationSection from "./InformationSection";
 import { useNextStep } from "nextstepjs";
+import { HomepageModulesData } from "./types";
+import { UserData } from "./types";
+import { ReadingStateData } from "./types";
 
+interface HomepageContentProps {
+    readingStateData: ReadingStateData;
+    homepageModulesData: HomepageModulesData;
+    userData: UserData;
+}
 
-const HomepageContent = () => {
+const HomepageContent = ({ readingStateData, homepageModulesData, userData }: HomepageContentProps) => {
 
     const { startNextStep } = useNextStep();
 
@@ -54,12 +62,15 @@ const HomepageContent = () => {
                     {/* Top section with information */}
                     <div className="h-[14.43rem] md:h-[16.43rem] w-full">
                         <div className="h-full flex items-center">
-                            <InformationSection />
+                            <InformationSection userData={userData} />
                         </div>
                     </div>
 
                     {/* Bottom sheet with rounded top corners and animations */}
-                    <BottomSheetSection />
+                    <BottomSheetSection 
+                        readingStateData={readingStateData}
+                        homepageModulesData={homepageModulesData}
+                    />
                 </div>
             </div>
             <div className="md:hidden">

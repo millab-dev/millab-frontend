@@ -3,6 +3,7 @@ import { Zap, Gem } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { SectionProps, informationTranslations } from './types'
 import { useState, useEffect } from 'react'
+import { UserData } from './types'
 
 interface UserProgression {
   currentExp: number
@@ -21,7 +22,11 @@ interface User {
   // other user fields...
 }
 
-const InformationSection = ({ language = 'id' }: SectionProps) => {
+type InformationSectionProps = SectionProps & {
+    userData?: UserData;
+};
+
+const InformationSection = ({ language = 'id', userData }: InformationSectionProps) => {
     // Get translations based on language
     const t = informationTranslations[language];
     
@@ -30,14 +35,54 @@ const InformationSection = ({ language = 'id' }: SectionProps) => {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        fetchUserData()
-    }, [])
+        if (userData) {
+            processUserData(userData);
+        } else {
+            fetchUserData();
+        }
+    }, [userData])
 
+    const processUserData = (data: UserData) => {
+        try {
+            // Process user progression data
+            if (data.progression) {
+                setProgression(data.progression)
+            }
+
+            // Process user profile data
+            if (data.user) {
+                setUser(data.user)
+            }
+        } catch (error) {
+            console.error('Error processing user data:', error)
+            setDefaultUserData();
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    // Set default values for demo purposes or when data is not available
+    const setDefaultUserData = () => {
+        setUser({ name: 'Mimi', username: 'Mimi' })
+        setProgression({
+            currentExp: 12,
+            level: 1,
+            expForNextLevel: 108,
+            totalExpForNextLevel: 120,
+            dayStreak: 1,
+            progressPercentage: 10,
+            points: 235,
+            rank: 401
+        })
+    }
+
+    // Fallback client-side fetch in case server data is not provided
     const fetchUserData = async () => {
         try {
+            console.log("Falling back to client-side fetch for user data");
             // Fetch user progression data
             const progressionResponse = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/progression/me`,
+                `/api/v1/progression/me`,
                 { credentials: "include" }
             )
             
@@ -50,7 +95,7 @@ const InformationSection = ({ language = 'id' }: SectionProps) => {
 
             // Fetch user profile data
             const userResponse = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/auth/me`,
+                `/api/v1/auth/me`,
                 { credentials: "include" }
             )
             
@@ -59,19 +104,10 @@ const InformationSection = ({ language = 'id' }: SectionProps) => {
                 if (userData.success) {
                     setUser(userData.data)
                 }
-            }        } catch (error) {
+            }
+        } catch (error) {
             console.error('Error fetching user data:', error)
-            // Set default values for demo purposes
-            setUser({ name: 'Mimi', username: 'Mimi' })
-            setProgression({
-                currentExp: 12,
-                level: 1,
-                expForNextLevel: 108,                totalExpForNextLevel: 120,
-                dayStreak: 1,
-                progressPercentage: 10,
-                points: 235,
-                rank: 401
-            })
+            setDefaultUserData();
         } finally {
             setLoading(false)
         }
@@ -144,7 +180,7 @@ const InformationSection = ({ language = 'id' }: SectionProps) => {
                         transition={{ duration: 0.5, delay: 0.5 }}
                     >
                         <p className="text-base md:text-3xl font-semibold">{t.welcomeBack}</p>
-                        <h2 className="text-3xl md:text-6xl font-bold">{getUserDisplayName()}</h2>
+                        <h2 className="text-2xl md:text-5xl font-bold">{getUserDisplayName()}</h2>
                     </motion.div>
                 </motion.div>
 

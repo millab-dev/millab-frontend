@@ -10,39 +10,21 @@ import { useRef, useState, useEffect } from 'react'
 import { Input } from "@/components/ui/input"
 import {
   ModuleCategory,
-  BaseModule,
   SectionProps,
-  discoverTranslations
+  discoverTranslations,
+  BackendModule,
+  HomepageModulesData,
+  Module
 } from './types'
-import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 
-// Backend module interface
-interface BackendModule {
-  id: string;
-  title: string;
-  description: string;
-  difficulty: 'Easy' | 'Intermediate' | 'Advanced';
-  order: number;
-  sections: any[];
-  quiz: any;
-  isActive: boolean;
-  progress?: {
-    completionPercentage: number;
-  };
+
+// Use SectionProps for component props but extend with initialModulesData
+interface DiscoverSectionProps extends SectionProps {
+  initialModulesData?: HomepageModulesData;
 }
 
-// Use BaseModule for the modules but extend it
-type Module = BaseModule & {
-  description?: string;
-  sections?: any[];
-  quiz?: any;
-};
-
-// Use SectionProps for component props
-type DiscoverSectionProps = SectionProps;
-
-const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
+const DiscoverSection = ({ language = 'id', initialModulesData }: DiscoverSectionProps) => {
   const router = useRouter();
   // Get translations based on language
   const t = discoverTranslations[language];
@@ -51,24 +33,21 @@ const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Fetch homepage modules (orders 1, 5, 11)
+  // Process server-provided modules data
   useEffect(() => {
-    fetchHomepageModules();
-  }, []);
+    if (initialModulesData) {
+      processModulesData();
+    } else {
+      setLoading(false);
+    }
+  }, [initialModulesData]);
 
-  const fetchHomepageModules = async () => {
+  const processModulesData = () => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/homepage`,
-        {
-          credentials: "include",
-        }
-      );
-
-      const data = await response.json();      if (data.success) {
+      if (initialModulesData && initialModulesData.success && initialModulesData.data) {
         // Transform backend modules to frontend format
-        const transformedModules: Module[] = data.data.map((module: BackendModule) => ({
-          id: module.id, // Keep as string to avoid NaN
+        const transformedModules: Module[] = initialModulesData.data.map((module: BackendModule) => ({
+          id: module.id,
           title: `Modul ${module.order}: ${module.title}`,
           progress: module.progress?.completionPercentage || 0,
           category: module.difficulty === 'Easy' ? 'beginner' : 
@@ -77,78 +56,10 @@ const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
           sections: module.sections,
           quiz: module.quiz
         }));
-        setModules(transformedModules);      } else {        // If not authenticated, show empty state instead of error
-        if (data.error === "Authentication required") {
-          console.log("User not authenticated, showing mock data for demo");
-          // Add some mock data for demonstration
-          const mockModules: Module[] = [
-            {
-              id: "1",
-              title: "Modul 1: Pengantar Literasi Media",
-              progress: 0,
-              category: "beginner",
-              description: "Dasar-dasar literasi media untuk pemula",
-              sections: [],
-              quiz: {}
-            },
-            {
-              id: "5", 
-              title: "Modul 5: Analisis Konten Media",
-              progress: 0,
-              category: "intermediate",
-              description: "Menganalisis berbagai jenis konten media",
-              sections: [],
-              quiz: {}
-            },
-            {
-              id: "11",
-              title: "Modul 11: Media dan Masyarakat",
-              progress: 0,
-              category: "advanced", 
-              description: "Dampak media terhadap masyarakat",
-              sections: [],
-              quiz: {}
-            }
-          ];
-          setModules(mockModules);
-        } else {
-          console.error("API Error:", data.error);
-          toast.error(data.error || "Failed to fetch modules");
-        }
-      }    } catch (error) {
-      console.error("Error fetching homepage modules:", error);
-      // Don't show error toast for network issues, show mock data instead
-      console.log("Network error, showing mock data for demo");
-      const mockModules: Module[] = [
-        {
-          id: "1",
-          title: "Modul 1: Pengantar Literasi Media",
-          progress: 25,
-          category: "beginner",
-          description: "Dasar-dasar literasi media untuk pemula",
-          sections: [],
-          quiz: {}
-        },
-        {
-          id: "5", 
-          title: "Modul 5: Analisis Konten Media",
-          progress: 60,
-          category: "intermediate",
-          description: "Menganalisis berbagai jenis konten media",
-          sections: [],
-          quiz: {}
-        },
-        {
-          id: "11",
-          title: "Modul 11: Media dan Masyarakat",
-          progress: 10,
-          category: "advanced", 
-          description: "Dampak media terhadap masyarakat",
-          sections: [],
-          quiz: {}
-        }
-      ];
-      setModules(mockModules);
+        setModules(transformedModules);
+      }
+    } catch (error) {
+      console.error("Error processing modules data:", error);
     } finally {
       setLoading(false);
     }
@@ -157,10 +68,24 @@ const DiscoverSection = ({ language = 'id' }: DiscoverSectionProps) => {
     router.push(`/module/${moduleId}`);
   };
   
-  // Filter modules based on search query
-  const filteredModules = modules.filter(module => 
-    module.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Priority module orders (1, 5, 11)
+  const priorityOrders = [1, 5, 11];
+  
+  // Filter and prioritize modules based on search query
+  const filteredModules = modules.filter(module => {
+    // If there's a search query, show all modules that match the query
+    if (searchQuery) {
+      return module.title.toLowerCase().includes(searchQuery.toLowerCase());
+    }
+    
+    // If no search query, only show priority modules (orders 1, 5, and 11)
+    // Extract the order number from the module title (format: "Modul X: Title")
+    const orderMatch = module.title.match(/Modul (\d+):/i);
+    if (!orderMatch) return false;
+    
+    const orderNum = parseInt(orderMatch[1], 10);
+    return priorityOrders.includes(orderNum);
+  });
     const sectionRef = useRef(null)
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 })
 

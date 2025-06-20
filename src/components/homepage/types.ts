@@ -214,3 +214,59 @@ export const carouselTranslations: CarouselTranslationsType = {
     ]
   }
 };
+
+export type Module = BaseModule & {
+  description?: string;
+  sections?: any[];
+  quiz?: any;
+};
+
+export interface BackendModule {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: 'Easy' | 'Intermediate' | 'Advanced';
+  order: number;
+  sections: any[];
+  quiz: any;
+  isActive: boolean;
+  progress?: {
+    completionPercentage: number;
+  };
+}
+
+export interface HomepageModulesData {
+  success: boolean;
+  data: BackendModule[];
+  error?: string;
+}
+
+export interface ReadingStateData {
+  success: boolean;
+  data: {
+    module: BackendModule;
+  }[];
+  error?: string;
+}
+
+export interface UserProgression {
+  currentExp: number;
+  level: number;
+  expForNextLevel: number;
+  totalExpForNextLevel: number;
+  dayStreak: number;
+  progressPercentage: number;
+  points: number;
+  rank: number;
+}
+
+export interface User {
+  name: string;
+  username: string;
+  // other user fields that might be present
+}
+
+export interface UserData {
+  user: User | null;
+  progression: UserProgression | null;
+}

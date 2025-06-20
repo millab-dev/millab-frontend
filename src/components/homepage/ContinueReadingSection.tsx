@@ -9,39 +9,21 @@ import { motion, useInView } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
 import {
   ModuleCategory,
-  BaseModule,
   SectionProps,
-  continueReadingTranslations
+  continueReadingTranslations,
+  Module
 } from './types'
-import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 
-// Backend module interface
-interface BackendModule {
-  id: string;
-  title: string;
-  description: string;
-  difficulty: 'Easy' | 'Intermediate' | 'Advanced';
-  order: number;
-  sections: any[];
-  quiz: any;
-  isActive: boolean;
-  progress?: {
-    completionPercentage: number;
-  };
+
+// Use SectionProps for component props but extend with initialReadingStateData
+import { ReadingStateData } from './types';
+
+interface ContinueReadingSectionProps extends SectionProps {
+  initialReadingStateData?: ReadingStateData;
 }
 
-// Use BaseModule for the modules but extend it
-type Module = BaseModule & {
-  description?: string;
-  sections?: any[];
-  quiz?: any;
-};
-
-// Use SectionProps for component props
-type ContinueReadingSectionProps = SectionProps;
-
-const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps) => {
+const ContinueReadingSection = ({ language = 'id', initialReadingStateData }: ContinueReadingSectionProps) => {
   const router = useRouter();
   
   // Get translations based on language
@@ -52,30 +34,26 @@ const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps
   const [hasStartedReading, setHasStartedReading] = useState(false);
   const [expectedModuleCount, setExpectedModuleCount] = useState(3); // Track expected number of modules
   
-  // Fetch user's last accessed modules
+  // Process initial data or fetch if not provided
   useEffect(() => {
-    fetchUserReadingState();
-  }, []);
-  const fetchUserReadingState = async () => {
-    try {      
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/reading-state/last-accessed`,
-        {
-          credentials: "include",
-        }
-      );
-
-      const data = await response.json();      
-      
+    if (initialReadingStateData) {
+      processReadingStateData(initialReadingStateData);
+    } else {
+      fetchUserReadingState();
+    }
+  }, [initialReadingStateData]);
+  // Process reading state data from server
+  const processReadingStateData = (data: ReadingStateData) => {
+    try {
       let accessedModules: Module[] = [];
-        if (data.success && data.data.length > 0) {
+      if (data.success && data.data.length > 0) {
         // Transform backend modules to frontend format
         accessedModules = data.data.map((state: any) => ({
           id: state.module.id, // Keep as string to avoid NaN
           title: `Modul ${state.module.order}: ${state.module.title}`,
           progress: state.module.progress?.completionPercentage || 0,
           category: state.module.difficulty === 'Easy' ? 'beginner' : 
-                   state.module.difficulty === 'Intermediate' ? 'intermediate' : 'advanced',
+                  state.module.difficulty === 'Intermediate' ? 'intermediate' : 'advanced',
           description: state.module.description,
           sections: state.module.sections,
           quiz: state.module.quiz
@@ -98,9 +76,29 @@ const ContinueReadingSection = ({ language = 'id' }: ContinueReadingSectionProps
         setHasStartedReading(false);
       }
     } catch (error) {
-      console.error("Error fetching user reading state:", error);
+      console.error("Error processing reading state data:", error);
       setHasStartedReading(false);
     } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fallback client-side fetch in case server data is not provided
+  const fetchUserReadingState = async () => {
+    try {      
+      console.log("Falling back to client-side fetch for reading state");
+      const response = await fetch(
+        `/api/v1/reading-state/last-accessed`,
+        {
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+      processReadingStateData(data);
+    } catch (error) {
+      console.error("Error fetching user reading state:", error);
+      setHasStartedReading(false);
       setLoading(false);
     }
   };
