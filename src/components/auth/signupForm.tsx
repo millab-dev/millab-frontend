@@ -111,7 +111,7 @@ export default function SignupForm({ language = 'id' }: SignupFormProps) {
             
             // Direct fetch to API
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/auth/register`,
+                `/api/v1/auth/register`,
                 {
                     method: "POST",
                     headers: {

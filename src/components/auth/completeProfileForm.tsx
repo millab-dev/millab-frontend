@@ -84,7 +84,7 @@ export default function CompleteProfileForm({ language = 'id' }: CompleteProfile
             };
 
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/auth/complete-profile`,
+                `/api/v1/auth/complete-profile`,
                 {
                     method: "POST",
                     headers: {

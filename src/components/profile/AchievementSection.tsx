@@ -24,7 +24,7 @@ const AchievementSection: React.FC<ProfileComponentProps> = ({ language = 'id' }
     }, []);    const fetchTopThree = async () => {
         try {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/progression/leaderboard?limit=3`,
+                `/api/v1/progression/leaderboard?limit=3`,
                 { credentials: "include" }
             );
 

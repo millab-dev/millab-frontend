@@ -30,13 +30,13 @@ const Leaderboard: React.FC<ProfileComponentProps> = ({ language = 'id' }) => {
     try {
       // Fetch leaderboard data
       const leaderboardResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/progression/leaderboard?limit=10`,
+        `/api/v1/progression/leaderboard?limit=10`,
         { credentials: "include" }
       );
 
       // Fetch current user progression
       const userProgressionResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/progression/me`,
+        `/api/v1/progression/me`,
         { credentials: "include" }
       );
 
