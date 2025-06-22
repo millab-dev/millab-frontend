@@ -47,6 +47,7 @@ export type FeaturedImageTranslationsType = {
 export type InformationTranslationsType = {
   [key: string]: {
     welcomeBack: string;
+    dayStreak: string;
   };
 };
 
@@ -156,10 +157,12 @@ export const finalTestTranslations: FinalTestTranslationsType = {
 // InformationSection translations
 export const informationTranslations: InformationTranslationsType = {
   id: {
-    welcomeBack: "Selamat datang kembali,"
+    welcomeBack: "Selamat datang kembali,",
+    dayStreak: "Streak Harian"
   },
   en: {
-    welcomeBack: "Welcome back,"
+    welcomeBack: "Welcome back,",
+    dayStreak: "Day Streak"
   }
 };
 

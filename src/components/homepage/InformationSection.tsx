@@ -206,7 +206,7 @@ const InformationSection = ({ language = 'id', userData }: InformationSectionPro
                         >
                             <Zap size={18} className="text-primary mr-1.5" />
                             <span className="font-semibold text-primary text-sm">
-                                {progressData.dayStreak} Day Streak
+                                {progressData.dayStreak} {t.dayStreak}
                             </span>
                         </motion.div>
                         
