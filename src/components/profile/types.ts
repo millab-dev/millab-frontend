@@ -17,7 +17,7 @@ export interface LeaderboardTranslations {
 export const leaderboardTranslations: Record<Language, LeaderboardTranslations> = {
   id: {
     title: 'Papan Peringkat',
-    pointsLabel: 'point',
+    pointsLabel: 'poin',
     youLabel: 'Kamu',
     gapIndicator: '•••',
   },
@@ -97,16 +97,19 @@ export const tabBarTranslations: Record<Language, TabBarTranslations> = {
 export interface AchievementSectionTranslations {
   title: string;
   emptyStateMessage: string;
+  point: string;
 }
 
 export const achievementSectionTranslations: Record<Language, AchievementSectionTranslations> = {
   id: {
     title: 'Pencapaian',
     emptyStateMessage: 'Belum ada pencapaian',
+    point: 'poin'
   },
   en: {
     title: 'Achievements',
     emptyStateMessage: 'No achievements yet',
+    point: 'point'
   }
 };
 
