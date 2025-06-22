@@ -23,7 +23,7 @@ const FeaturedImageSection = ({ language = "id" }: SectionProps) => {
         >
             {/* Overlay text */}
             <div className="flex justify-between text-white p-6 md:px-8 md:py-20 bg-orange-unesco rounded-3xl relative overflow-hidden">
-                <Image src={moonbear} alt="Founder" className="absolute top-0 right-0 z-0 max-md:w-40 max-md:h-40" />
+                <Image src={moonbear} alt="Founder" className="absolute bottom-0 right-0 z-0 max-md:w-40 max-md:h-40" />
                 <div className="flex flex-col justify-center z-10">
                     <motion.h3
                         className="text-base md:text-2xl mb-2"
@@ -42,7 +42,7 @@ const FeaturedImageSection = ({ language = "id" }: SectionProps) => {
                         {t.descriptionMobile.map((line, index) => (
                             <motion.div
                                 key={`mobile-${index}`}
-                                className="text-2xl font-medium"
+                                className="text-xl font-medium"
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={
                                     isInView

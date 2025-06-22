@@ -170,13 +170,13 @@ export const informationTranslations: InformationTranslationsType = {
 export const featuredImageTranslations: FeaturedImageTranslationsType = {
   id: {
     title: "Tahukah Kamu?",
-    descriptionMobile: ["MIL ditemukan", "pada tahun 1990"],
-    descriptionDesktop: ["MIL ditemukan pada 1990", "oleh John Doe"]
+    descriptionMobile: ["Konsep LMI", "diadopsi UNESCO", "sejak tahun 2008"],
+    descriptionDesktop: ["Konsep LMI", "diadopsi UNESCO", "sejak tahun 2008"]
   },
   en: {
     title: "Did You Know?",
-    descriptionMobile: ["MIL was founded", "in 1990"],
-    descriptionDesktop: ["MIL was founded in 1990", "by John Doe"]
+    descriptionMobile: ["LMI was adopted by UNESCO", "since 2008"],
+    descriptionDesktop: ["LMI was adopted by UNESCO", "since 2008"]
   }
 };
 
