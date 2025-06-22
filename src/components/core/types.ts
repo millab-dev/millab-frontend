@@ -13,6 +13,16 @@ export type NavbarTranslationsType = {
   };
 };
 
+// Define BottomNavbar translations structure
+export type BottomNavbarTranslationsType = {
+  [key: string]: {
+    navItems: {
+      name: string;
+      path: string;
+    }[];
+  };
+};
+
 // Navbar translations
 export const navbarTranslations: NavbarTranslationsType = {
   id: {
@@ -35,6 +45,24 @@ export const navbarTranslations: NavbarTranslationsType = {
       { name: "About Us", path: "/about-us" },
       { name: "Sign In", path: "/signin" },
       { name: "Sign Up", path: "/signup" },
+    ]
+  }
+};
+
+// Bottom Navbar translations
+export const bottomNavbarTranslations: BottomNavbarTranslationsType = {
+  id: {
+    navItems: [
+      { name: "Beranda", path: "/app" },
+      { name: "Pindai", path: "/scan" },
+      { name: "Profil", path: "/profile" },
+    ]
+  },
+  en: {
+    navItems: [
+      { name: "Home", path: "/app" },
+      { name: "Scan", path: "/scan" },
+      { name: "Profile", path: "/profile" },
     ]
   }
 };
