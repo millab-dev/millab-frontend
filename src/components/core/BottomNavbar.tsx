@@ -1,37 +1,85 @@
 "use client";
 
 import {usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { SectionProps, bottomNavbarTranslations } from "./types";
 
-const BottomNavbar = () => {
+const BottomNavbar = ({ language = 'id' }: SectionProps) => {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [isHovering, setIsHovering] = useState("");
+  const navbarRef = useRef<HTMLDivElement>(null);
+  const isMobileRef = useRef(false);
   
   // Animation on component mount
   useEffect(() => {
     setMounted(true);
+    
+    // Check if device is mobile (< md breakpoint)
+    const checkMobile = () => {
+      isMobileRef.current = window.innerWidth < 768; // 768px is Tailwind's md breakpoint
+    };
+    
+    checkMobile(); // Initial check
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
+  
+  // Handle keyboard visibility with Visual Viewport API (only on mobile)
+  useEffect(() => {
+    if (!isMobileRef.current || typeof window === 'undefined') return;
+    
+    // Safety check for Visual Viewport API support
+    const visualViewport = window.visualViewport;
+    if (!visualViewport) return;
+    
+    const onVisualViewportChange = () => {
+      if (!navbarRef.current) return;
+      
+      const keyboardHeight = window.innerHeight - visualViewport.height;
+      if (keyboardHeight > 150) { // Threshold to detect keyboard
+        // Position the navbar above the keyboard
+        navbarRef.current.style.bottom = `${keyboardHeight}px`;
+      } else {
+        // Reset position when keyboard is closed
+        navbarRef.current.style.bottom = '0px';
+      }
+    };
+    
+    visualViewport.addEventListener('resize', onVisualViewportChange);
+    visualViewport.addEventListener('scroll', onVisualViewportChange);
+    
+    return () => {
+      visualViewport.removeEventListener('resize', onVisualViewportChange);
+      visualViewport.removeEventListener('scroll', onVisualViewportChange);
+    };
+  }, []);
+
+  // Get translations based on language
+  const t = bottomNavbarTranslations[language];
 
   const navItems = [
     {
-      name: "Home",
+      name: t.navItems[0].name, // Home
       path: "/app",
       icon: "/book-half.svg",
       activeIcon: "/book-half-active.svg"
     },
     {
-      name: "Scan",
+      name: t.navItems[1].name, // Scan
       path: "/scan",
       icon: "/scan-button.svg",
       isPrimary: true,
       scanIcon: "/scan-button.svg"
     },
     {
-      name: "Profile",
+      name: t.navItems[2].name, // Profile
       path: "/profile",
       icon: "/person-fill.svg",
       activeIcon: "/person-fill-active.svg"
@@ -40,6 +88,7 @@ const BottomNavbar = () => {
 
   return (
     <div 
+      ref={navbarRef}
       className={`fixed bottom-0 left-0 z-50 w-full h-[5.625rem] bg-white min-w-0 border-t border-gray-200 
         transition-all duration-500 ease-in-out transform 
         ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'} 
