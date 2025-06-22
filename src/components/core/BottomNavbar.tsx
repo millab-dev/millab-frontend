@@ -44,11 +44,11 @@ const BottomNavbar = ({ language = 'id' }: SectionProps) => {
       
       const keyboardHeight = window.innerHeight - visualViewport.height;
       if (keyboardHeight > 150) { // Threshold to detect keyboard
-        // Position the navbar above the keyboard
-        navbarRef.current.style.bottom = `${keyboardHeight}px`;
+        // Hide the navbar when keyboard is open
+        navbarRef.current.style.display = 'none';
       } else {
-        // Reset position when keyboard is closed
-        navbarRef.current.style.bottom = '0px';
+        // Show the navbar when keyboard is closed
+        navbarRef.current.style.display = '';
       }
     };
     
