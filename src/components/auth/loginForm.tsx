@@ -54,16 +54,16 @@ export default function LoginForm({ errorParam, language = 'id' }: LoginFormProp
         if (errorParam) {
             switch (errorParam) {
                 case 'oauth_cancelled':
-                    toast.error('Google sign-in was cancelled');
+                    toast.error('Login Google dibatalkan');
                     break;
                 case 'oauth_failed':
-                    toast.error('Google sign-in failed. Please try again.');
+                    toast.error('Login Google gagal. Silakan coba lagi.');
                     break;
                 case 'oauth_error':
-                    toast.error('An error occurred during Google sign-in');
+                    toast.error('Terjadi kesalahan saat login Google');
                     break;
                 default:
-                    toast.error('An error occurred. Please try again.');
+                    toast.error('Terjadi kesalahan. Silakan coba lagi.');
             }
             // Optionally clear the error from URL for better UX
             // This is now handled server-side
@@ -107,7 +107,7 @@ export default function LoginForm({ errorParam, language = 'id' }: LoginFormProp
             
         } catch (error: any) {
             console.error("Google Sign-In error:", error);
-            toast.error("Google Sign-In failed. Please try again.");
+            toast.error("Login Google gagal. Silakan coba lagi.");
             setIsGoogleLoading(false);
         }
     }
