@@ -394,7 +394,7 @@ export default function SignupForm({ language = 'id' }: SignupFormProps) {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            School/Socialization Location*
+                                            {t.socialization}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
