@@ -24,7 +24,7 @@ export type ScanPageTranslationsType = {
 // Define translations for ScanPage component
 export const scanPageTranslations: ScanPageTranslationsType = {
   id: {
-    title: "Scan QR Code",
+    title: "Pindai QR Code",
     subtitle: "Arahkan kamera Anda ke QR code untuk mengakses konten.",
     steps: {
       tapStartCamera: "Ketuk Mulai Kamera",
