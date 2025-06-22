@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, useInView } from 'framer-motion';
 import { ProfileComponentProps, leaderboardTranslations } from './types';
+import profileHeader from '@/assets/profile-header.svg'
 
 type LeaderboardEntry = {
   rank: number;
@@ -94,12 +95,12 @@ const Leaderboard: React.FC<ProfileComponentProps> = ({ language = 'id' }) => {
         key={`${entry.userId}-${entry.rank}`}
         className={`flex items-center py-2 px-4 ${entry.isCurrentUser ? 'bg-[#FFCF89] rounded-md' : ''}`}
       >
-        <div className="flex items-center justify-center w-8 mr-1">
+        <div className="flex items-center justify-center w-8 pt-3 mr-1">
           {getMedalImage()}
         </div>
         <div className="flex items-center flex-grow min-w-0 pr-1" style={{ width: "calc(100% - 90px)" }}>
           <img
-            src="/rabbit-leaderboard.png"
+            src="/owl-profile.svg"
             alt="User"
             className="h-12 w-12 mr-2 flex-shrink-0"
           />

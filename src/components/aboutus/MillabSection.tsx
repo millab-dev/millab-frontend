@@ -2,7 +2,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import authLogo from "@/assets/authLogo.svg"
+import owl from "@/assets/owl-2.svg"
 import { SectionProps, millabSectionTranslations } from './types'
 
 const MillabSection = ({ language = 'id' }: SectionProps) => {
@@ -60,14 +60,14 @@ const MillabSection = ({ language = 'id' }: SectionProps) => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.5, duration: 0.5 }}
         >
-          <div className="relative w-full h-full">
+          <div className="relative w-full bg-orange-unesco rounded-3xl overflow-hidden">
             <Image 
-              src="/pet-ask.png" 
+              src={owl}
               alt={t.imageAlt} 
               width={400}
               height={400}
               className="object-contain w-full h-auto"
-              style={{ maxHeight: '100%' }}
+              style={{ display: 'block' }}
             />
           </div>
         </motion.div>

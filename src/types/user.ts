@@ -1,6 +1,7 @@
 export interface User {
     id: string
     name: string
+    username: string
     gender: 'Male' | 'Female'
     birthplace: string
     birthdate: string

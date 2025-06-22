@@ -171,7 +171,7 @@ export const featuredImageTranslations: FeaturedImageTranslationsType = {
   id: {
     title: "Tahukah Kamu?",
     descriptionMobile: ["Konsep LMI", "diadopsi UNESCO", "sejak tahun 2008"],
-    descriptionDesktop: ["Konsep LMI", "diadopsi UNESCO", "sejak tahun 2008"]
+    descriptionDesktop: ["Konsep LMI diadopsi UNESCO", "sejak tahun 2008"]
   },
   en: {
     title: "Did You Know?",

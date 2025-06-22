@@ -164,9 +164,9 @@ const InformationSection = ({ language = 'id', userData }: InformationSectionPro
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.5, delay: 0.4 }}
                     >
-                        <div className="w-full h-full rounded-full bg-blue-100 flex items-center justify-center overflow-hidden">
+                        <div className="w-full h-full rounded-full flex items-center justify-center overflow-hidden">
                             <img 
-                                src="/kelinci.png" 
+                                src="/owl-profile.png" 
                                 alt="Profile" 
                                 className="w-full h-full object-cover"
                             />

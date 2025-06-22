@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { SectionProps, featuredImageTranslations } from "./types";
 import Image from "next/image";
-import moonbear from "@/assets/MoonBear-Hello.svg";
+import owl from "@/assets/owl.svg";
 
 const FeaturedImageSection = ({ language = "id" }: SectionProps) => {
     const ref = useRef(null);
@@ -22,8 +22,12 @@ const FeaturedImageSection = ({ language = "id" }: SectionProps) => {
             id="fyi"
         >
             {/* Overlay text */}
-            <div className="flex justify-between text-white p-6 md:px-8 md:py-20 bg-orange-unesco rounded-3xl relative overflow-hidden">
-                <Image src={moonbear} alt="Founder" className="absolute bottom-0 right-0 z-0 max-md:w-40 max-md:h-40" />
+            <div className="flex justify-between text-white p-6 md:px-8
+             md:py-20 bg-orange-unesco rounded-3xl relative overflow-hidden">
+                
+                <div className="absolute bottom-0 right-0 z-0 h-full flex items-end">
+                    <Image src={owl} alt="Founder" className="w-auto h-full object-contain" />
+                </div>
                 <div className="flex flex-col justify-center z-10">
                     <motion.h3
                         className="text-base md:text-2xl mb-2"

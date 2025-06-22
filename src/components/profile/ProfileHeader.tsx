@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from "@/components/ui/card";
 import { User } from '@/types/user';
 import { ProfileComponentProps, profileHeaderTranslations } from './types';
+import profileHeader from '@/assets/profile-header.svg'
 
 type Props = {
     user: Partial<User>
@@ -144,7 +145,7 @@ const ProfileHeader = ({user, language = 'id'}: Props) => {
                 }}
               >
                 <Image 
-                  src="/kelinci.png" 
+                  src={profileHeader} 
                   alt="Profile character" 
                   fill 
                   className="object-cover" 
@@ -175,8 +176,8 @@ const ProfileHeader = ({user, language = 'id'}: Props) => {
                 
                 {/* PHONE */}
                 <div>
-                  <p className="text-xs md:text-sm text-gray-500 uppercase">{t.phoneLabel}</p>
-                  <p className="text-sm md:text-xl font-semibold">{user.phoneNumber}</p>
+                  <p className="text-xs md:text-sm text-gray-500 uppercase">{t.usernameLabel}</p>
+                  <p className="text-sm md:text-xl font-semibold">{user.username}</p>
                 </div>
                 
                 {/* GENDER */}

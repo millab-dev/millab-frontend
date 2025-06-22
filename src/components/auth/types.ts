@@ -63,7 +63,7 @@ export const loginTranslations: Record<Language, LoginFormTranslations> = {
   id: {
     title: 'Masuk',
     welcome: 'Selamat datang di MILBoard, silakan masukkan\ndata login Anda untuk melanjutkan belajar.',
-    email: 'Email',
+    email: 'Username atau Email',
     password: 'Kata Sandi',
     signIn: 'Masuk',
     loading: 'Memuat...',
@@ -76,7 +76,7 @@ export const loginTranslations: Record<Language, LoginFormTranslations> = {
   en: {
     title: 'Sign In',
     welcome: 'Welcome to MILBoard, please enter\nyour login details to continue learning.',
-    email: 'Email',
+    email: 'Username atau Email',
     password: 'Password',
     signIn: 'Sign In',
     loading: 'Loading...',

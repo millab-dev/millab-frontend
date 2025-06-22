@@ -42,11 +42,13 @@ export interface ProfileHeaderTranslations {
   genderLabel: string;
   schoolLabel: string;
   emailLabel: string;
+  usernameLabel: string;
 }
 
 export const profileHeaderTranslations: Record<Language, ProfileHeaderTranslations> = {
   id: {
     followersLabel: 'Pengikut',
+    usernameLabel: 'Username',
     followingLabel: 'Mengikuti',
     coursesFinishedLabel: 'Kursus Selesai',
     editProfileButton: 'Edit Profil',
@@ -60,6 +62,7 @@ export const profileHeaderTranslations: Record<Language, ProfileHeaderTranslatio
   },
   en: {
     followersLabel: 'Followers',
+    usernameLabel: 'Username',
     followingLabel: 'Following',
     coursesFinishedLabel: 'Courses Finished',
     editProfileButton: 'Edit Profile',
