@@ -14,6 +14,8 @@ import {
   Module
 } from './types'
 import { useRouter } from 'next/navigation'
+import owlSad from '/public/owl-sad.png'
+import scrollText from '/public/scroll-text.svg'
 
 
 // Use SectionProps for component props but extend with initialReadingStateData
@@ -171,17 +173,15 @@ const ContinueReadingSection = ({ language = 'id', initialReadingStateData }: Co
           className="flex flex-col items-center justify-center py-8 px-4 text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.1 }}        >
-          <img 
-            src="/owl-sad.png" 
+          transition={{ duration: 0.5, delay: 0.1 }}        >          <img 
+            src={owlSad.src} 
             alt="Empty reading state" 
-            className="w-32 h-32 mb-4 opacity-60"
-          />
-          <p className="text-gray-500 text-sm md:text-base">
-            Kamu belum mulai baca modul kami
+            className="w-64 h-64 mb-4 opacity-60"
+          />          <p className="text-gray-500 text-sm md:text-base">
+            {t.emptyStateTitle}
           </p>
           <p className="text-gray-400 text-xs md:text-sm mt-2">
-            Mulai belajar dengan mengeksplorasi modul-modul yang tersedia
+            {t.emptyStateSubtitle}
           </p>
         </motion.div>
       </div>
@@ -238,9 +238,10 @@ const ContinueReadingSection = ({ language = 'id', initialReadingStateData }: Co
                             module.category === "beginner" ? "#218E44" : 
                             module.category === "intermediate" ? "#FBAD18" : "#DC2626" 
                         }}
-                      >
-                        {module.category === "beginner" ? "Mudah" : 
-                         module.category === "intermediate" ? "Menengah" : "Sulit"}
+                      >                        {t.difficulty[
+                          module.category === "beginner" ? "Easy" : 
+                          module.category === "intermediate" ? "Intermediate" : "Advanced"
+                        ]}
                       </span>
                     </div>
                     
@@ -250,9 +251,8 @@ const ContinueReadingSection = ({ language = 'id', initialReadingStateData }: Co
                         <div 
                           style={{ background: 'linear-gradient(to right, #0077D4, #4CB0FF)' }} 
                           className="w-full h-full flex items-center justify-center"
-                        >
-                          <motion.img 
-                            src="/scroll-text.svg" 
+                        >                          <motion.img 
+                            src={scrollText.src} 
                             alt="Module" 
                             className="w-16 h-16" 
                             whileHover={{ scale: 1.1 }}

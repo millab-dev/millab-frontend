@@ -101,23 +101,55 @@ export const discoverTranslations: TranslationsType = {
   }
 };
 
-export const continueReadingTranslations: TranslationsType = {
+// Define ContinueReading translations structure
+export type ContinueReadingTranslationsType = {
+  [key: string]: {
+    title: string;
+    seeAll: string;
+    emptyStateTitle: string;
+    emptyStateSubtitle: string;
+    categories: {
+      [key in ModuleCategory]: string;
+    };
+    difficulty: {
+      Easy: string;
+      Intermediate: string;
+      Advanced: string;
+    };
+  };
+};
+
+export const continueReadingTranslations: ContinueReadingTranslationsType = {
   id: {
     title: "Lanjutkan Membaca",
     seeAll: "Lihat Semua",
+    emptyStateTitle: "Kamu belum mulai baca modul kami",
+    emptyStateSubtitle: "Mulai belajar dengan mengeksplorasi modul-modul yang tersedia",
     categories: {
       beginner: "Pemula",
       intermediate: "Menengah",
       advanced: "Sulit"
+    },
+    difficulty: {
+      Easy: "Mudah",
+      Intermediate: "Menengah",
+      Advanced: "Sulit"
     }
   },
   en: {
     title: "Continue Reading",
     seeAll: "See All",
+    emptyStateTitle: "You haven't started reading our modules yet",
+    emptyStateSubtitle: "Start learning by exploring the available modules",
     categories: {
       beginner: "Beginner",
       intermediate: "Intermediate",
       advanced: "Advanced"
+    },
+    difficulty: {
+      Easy: "Easy",
+      Intermediate: "Intermediate",
+      Advanced: "Advanced"
     }
   }
 };

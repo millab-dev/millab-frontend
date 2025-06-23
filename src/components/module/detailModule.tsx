@@ -7,6 +7,11 @@ import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import axiosClient from "@/lib/axios.client";
+import { 
+    SectionProps, 
+    detailModuleTranslations, 
+    Language 
+} from "./types";
 
 interface Module {
     id: string;
@@ -51,13 +56,17 @@ interface UserProgress {
     lastAccessedAt: string;
 }
 
-export default function DetailModule() {
+interface DetailModuleProps extends SectionProps {}
+
+export default function DetailModule({ language = 'id' }: DetailModuleProps) {
     const router = useRouter();
     const params = useParams();
     const id = params.id as string;
 
-    const [module, setModule] = useState<Module | null>(null);
+    // Get translations based on language
+    const t = detailModuleTranslations[language];    const [module, setModule] = useState<Module | null>(null);
     const [loading, setLoading] = useState(true);
+    const [navigatingSectionId, setNavigatingSectionId] = useState<string | null>(null);
 
     useEffect(() => {
         if (id) {
@@ -67,18 +76,16 @@ export default function DetailModule() {
     const fetchModule = async () => {
         try {
             const response = await axiosClient.get(`/api/v1/modules/${id}`);
-            const data = response.data;
-
-            if (data.success) {
+            const data = response.data;            if (data.success) {
                 setModule(data.data);
                 // Module access is automatically tracked on the backend when fetching module details
             } else {
-                toast.error(data.error || "Failed to fetch module");
+                toast.error(data.error || t.fetchModuleError);
                 router.push("/module");
             }
         } catch (error) {
             console.error("Error fetching module:", error);
-            toast.error("Failed to fetch module");
+            toast.error(t.fetchModuleError);
             router.push("/module");
         } finally {
             setLoading(false);
@@ -105,11 +112,14 @@ export default function DetailModule() {
 
     const getQuizScore = (): number | undefined => {
         return module?.progress?.quizScore;
+    };    const getProgressPercentage = (): number => {
+        return module?.progress?.completionPercentage || 0;
     };
 
-    const getProgressPercentage = (): number => {
-        return module?.progress?.completionPercentage || 0;
-    };    if (loading) {
+    const handleSectionClick = (sectionId: string) => {
+        setNavigatingSectionId(sectionId);
+        router.push(`/module/${id}/${sectionId}`);
+    };if (loading) {
         return (
             <div
                 className="mx-auto font-jakarta bg-primary min-h-screen sm:px-24 lg:px-40 flex flex-col bg-repeat bg-[length:600px] lg:bg-[length:900px]"
@@ -191,12 +201,10 @@ export default function DetailModule() {
                 </div>
             </div>
         );
-    }
-
-    if (!module) {
+    }    if (!module) {
         return (
             <div className="min-h-screen bg-primary flex items-center justify-center">
-                <div className="text-white text-xl">Module not found</div>
+                <div className="text-white text-xl">{t.moduleNotFound}</div>
             </div>
         );
     }
@@ -232,10 +240,9 @@ export default function DetailModule() {
                                 className="text-primary"
                                 onClick={() => {
                                     if (module.pdfUrl) {
-                                        window.open(module.pdfUrl, "_blank");
-                                    } else {
+                                        window.open(module.pdfUrl, "_blank");                                    } else {
                                         toast.info(
-                                            "Tidak ada PDF yang tersedia untuk modul ini"
+                                            t.noPdfAvailable
                                         );
                                     }
                                 }}
@@ -247,8 +254,7 @@ export default function DetailModule() {
                             <div className="flex items-center gap-2 mb-2">
                                 <div className="text-md sm:text-xl font-semibold text-primary">
                                     {module.title}
-                                </div>
-                                <span
+                                </div>                                <span
                                     className={`px-2 py-1 rounded-full text-xs font-medium ${
                                         module.difficulty === "Easy"
                                             ? "bg-green-100 text-green-800"
@@ -258,16 +264,11 @@ export default function DetailModule() {
                                             : "bg-red-100 text-red-800"
                                     }`}
                                 >
-                                    {module.difficulty === "Easy"
-                                        ? "Mudah"
-                                        : module.difficulty === "Intermediate"
-                                        ? "Menengah"
-                                        : "Sulit"}
+                                    {t.difficulty[module.difficulty]}
                                 </span>
-                            </div>
-                            <div className="text-gray-400 text-sm mt-1">
-                                Bagian {getCompletedSectionsCount()}/
-                                {getTotalSectionsCount()} | Kuis{" "}
+                            </div>                            <div className="text-gray-400 text-sm mt-1">
+                                {t.sections} {getCompletedSectionsCount()}/
+                                {getTotalSectionsCount()} | {t.quiz}{" "}
                                 {isQuizCompleted() ? "1/1" : "0/1"}
                             </div>
                             <div className="flex items-center gap-2 mt-2">
@@ -284,11 +285,10 @@ export default function DetailModule() {
                                 </span>
                             </div>
                         </div>
-                    </div>{" "}
-                    {/* Module Description */}
+                    </div>{" "}                    {/* Module Description */}
                     <div className="bg-white rounded-xl shadow-sm p-6">
                         <h2 className="text-lg font-bold text-primary mb-3">
-                            Deskripsi Modul
+                            {t.moduleDescription}
                         </h2>
                         <div
                             className="text-gray-700 prose prose-sm max-w-none leading-relaxed"
@@ -296,9 +296,8 @@ export default function DetailModule() {
                                 __html: module.description,
                             }}
                         />
-                    </div>
-                    {/* Sections Heading */}
-                    <h2 className="text-xl font-bold text-primary">Materi</h2>
+                    </div>                    {/* Sections Heading */}
+                    <h2 className="text-xl font-bold text-primary">{t.materials}</h2>
                     <div className="relative flex flex-col gap-3">
                         {/* Vertical line */}
                         <div className="absolute left-[14px] top-0 bottom-0 w-1 bg-gray-200 z-0 rounded-full" />
@@ -324,16 +323,13 @@ export default function DetailModule() {
                                                 size={28}
                                             />
                                         )}
-                                    </div>
-                                    {/* Section Card */}
+                                    </div>                                    {/* Section Card */}
                                     <div className="flex-1 ml-2">
                                         <div
-                                            className="bg-white border rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition shadow-md"
-                                            onClick={() =>
-                                                router.push(
-                                                    `/module/${id}/${section.id}`
-                                                )
-                                            }
+                                            className={`bg-white border rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-all duration-200 shadow-md ${
+                                                navigatingSectionId === section.id ? 'opacity-50 pointer-events-none' : ''
+                                            }`}
+                                            onClick={() => handleSectionClick(section.id)}
                                         >
                                             <div>
                                                 <div className="text-primary font-medium">
@@ -349,9 +345,7 @@ export default function DetailModule() {
                                                 className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg cursor-pointer"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    router.push(
-                                                        `/module/${id}/${section.id}`
-                                                    );
+                                                    handleSectionClick(section.id);
                                                 }}
                                             >
                                                 <FileText size={20} />
@@ -389,17 +383,16 @@ export default function DetailModule() {
                                         <div>
                                             <div className="font-semibold">
                                                 {module.quiz.title}
-                                            </div>
-                                            <div className="text-xs">
+                                            </div>                                            <div className="text-xs">
                                                 {module.quiz.duration} •{" "}
                                                 {module.quiz.totalQuestions}{" "}
-                                                questions
+                                                {t.questions}
                                                 {isQuizCompleted() &&
                                                     getQuizScore() !==
                                                         undefined && (
                                                         <span>
                                                             {" "}
-                                                            • Score:{" "}
+                                                            • {t.score}:{" "}
                                                             {getQuizScore()}%
                                                         </span>
                                                     )}
