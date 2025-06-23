@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import Navbar from "../core/Navbar";
 import axiosClient from "@/lib/axios.client";
 import { downloadAllPdf } from "@/utils/settingsApi";
+import owlComputer from "/public/owl-computer.png";
 import { 
     Module, 
     ModuleSection,
@@ -26,6 +27,7 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
     const router = useRouter();
     const [modules, setModules] = useState<Module[]>([]);
     const [loading, setLoading] = useState(true);
+    const [navigatingModuleId, setNavigatingModuleId] = useState<string | null>(null);
 
     // Get translations based on language
     const t = listModuleTranslations[language];
@@ -48,11 +50,10 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
         } finally {
             setLoading(false);
         }
-    };
-
-    const handleModuleClick = (id: string) => {
+    };    const handleModuleClick = (id: string) => {
+        setNavigatingModuleId(id);
         router.push(`/module/${id}`);
-    };    const downloadAllModules = async () => {
+    };const downloadAllModules = async () => {
         try {
             const success = await downloadAllPdf();
             if (!success) {
@@ -142,12 +143,11 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
                         >
                             <Download size={18} />
                             {t.downloadAll}
-                        </Button>
-                        <Image
-                            src="/owl-computer.png"
+                        </Button>                        <Image
+                            src={owlComputer}
                             alt="owl-computer"
-                            width={64}
-                            height={64}
+                            width={156}
+                            height={156}
                             className="absolute top-10 right-5"
                         />
                     </div>
@@ -165,10 +165,11 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
                         ) : (
                             modules.map((module) => {
                                 const progress = module.progress?.completionPercentage || 0;
-                                return (
-                                    <div
+                                return (                                    <div
                                         key={module.id}
-                                        className="border rounded-xl p-4 flex items-center justify-between gap-4 cursor-pointer shadow-md hover:bg-gray-50 transition-all duration-100"
+                                        className={`border rounded-xl p-4 flex items-center justify-between gap-4 cursor-pointer shadow-md hover:bg-gray-50 transition-all duration-100 ${
+                                            navigatingModuleId === module.id ? 'opacity-50 pointer-events-none' : ''
+                                        }`}
                                         onClick={() => handleModuleClick(module.id)}
                                     >
                                         <div className="flex items-center gap-4 w-full">
@@ -227,11 +228,11 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
                                         </div>                                        <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg cursor-pointer"                                            onClick={(e) => {
+                                            className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg cursor-pointer"
+                                            onClick={(e) => {
                                                 e.stopPropagation();
                                                 if (module.pdfUrl) {
-                                                    window.open(module.pdfUrl, '_blank');
-                                                } else {
+                                                    window.open(module.pdfUrl, '_blank');                                                } else {
                                                     toast.info(t.noPdfAvailable);
                                                 }
                                             }}

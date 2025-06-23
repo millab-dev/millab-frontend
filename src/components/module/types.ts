@@ -39,10 +39,13 @@ export type SectionModuleTranslationsType = {
     backToModule: string;
     markAsDone: string;
     nextSection: string;
+    loading: string;
     sectionCompleted: string;
     completionError: string;
     pointsAwarded: string;
     pointsError: string;
+    fetchModuleError: string;
+    fetchModuleErrorGeneric: string;
   };
 };
 
@@ -60,6 +63,10 @@ export type DetailModuleTranslationsType = {
     duration: string;
     completed: string;
     score: string;
+    noPdfAvailable: string;
+    moduleDescription: string;
+    materials: string;
+    fetchModuleError: string;
     difficulty: {
       [key in ModuleDifficulty]: string;
     };
@@ -115,31 +122,37 @@ export const listModuleTranslations: ListModuleTranslationsType = {
 // SectionModule translations
 export const sectionModuleTranslations: SectionModuleTranslationsType = {
   id: {
-    sectionNotFound: "Section not found",
+    sectionNotFound: "Bagian tidak ditemukan",
     backToModule: "Kembali ke Modul",
     markAsDone: "Tandai Selesai",
     nextSection: "Lanjut",
+    loading: "Memuat...",
     sectionCompleted: "Bagian berhasil diselesaikan!",
     completionError: "Gagal menandai bagian sebagai selesai",
     pointsAwarded: "Kamu mendapatkan poin!",
-    pointsError: "Bagian selesai, tetapi pemberian poin gagal"
+    pointsError: "Bagian selesai, tetapi pemberian poin gagal",
+    fetchModuleError: "Gagal memuat modul",
+    fetchModuleErrorGeneric: "Gagal memuat modul"
   },
   en: {
     sectionNotFound: "Section not found",
     backToModule: "Back to Module",
     markAsDone: "Mark as Done",
     nextSection: "Next",
+    loading: "Loading...",
     sectionCompleted: "Section completed successfully!",
     completionError: "Failed to mark section as completed",
     pointsAwarded: "You earned points!",
-    pointsError: "Section completed, but points award failed"
+    pointsError: "Section completed, but points award failed",
+    fetchModuleError: "Failed to fetch module",
+    fetchModuleErrorGeneric: "Failed to fetch module"
   }
 };
 
 // DetailModule translations
 export const detailModuleTranslations: DetailModuleTranslationsType = {
   id: {
-    moduleNotFound: "Module not found",
+    moduleNotFound: "Modul tidak ditemukan",
     startReading: "Mulai Membaca",
     continueReading: "Lanjutkan Membaca",
     takeQuiz: "Ikuti Kuis",
@@ -150,6 +163,10 @@ export const detailModuleTranslations: DetailModuleTranslationsType = {
     duration: "durasi",
     completed: "selesai",
     score: "Skor",
+    noPdfAvailable: "Tidak ada PDF yang tersedia untuk modul ini",
+    moduleDescription: "Deskripsi Modul",
+    materials: "Materi",
+    fetchModuleError: "Gagal memuat modul",
     difficulty: {
       Easy: "Mudah",
       Intermediate: "Menengah",
@@ -168,6 +185,10 @@ export const detailModuleTranslations: DetailModuleTranslationsType = {
     duration: "duration",
     completed: "completed",
     score: "Score",
+    noPdfAvailable: "No PDF available for this module",
+    moduleDescription: "Module Description",
+    materials: "Materials",
+    fetchModuleError: "Failed to fetch module",
     difficulty: {
       Easy: "Easy",
       Intermediate: "Intermediate",

@@ -13,6 +13,11 @@ import { Check, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import axiosClient from "@/lib/axios.client";
 import { awardSectionXP } from "@/utils/progressionApi";
+import { 
+    SectionProps, 
+    sectionModuleTranslations, 
+    Language 
+} from "./types";
 
 interface Module {
     id: string;
@@ -57,18 +62,22 @@ interface UserProgress {
     lastAccessedAt: string;
 }
 
-export default function SectionModule() {
+interface SectionModuleProps extends SectionProps {}
+
+export default function SectionModule({ language = 'id' }: SectionModuleProps) {
     const router = useRouter();
     const params = useParams();
     const moduleId = params.id as string;
     const sectionId = params.section as string;
 
-    const [module, setModule] = useState<Module | null>(null);
+    // Get translations based on language
+    const t = sectionModuleTranslations[language];const [module, setModule] = useState<Module | null>(null);
     const [currentSection, setCurrentSection] = useState<ModuleSection | null>(
         null
     );
     const [loading, setLoading] = useState(true);
     const [isMarkedAsDone, setIsMarkedAsDone] = useState(false);
+    const [isNavigating, setIsNavigating] = useState(false);
 
     useEffect(() => {
         if (moduleId && sectionId) {
@@ -97,18 +106,17 @@ export default function SectionModule() {
                         data.data.progress?.completedSections.includes(
                             sectionId
                         ) || false
-                    );
-                } else {
-                    toast.error("Section not found");
+                    );                } else {
+                    toast.error(t.sectionNotFound);
                     router.push(`/module/${moduleId}`);
                 }
             } else {
-                toast.error(data.error || "Failed to fetch module");
+                toast.error(data.error || t.fetchModuleError);
                 router.push("/module");
             }
         } catch (error) {
             console.error("Error fetching module:", error);
-            toast.error("Failed to fetch module");
+            toast.error(t.fetchModuleErrorGeneric);
             router.push("/module");
         } finally {
             setLoading(false);
@@ -144,17 +152,13 @@ export default function SectionModule() {
                             sectionId,
                             module.difficulty
                         );
-                        console.log("Progression result:", progressionResult);
-
-                        if (progressionResult.success) {
+                        console.log("Progression result:", progressionResult);                        if (progressionResult.success) {
                             if (progressionResult.message) {
                                 toast.success(progressionResult.message, {
                                     duration: 4000,
                                 });
                             } else {
-                                toast.success(
-                                    "Section completed successfully! XP awarded."
-                                );
+                                toast.success(t.sectionCompleted);
                             }
                         } else {
                             console.error(
@@ -162,28 +166,27 @@ export default function SectionModule() {
                                 progressionResult.error
                             );
                             toast.warning(
-                                progressionResult.error ||
-                                    "Section completed, but XP award failed"
+                                progressionResult.error || t.pointsError
                             );
                         }
                     } catch (xpError) {
                         console.error("Error awarding XP:", xpError);
-                        toast.warning("Section completed, but XP award failed");
+                        toast.warning(t.pointsError);
                     }
                 } else {
                     console.log(
                         "No module difficulty found, skipping XP award"
                     );
-                    toast.success("Section completed successfully!");
+                    toast.success(t.sectionCompleted);
                 }
             } else {
                 toast.error(
-                    data.error || "Failed to mark section as completed"
+                    data.error || t.completionError
                 );
             }
         } catch (error) {
             console.error("Error marking section as completed:", error);
-            toast.error("Failed to mark section as completed");
+            toast.error(t.completionError);
         }
     };
 
@@ -204,9 +207,8 @@ export default function SectionModule() {
         return currentIndex < activeSections.length - 1
             ? activeSections[currentIndex + 1].id
             : null;
-    };
-
-    const handleNext = () => {
+    };    const handleNext = () => {
+        setIsNavigating(true);
         const nextSectionId = getNextSectionId();
         if (nextSectionId) {
             router.push(`/module/${moduleId}/${nextSectionId}`);
@@ -218,7 +220,7 @@ export default function SectionModule() {
                 router.push(`/module/${moduleId}`);
             }
         }
-    };    if (loading) {
+    };if (loading) {
         return (
             <div className="bg-primary min-h-screen">
                 {/* Header Section Skeleton */}
@@ -272,12 +274,10 @@ export default function SectionModule() {
                 </div>
             </div>
         );
-    }
-
-    if (!module || !currentSection) {
+    }    if (!module || !currentSection) {
         return (
             <div className="bg-primary min-h-screen flex items-center justify-center">
-                <div className="text-white text-xl">Section not found</div>
+                <div className="text-white text-xl">{t.sectionNotFound}</div>
             </div>
         );
     }
@@ -309,22 +309,22 @@ export default function SectionModule() {
                         <Image 
                             src={owlRead} 
                             alt="owl-read" 
-                            className="w-16 h-auto" 
+                            className="w-48 h-auto" 
                         />
                         <Image
                             src={owlVibe}
                             alt="owl-vibe"
-                            className="w-16 h-auto"
+                            className="w-48 h-auto"
                         />
                         <Image
                             src={owlWave}
                             alt="owl-wave"
-                            className="w-16 h-auto"
+                            className="w-48 h-auto"
                         />
                         <Image
                             src={owlHappy}
                             alt="owl-happy"
-                            className="w-16 h-auto"
+                            className="w-48 h-auto"
                         />
                     </div>
 
@@ -338,29 +338,27 @@ export default function SectionModule() {
                 </div>
 
                 {/* Navigation Buttons */}
-                <div className="flex flex-wrap flex-row-reverse gap-4 justify-between pt-6 md:px-6 border-t mt-auto items-center">
-                    <Button
+                <div className="flex flex-wrap flex-row-reverse gap-4 justify-between pt-6 md:px-6 border-t mt-auto items-center">                    <Button
                         className={`px-8 flex items-center gap-2 cursor-pointer transition-all duration-300 ${
                             isMarkedAsDone
                                 ? " text-primary ring-1 ring-primary bg-white hover:bg-primary hover:text-white"
                                 : "bg-primary hover:bg-primary/90 text-white"
-                        }`}
+                        } ${isNavigating ? 'opacity-50' : ''}`}
                         onClick={isMarkedAsDone ? handleNext : handleMarkAsDone}
-                        disabled={!isMarkedAsDone && loading}
+                        disabled={(!isMarkedAsDone && loading) || isNavigating}
                     >
-                        <span>{isMarkedAsDone ? "Next" : "Mark as Done"}</span>
-                        {isMarkedAsDone ? (
+                        <span>{isNavigating ? t.loading : (isMarkedAsDone ? t.nextSection : t.markAsDone)}</span>
+                        {!isNavigating && (isMarkedAsDone ? (
                             <ArrowRight className="w-5 h-5" />
                         ) : (
                             <Check className="w-5 h-5" />
-                        )}
-                    </Button>
-                    <Button
+                        ))}
+                    </Button>                    <Button
                         variant="outline"
                         className="px-6 cursor-pointer"
                         onClick={() => router.push(`/module/${moduleId}`)}
                     >
-                        Back to Module
+                        {t.backToModule}
                     </Button>
                 </div>
             </div>
