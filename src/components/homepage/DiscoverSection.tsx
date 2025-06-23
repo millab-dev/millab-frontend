@@ -215,7 +215,9 @@ const DiscoverSection = ({ language = 'id', initialModulesData }: DiscoverSectio
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-      >        {filteredModules.map((module, index) => (
+      >
+        {filteredModules.length > 0 ? (
+          filteredModules.map((module, index) => (
           <motion.div
             key={module.id}
             className="w-[260px] md:w-[280px] flex-shrink-0 flex-grow-0"
@@ -284,7 +286,20 @@ const DiscoverSection = ({ language = 'id', initialModulesData }: DiscoverSectio
               </CardContent>
             </Card>
           </motion.div>
-        ))}
+        )))
+        : searchQuery ? (
+          <motion.div 
+            className="w-full flex flex-col items-center justify-center py-10"
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="text-gray-500 text-center mb-2">
+              <p className="text-lg font-medium">{t.notFound}</p>
+              <p className="text-sm mt-2">{t.tryAnotherKeyword}</p>
+            </div>
+          </motion.div>
+        ) : null}
       </motion.div>
     </div>
   )

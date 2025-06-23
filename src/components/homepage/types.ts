@@ -8,6 +8,8 @@ export type TranslationsType = {
     seeAll: string;
     searchPlaceholder?: string; // Optional - only used in DiscoverSection
     notFound?: string; // For displaying when no modules match the search
+    tryAnotherKeyword?: string; // Message shown when search returns no results
+    resetButton?: string; // Text for the reset button
     categories: {
       [key in ModuleCategory]: string;
     };
@@ -82,6 +84,8 @@ export const discoverTranslations: TranslationsType = {
     seeAll: "Lihat Semua",
     searchPlaceholder: "Cari modul...",
     notFound: "Tidak ada modul yang ditemukan",
+    tryAnotherKeyword: "Coba kata kunci lain atau reset pencarian",
+    resetButton: "Reset",
     categories: {
       beginner: "Pemula",
       intermediate: "Menengah",
@@ -93,6 +97,8 @@ export const discoverTranslations: TranslationsType = {
     seeAll: "See All",
     searchPlaceholder: "Search modules...",
     notFound: "No modules found",
+    tryAnotherKeyword: "Try another keyword or reset search",
+    resetButton: "Reset",
     categories: {
       beginner: "Beginner",
       intermediate: "Intermediate",
@@ -105,6 +111,8 @@ export const continueReadingTranslations: TranslationsType = {
   id: {
     title: "Lanjutkan Membaca",
     seeAll: "Lihat Semua",
+    tryAnotherKeyword: "Coba kata kunci lain atau reset pencarian",
+    resetButton: "Reset",
     categories: {
       beginner: "Pemula",
       intermediate: "Menengah",

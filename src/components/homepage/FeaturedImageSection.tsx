@@ -4,6 +4,7 @@ import { motion, useInView } from "framer-motion";
 import { SectionProps, featuredImageTranslations } from "./types";
 import Image from "next/image";
 import owl from "@/assets/owl.svg";
+import owlMobile from "@/assets/owl-mobile.svg";
 
 const FeaturedImageSection = ({ language = "id" }: SectionProps) => {
     const ref = useRef(null);
@@ -26,7 +27,8 @@ const FeaturedImageSection = ({ language = "id" }: SectionProps) => {
              md:py-20 bg-orange-unesco rounded-3xl relative overflow-hidden">
                 
                 <div className="absolute bottom-0 right-0 z-0 h-full flex items-end">
-                    <Image src={owl} alt="Founder" className="w-auto h-full object-contain" />
+                    <Image src={owl} alt="Founder" className="w-auto h-full object-contain hidden md:block" />
+                    <Image src={owlMobile} alt="Founder" className="w-auto h-full object-contain md:hidden" />
                 </div>
                 <div className="flex flex-col justify-center z-10">
                     <motion.h3
