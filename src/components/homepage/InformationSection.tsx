@@ -129,8 +129,7 @@ const InformationSection = ({ language = 'id', userData }: InformationSectionPro
     const getUserDisplayName = () => {
         if (loading) return 'Loading...'
         if (!user || !user.username) return 'Mimi!'
-        
-        // Use username for display in homepage        return `${user.username}!`
+        return user.username
     }
 
     const getProgressData = () => {
