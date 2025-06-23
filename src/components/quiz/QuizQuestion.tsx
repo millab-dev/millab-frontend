@@ -58,21 +58,6 @@ export default function QuizQuestion({
         }
     };
 
-    const getOptionLabel = (option: QuizOption) => {
-        if (showResults) {
-            if (option.isCorrect) {
-                return selectedAnswer === option.id
-                    ? "Selected Correct Answer ✓"
-                    : "Correct Answer ✓";
-            } else if (selectedAnswer === option.id) {
-                return "Selected Wrong Answer ✗";
-            } else {
-                return "Unselected Answer ✗";
-            }
-        }
-        return "";
-    };
-
     const getOptionCircleStyle = (option: QuizOption) => {
         if (showResults) {
             if (option.isCorrect) {
@@ -129,11 +114,6 @@ export default function QuizQuestion({
                     <div className="space-y-4 mb-12">
                         {question.options.map((option) => (
                             <div key={option.id} className="relative">
-                                {showResults && (
-                                    <div className="text-sm font-medium text-gray-600 mb-2">
-                                        {getOptionLabel(option)}
-                                    </div>
-                                )}
                                 <div
                                     className={`
                                         border-2 rounded-2xl p-4 cursor-pointer transition-all duration-200 flex items-center gap-4

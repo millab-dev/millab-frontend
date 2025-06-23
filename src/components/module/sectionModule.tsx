@@ -18,7 +18,7 @@ interface Module {
     title: string;
     description: string;
     order: number;
-    difficulty: 'Easy' | 'Intermediate' | 'Advanced';
+    difficulty: "Easy" | "Intermediate" | "Advanced";
     pdfUrl?: string;
     sections: ModuleSection[];
     quiz: ModuleQuiz;
@@ -61,9 +61,11 @@ export default function SectionModule() {
     const params = useParams();
     const moduleId = params.id as string;
     const sectionId = params.section as string;
-    
+
     const [module, setModule] = useState<Module | null>(null);
-    const [currentSection, setCurrentSection] = useState<ModuleSection | null>(null);
+    const [currentSection, setCurrentSection] = useState<ModuleSection | null>(
+        null
+    );
     const [loading, setLoading] = useState(true);
     const [isMarkedAsDone, setIsMarkedAsDone] = useState(false);
 
@@ -75,18 +77,26 @@ export default function SectionModule() {
 
     const fetchModuleData = async () => {
         try {
-            const response = await axiosClient.get(`/api/v1/modules/${moduleId}`);
+            const response = await axiosClient.get(
+                `/api/v1/modules/${moduleId}`
+            );
             const data = response.data;
 
             if (data.success) {
                 setModule(data.data);
-                
+
                 // Find the current section
-                const section = data.data.sections.find((s: ModuleSection) => s.id === sectionId);
+                const section = data.data.sections.find(
+                    (s: ModuleSection) => s.id === sectionId
+                );
                 if (section) {
                     setCurrentSection(section);
                     // Check if section is already completed
-                    setIsMarkedAsDone(data.data.progress?.completedSections.includes(sectionId) || false);
+                    setIsMarkedAsDone(
+                        data.data.progress?.completedSections.includes(
+                            sectionId
+                        ) || false
+                    );
                 } else {
                     toast.error("Section not found");
                     router.push(`/module/${moduleId}`);
@@ -102,50 +112,73 @@ export default function SectionModule() {
         } finally {
             setLoading(false);
         }
-    };    const markSectionAsCompleted = async () => {
+    };
+    const markSectionAsCompleted = async () => {
         try {
             // Mark section as completed in existing system
-            const response = await axiosClient.post(`/api/v1/modules/${moduleId}/sections/${sectionId}/complete`);
+            const response = await axiosClient.post(
+                `/api/v1/modules/${moduleId}/sections/${sectionId}/complete`
+            );
             const data = response.data;
 
             if (data.success) {
                 setIsMarkedAsDone(true);
-                
+
                 // Update the module progress locally
                 if (module) {
                     setModule({
                         ...module,
-                        progress: data.data
+                        progress: data.data,
                     });
-                }                // Award XP through progression system
+                } // Award XP through progression system
                 if (module?.difficulty) {
-                    console.log('Attempting to award XP for section:', sectionId, 'difficulty:', module.difficulty);
+                    console.log(
+                        "Attempting to award XP for section:",
+                        sectionId,
+                        "difficulty:",
+                        module.difficulty
+                    );
                     try {
-                        const progressionResult = await awardSectionXP(sectionId, module.difficulty);
-                        console.log('Progression result:', progressionResult);
-                        
+                        const progressionResult = await awardSectionXP(
+                            sectionId,
+                            module.difficulty
+                        );
+                        console.log("Progression result:", progressionResult);
+
                         if (progressionResult.success) {
                             if (progressionResult.message) {
                                 toast.success(progressionResult.message, {
                                     duration: 4000,
                                 });
                             } else {
-                                toast.success("Section completed successfully! XP awarded.");
+                                toast.success(
+                                    "Section completed successfully! XP awarded."
+                                );
                             }
                         } else {
-                            console.error('XP award failed:', progressionResult.error);
-                            toast.warning(progressionResult.error || "Section completed, but XP award failed");
+                            console.error(
+                                "XP award failed:",
+                                progressionResult.error
+                            );
+                            toast.warning(
+                                progressionResult.error ||
+                                    "Section completed, but XP award failed"
+                            );
                         }
                     } catch (xpError) {
-                        console.error('Error awarding XP:', xpError);
+                        console.error("Error awarding XP:", xpError);
                         toast.warning("Section completed, but XP award failed");
                     }
                 } else {
-                    console.log('No module difficulty found, skipping XP award');
+                    console.log(
+                        "No module difficulty found, skipping XP award"
+                    );
                     toast.success("Section completed successfully!");
                 }
             } else {
-                toast.error(data.error || "Failed to mark section as completed");
+                toast.error(
+                    data.error || "Failed to mark section as completed"
+                );
             }
         } catch (error) {
             console.error("Error marking section as completed:", error);
@@ -159,13 +192,17 @@ export default function SectionModule() {
 
     const getNextSectionId = (): string | null => {
         if (!module || !currentSection) return null;
-        
+
         const activeSections = module.sections
-            .filter(s => s.isActive)
+            .filter((s) => s.isActive)
             .sort((a, b) => a.order - b.order);
-        
-        const currentIndex = activeSections.findIndex(s => s.id === currentSection.id);
-        return currentIndex < activeSections.length - 1 ? activeSections[currentIndex + 1].id : null;
+
+        const currentIndex = activeSections.findIndex(
+            (s) => s.id === currentSection.id
+        );
+        return currentIndex < activeSections.length - 1
+            ? activeSections[currentIndex + 1].id
+            : null;
     };
 
     const handleNext = () => {
@@ -196,7 +233,8 @@ export default function SectionModule() {
                 <div className="text-white text-xl">Section not found</div>
             </div>
         );
-    }    return (
+    }
+    return (
         <div className="bg-primary min-h-screen font-jakarta sm:px-24 lg:px-50 mx-auto flex flex-col">
             {/* Header with section number and title */}
             <div
@@ -211,7 +249,9 @@ export default function SectionModule() {
                     <div className="bg-white text-primary w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0">
                         {currentSection.order}
                     </div>
-                    <h1 className="text-xl font-bold">{currentSection.title}</h1>
+                    <h1 className="text-xl font-bold">
+                        {currentSection.title}
+                    </h1>
                 </div>
             </div>
 
@@ -220,11 +260,7 @@ export default function SectionModule() {
                 <div className="mb-8">
                     {/* Illustrations */}
                     <div className="rounded-xl py-6 px-4 mb-4 flex justify-between sm:justify-center items-end sm:gap-12 bg-gradient-to-b from-[#FFB9DA] to-white">
-                        <Image
-                            src={bear}
-                            alt="bear"
-                            className="w-22 h-auto"
-                        />
+                        <Image src={bear} alt="bear" className="w-22 h-auto" />
                         <Image
                             src={rabbit}
                             alt="rabbit"
@@ -238,22 +274,16 @@ export default function SectionModule() {
                     </div>
 
                     {/* Section Content */}
-                    <div 
+                    <div
                         className="text-sm mb-4 prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: currentSection.content }}
+                        dangerouslySetInnerHTML={{
+                            __html: currentSection.content,
+                        }}
                     />
                 </div>
 
                 {/* Navigation Buttons */}
-                <div className="flex flex-wrap gap-4 justify-between pt-6 md:px-6 border-t mt-auto items-center">
-                    <Button
-                        variant="outline"
-                        className="px-6 cursor-pointer"
-                        onClick={() => router.push(`/module/${moduleId}`)}
-                    >
-                        Back to Module
-                    </Button>
-
+                <div className="flex flex-wrap flex-row-reverse gap-4 justify-between pt-6 md:px-6 border-t mt-auto items-center">
                     <Button
                         className={`px-8 flex items-center gap-2 cursor-pointer transition-all duration-300 ${
                             isMarkedAsDone
@@ -269,6 +299,13 @@ export default function SectionModule() {
                         ) : (
                             <Check className="w-5 h-5" />
                         )}
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="px-6 cursor-pointer"
+                        onClick={() => router.push(`/module/${moduleId}`)}
+                    >
+                        Back to Module
                     </Button>
                 </div>
             </div>

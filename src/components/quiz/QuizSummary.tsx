@@ -126,33 +126,22 @@ export default function QuizSummary({
                                                 const isSelected = answer?.selectedOptionId === option.id;
                                                 const isCorrectOption = option.isCorrect;
                                                 
-                                                let labelText = "";
                                                 let bgColor = "";
-                                                let textColor = "";
-                                                let iconText = "";
+                                                let textColor = ""; 
 
                                                 if (isCorrectOption) {
-                                                    labelText = "Selected Correct Answer";
                                                     bgColor = "bg-green-500";
                                                     textColor = "text-white";
-                                                    iconText = "✓";
                                                 } else if (isSelected) {
-                                                    labelText = "Selected Wrong Answer";
                                                     bgColor = "bg-red-500";
                                                     textColor = "text-white";
-                                                    iconText = "✗";
                                                 } else {
-                                                    labelText = "Unselected Answer";
                                                     bgColor = "bg-gray-100";
                                                     textColor = "text-gray-500";
-                                                    iconText = "✗";
                                                 }
 
                                                 return (
                                                     <div key={option.id}>
-                                                        <div className="text-xs text-gray-600 mb-1">
-                                                            {labelText} {iconText}
-                                                        </div>
                                                         <div className={`p-3 rounded-lg ${bgColor} ${textColor} text-sm`}>
                                                             <div className="flex items-center gap-2">
                                                                 <span className="font-semibold">{option.id}</span>
