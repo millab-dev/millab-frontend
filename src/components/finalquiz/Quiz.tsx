@@ -161,15 +161,25 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
                         duration: 4000,
                     });
                 } else {
-                    toast.success(`You scored ${totalPoints} points!`);
+                    if (language === 'id') {
+                        toast.success(`Kamu mendapatkan ${totalPoints} poin!`);
+                    } else {
+                        toast.success(`You scored ${totalPoints} points!`);
+                    }
                 }
 
                 setCurrentView("summary");
             } catch (error: unknown) {
                 console.error("Error submitting final quiz:", error);
-                toast.error("Failed to add score", {
-                    description: error instanceof AxiosError ? error.response?.data.message : "Unknown error",
-                });
+                if (language === 'id') {
+                    toast.error("Gagal menambahkan skor", {
+                        description: error instanceof AxiosError ? error.response?.data.message : "Terjadi kesalahan",
+                    });
+                } else {
+                    toast.error("Failed to add score", {
+                        description: error instanceof AxiosError ? error.response?.data.message : "Unknown error",
+                    });
+                }
             }
         }
     };
