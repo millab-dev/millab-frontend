@@ -67,6 +67,7 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
     const t = detailModuleTranslations[language];    const [module, setModule] = useState<Module | null>(null);
     const [loading, setLoading] = useState(true);
     const [navigatingSectionId, setNavigatingSectionId] = useState<string | null>(null);
+    const [navigatingToQuiz, setNavigatingToQuiz] = useState(false);
 
     useEffect(() => {
         if (id) {
@@ -114,11 +115,14 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
         return module?.progress?.quizScore;
     };    const getProgressPercentage = (): number => {
         return module?.progress?.completionPercentage || 0;
-    };
-
-    const handleSectionClick = (sectionId: string) => {
+    };    const handleSectionClick = (sectionId: string) => {
         setNavigatingSectionId(sectionId);
         router.push(`/module/${id}/${sectionId}`);
+    };
+
+    const handleQuizClick = () => {
+        setNavigatingToQuiz(true);
+        router.push(`/module/${id}/quiz`);
     };if (loading) {
         return (
             <div
@@ -372,13 +376,12 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                                             size={28}
                                         />
                                     )}
-                                </div>
-                                <div className="flex-1 ml-2">
+                                </div>                                <div className="flex-1 ml-2">
                                     <div
-                                        className="bg-gradient-to-r shadow-md from-primary to-blue-400 text-white rounded-xl p-3 flex items-center justify-between cursor-pointer hover:opacity-90 transition"
-                                        onClick={() =>
-                                            router.push(`/module/${id}/quiz`)
-                                        }
+                                        className={`bg-gradient-to-r shadow-md from-primary to-blue-400 text-white rounded-xl p-3 flex items-center justify-between cursor-pointer hover:opacity-90 transition ${
+                                            navigatingToQuiz ? 'opacity-50 pointer-events-none' : ''
+                                        }`}
+                                        onClick={handleQuizClick}
                                     >
                                         <div>
                                             <div className="font-semibold">
