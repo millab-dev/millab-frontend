@@ -305,26 +305,26 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
             {/* Content Section */}
             <div className="p-6 bg-white rounded-t-4xl flex-grow flex flex-col">
                 <div className="mb-8">                    {/* Illustrations */}
-                    <div className="rounded-xl py-6 px-4 mb-4 flex justify-between sm:justify-center items-end sm:gap-6 bg-gradient-to-b from-[#FFB9DA] to-white">
+                    <div className="rounded-xl py-6 px-4 mb-4 flex justify-between sm:justify-center items-end sm:gap-6 bg-gradient-to-b from-orange-unesco to-white [x">
                         <Image 
                             src={owlRead} 
                             alt="owl-read" 
-                            className="w-48 h-auto" 
+                            className="w-1/4 h-auto" 
                         />
                         <Image
                             src={owlVibe}
                             alt="owl-vibe"
-                            className="w-48 h-auto"
+                            className="w-1/4 h-auto"
                         />
                         <Image
                             src={owlWave}
                             alt="owl-wave"
-                            className="w-48 h-auto"
+                            className="w-1/4 h-auto"
                         />
                         <Image
                             src={owlHappy}
                             alt="owl-happy"
-                            className="w-48 h-auto"
+                            className="w-1/4 h-auto"
                         />
                     </div>
 
