@@ -6,14 +6,17 @@ import { useState, useEffect } from 'react'
 import { UserData } from './types'
 
 interface UserProgression {
-  currentExp: number
-  level: number
-  expForNextLevel: number
-  totalExpForNextLevel: number
-  dayStreak: number
-  progressPercentage: number
-  points: number
-  rank: number
+  // Backend response format
+  points?: number
+  level?: number
+  levelTitle?: string
+  pointsForNextLevel?: number
+  dayStreak?: number
+  rank?: number
+  // Legacy frontend format (for compatibility)
+  currentPoints?: number
+  totalPointsForNextLevel?: number
+  progressPercentage?: number
 }
 
 interface User {
@@ -59,56 +62,66 @@ const InformationSection = ({ language = 'id', userData }: InformationSectionPro
         } finally {
             setLoading(false)
         }
-    }
-
-    // Set default values for demo purposes or when data is not available
+    }    // Set default values for demo purposes or when data is not available
     const setDefaultUserData = () => {
         setUser({ name: 'Mimi', username: 'Mimi' })
         setProgression({
-            currentExp: 12,
+            currentPoints: 235,
             level: 1,
-            expForNextLevel: 108,
-            totalExpForNextLevel: 120,
+            levelTitle: 'Beginner',
+            pointsForNextLevel: 15,
+            totalPointsForNextLevel: 250,
             dayStreak: 1,
             progressPercentage: 10,
-            points: 235,
             rank: 401
         })
-    }
-
-    // Fallback client-side fetch in case server data is not provided
+    }    // Fallback client-side fetch in case server data is not provided
     const fetchUserData = async () => {
         try {
             console.log("Falling back to client-side fetch for user data");
+            
             // Fetch user progression data
+            console.log("Fetching progression data from:", `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/progression/me`);
             const progressionResponse = await fetch(
-                `/api/v1/progression/me`,
+                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/progression/me`,
                 { credentials: "include" }
             )
             
+            console.log("Progression response status:", progressionResponse.status);
+            
             if (progressionResponse.ok) {
                 const progressionData = await progressionResponse.json()
+                console.log("Progression data received:", progressionData);
                 if (progressionData.success) {
                     setProgression(progressionData.data)
+                    console.log("Progression set to:", progressionData.data);
+                } else {
+                    console.error("Progression API returned error:", progressionData.error);
                 }
+            } else {
+                console.error("Progression fetch failed with status:", progressionResponse.status);
             }
 
             // Fetch user profile data
             const userResponse = await fetch(
-                `/api/v1/auth/me`,
+                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/auth/me`,
                 { credentials: "include" }
             )
             
             if (userResponse.ok) {
                 const userData = await userResponse.json()
+                console.log("User data received:", userData);
                 if (userData.success) {
                     setUser(userData.data)
+                } else {
+                    console.error("User API returned error:", userData.error);
                 }
+            } else {
+                console.error("User fetch failed with status:", userResponse.status);
             }
         } catch (error) {
             console.error('Error fetching user data:', error)
-            setDefaultUserData();
-        } finally {
+            setDefaultUserData();} finally {
             setLoading(false)
         }
     }
@@ -117,22 +130,41 @@ const InformationSection = ({ language = 'id', userData }: InformationSectionPro
         if (loading) return 'Loading...'
         if (!user || !user.username) return 'Mimi!'
         
-        // Use username for display in homepage
-        return `${user.username}!`
+        // Use username for display in homepage        return `${user.username}!`
     }
 
     const getProgressData = () => {
         if (loading || !progression) {
             return {
                 level: 1,
-                currentExp: 0,
-                totalExpForNextLevel: 120,
+                levelTitle: 'Beginner',
+                currentPoints: 0,
+                totalPointsForNextLevel: 50,
+                pointsForNextLevel: 50,
                 progressPercentage: 0,
                 dayStreak: 1,
-                points: 0
+                rank: 999
             }
         }
-        return progression
+        
+        // Map backend progression data to frontend format
+        const currentPoints = progression.points || 0;
+        const pointsForNextLevel = progression.pointsForNextLevel || 0;
+        const totalPointsForNextLevel = currentPoints + pointsForNextLevel;
+        const progressPercentage = totalPointsForNextLevel > 0 
+            ? Math.round((currentPoints / totalPointsForNextLevel) * 100) 
+            : 0;
+
+        return {
+            level: progression.level || 1,
+            levelTitle: progression.levelTitle || 'Beginner',
+            currentPoints,
+            totalPointsForNextLevel,
+            pointsForNextLevel,
+            progressPercentage,
+            dayStreak: progression.dayStreak || 0,
+            rank: progression.rank || 999
+        };
     }
 
     const progressData = getProgressData()
@@ -210,14 +242,16 @@ const InformationSection = ({ language = 'id', userData }: InformationSectionPro
                             </span>
                         </motion.div>
                         
+                    {/* Do NOT REMOVE THIS */}
                         <motion.div 
                             className="flex items-center text-white ml-4 md:ml-0"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
                             <Gem size={18} className="mr-1" />
-                            <span className="font-semibold text-sm">{progressData.points}</span>
+                            <span className="font-semibold text-sm">0</span>
                         </motion.div>
+
                     </motion.div>
                     
                     {/* Progress bar - now part of the right column in desktop */}
@@ -241,7 +275,7 @@ const InformationSection = ({ language = 'id', userData }: InformationSectionPro
                         <div className="flex justify-between mt-2 md:mt-3 text-xs md:text-sm">
                             <span className="font-semibold text-white">Level {progressData.level}</span>
                             <span className="font-semibold text-white">
-                                {progressData.currentExp}/{progressData.totalExpForNextLevel} xp
+                                {progressData.currentPoints}/{progressData.totalPointsForNextLevel} poin
                             </span>
                         </div>
                     </motion.div>

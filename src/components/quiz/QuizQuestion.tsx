@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ArrowLeft, List, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { QuizQuestionData, QuizOption } from "./Quiz";
+import { QuizQuestionData, QuizOption, Language, quizQuestionTranslations } from "./types";
 import cloud from "@/assets/cloudPatternBlue.svg";
 
 interface QuizQuestionProps {
@@ -20,6 +20,7 @@ interface QuizQuestionProps {
     canGoNext: boolean;
     canGoPrev: boolean;
     onShowNavigation: () => void;
+    language: Language;
 }
 
 export default function QuizQuestion({
@@ -35,8 +36,10 @@ export default function QuizQuestion({
     onBackToModule,
     canGoPrev,
     onShowNavigation,
+    language,
 }: QuizQuestionProps) {
     const [hoveredOption, setHoveredOption] = useState<string | null>(null);
+    const t = quizQuestionTranslations[language || 'id'];
 
     const getOptionStyle = (option: QuizOption) => {
         if (showResults) {
@@ -96,7 +99,7 @@ export default function QuizQuestion({
                         onClick={onShowNavigation}
                     >
                         <List size={16} />
-                        {currentQuestionNumber} of {totalQuestions}
+                        {currentQuestionNumber} {t.of} {totalQuestions}
                     </div>
                 </div>
 
@@ -112,7 +115,7 @@ export default function QuizQuestion({
                         dangerouslySetInnerHTML={{ __html: question.question }}
                     />                    {/* Options */}
                     <div className="space-y-4 mb-12">
-                        {question.options.map((option) => (
+                        {question.options.map((option: QuizOption) => (
                             <div key={option.id} className="relative">
                                 <div
                                     className={`
@@ -182,16 +185,15 @@ export default function QuizQuestion({
                                 className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <Search size={16} className="mr-2" />
-                                Check Answer
+                                {t.checkAnswer}
                             </Button>
                         ) : (
                             <Button
                                 onClick={onNextQuestion}
                                 className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium"
-                            >
-                                {currentQuestionNumber === totalQuestions
-                                    ? "Finish Quiz"
-                                    : "Next Question"}{" "}
+                            >                                {currentQuestionNumber === totalQuestions
+                                    ? t.finishQuiz
+                                    : t.nextQuestion}{" "}
                                 →
                             </Button>
                         )}

@@ -1,5 +1,10 @@
 import CreateModuleForm from "@/components/admin/CreateModuleForm";
+import AdminGuard from "@/components/admin/AdminGuard";
 
 export default function CreateModulePage() {
-  return <CreateModuleForm />;
+  return (
+    <AdminGuard>
+      <CreateModuleForm />
+    </AdminGuard>
+  );
 }

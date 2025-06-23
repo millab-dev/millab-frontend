@@ -8,89 +8,28 @@ import QuizSummary from "./QuizSummary";
 import QuizNavigation from "./QuizNavigation";
 import axiosClient from "@/lib/axios.client";
 import { awardQuizRewards } from "@/utils/progressionApi";
+import { 
+    QuizOption,
+    QuizQuestionData,
+    QuizAnswer,
+    DatabaseQuizQuestion,
+    Module,
+    ModuleSection,
+    ModuleQuiz,
+    UserProgress,
+    QuizView,
+    SectionProps,
+    quizTranslations,
+    Language
+} from "./types";
 
-export interface QuizOption {
-    id: string;
-    text: string;
-    isCorrect: boolean;
-}
+interface QuizProps extends SectionProps {}
 
-export interface QuizQuestionData {
-    id: number;
-    question: string;
-    options: QuizOption[];
-    points: number;
-    explanation?: string;
-}
-
-export interface QuizAnswer {
-    questionId: number;
-    selectedOptionId: string;
-    isCorrect: boolean;
-    points: number;
-}
-
-// Database quiz question structure
-interface DatabaseQuizQuestion {
-    id: string;
-    question: string;
-    type: 'multiple-choice' | 'true-false';
-    options: string[];
-    correctAnswer: number;
-    explanation?: string;
-    order: number;
-}
-
-interface Module {
-    id: string;
-    title: string;
-    description: string;
-    order: number;
-    difficulty: 'Easy' | 'Intermediate' | 'Advanced';
-    sections: ModuleSection[];
-    quiz: ModuleQuiz;
-    isActive: boolean;
-    progress?: UserProgress;
-}
-
-interface ModuleSection {
-    id: string;
-    title: string;
-    content: string;
-    duration: string;
-    order: number;
-    pdfUrl?: string;
-    isActive: boolean;
-}
-
-interface ModuleQuiz {
-    id: string;
-    title: string;
-    description: string;
-    duration: string;
-    totalQuestions: number;
-    questions: DatabaseQuizQuestion[];
-    isActive: boolean;
-}
-
-interface UserProgress {
-    id: string;
-    userId: string;
-    moduleId: string;
-    completedSections: string[];
-    quizCompleted: boolean;
-    quizScore?: number;
-    quizAttempts: number;
-    completionPercentage: number;
-    lastAccessedAt: string;
-}
-
-type QuizView = "question" | "results" | "summary" | "navigation";
-
-export default function Quiz() {
+export default function Quiz({ language }: QuizProps) {
     const router = useRouter();
     const params = useParams();
-    const moduleId = params.id as string;
+    const moduleId = params.id as string;    // Get translations based on language with fallback to Indonesian
+    const t = quizTranslations[language || 'id'];
 
     const [module, setModule] = useState<Module | null>(null);
     const [loading, setLoading] = useState(true);
@@ -104,9 +43,7 @@ export default function Quiz() {
         if (moduleId) {
             fetchModuleData();
         }
-    }, [moduleId]);
-
-    const fetchModuleData = async () => {
+    }, [moduleId]);    const fetchModuleData = async () => {
         try {
             const response = await axiosClient.get(`/api/v1/modules/${moduleId}`);
             const data = response.data;
@@ -116,20 +53,20 @@ export default function Quiz() {
                 
                 // Check if quiz is already completed
                 if (data.data.progress?.quizCompleted) {
-                    toast.info("You have already completed this quiz!");
+                    toast.info(t.quizCompletedAlready);
                 }
             } else {
-                toast.error(data.error || "Failed to fetch module");
+                toast.error(data.error || t.fetchError);
                 router.push(`/module/${moduleId}`);
             }
         } catch (error) {
             console.error("Error fetching module:", error);
-            toast.error("Failed to fetch module");
+            toast.error(t.fetchErrorGeneric);
             router.push(`/module/${moduleId}`);
         } finally {
             setLoading(false);
         }
-    };    // Transform database quiz questions into UI format
+    };// Transform database quiz questions into UI format
     const transformQuizQuestions = (dbQuestions: DatabaseQuizQuestion[]): QuizQuestionData[] => {
         return dbQuestions
             .sort((a, b) => a.order - b.order)
@@ -267,28 +204,26 @@ export default function Quiz() {
                         totalQuestions,
                         attemptNumber,
                         isFirstAttempt
-                    );
-
-                    if (progressionResult.success && progressionResult.message) {
+                    );                    if (progressionResult.success && progressionResult.message) {
                         toast.success(progressionResult.message, {
                             duration: 4000,
                         });
                     } else {
-                        toast.success(`Quiz completed! You scored ${score}%`, {
+                        toast.success(`${t.quizCompleted} ${score}%`, {
                             duration: 3000,
                         });
                     }
                 } else {
-                    toast.success(`Quiz completed! You scored ${score}%`, {
+                    toast.success(`${t.quizCompleted} ${score}%`, {
                         duration: 3000,
                     });
                 }
             } else {
-                toast.error(data.error || "Failed to submit quiz score");
+                toast.error(data.error || t.submitError);
             }
         } catch (error) {
             console.error("Error submitting quiz score:", error);
-            toast.error("Failed to submit quiz score");
+            toast.error(t.submitErrorGeneric);
         }
     };
 
@@ -363,12 +298,10 @@ export default function Quiz() {
         setAnswers([]);
         setSelectedAnswer(null);
         setShowResults(false);
-    };
-
-    if (loading) {
+    };    if (loading) {
         return (
             <div className="min-h-screen bg-primary flex items-center justify-center">
-                <div className="text-white text-xl">Loading quiz...</div>
+                <div className="text-white text-xl">{t.loading}</div>
             </div>
         );
     }
@@ -376,7 +309,7 @@ export default function Quiz() {
     if (!module) {
         return (
             <div className="min-h-screen bg-primary flex items-center justify-center">
-                <div className="text-white text-xl">Module not found</div>
+                <div className="text-white text-xl">{t.moduleNotFound}</div>
             </div>
         );
     }
@@ -385,38 +318,36 @@ export default function Quiz() {
         return (
             <div className="min-h-screen bg-primary flex items-center justify-center">
                 <div className="text-white text-center">
-                    <h2 className="text-2xl font-bold mb-4">Quiz Not Available</h2>
-                    <p className="mb-4">This quiz is currently not active.</p>
+                    <h2 className="text-2xl font-bold mb-4">{t.quizNotActiveTitle}</h2>
+                    <p className="mb-4">{t.quizNotActiveMessage}</p>
                     <button 
                         onClick={handleBackToModule}
                         className="bg-white text-primary px-6 py-2 rounded-lg font-medium"
                     >
-                        Back to Module
+                        {t.backToModule}
                     </button>
                 </div>
             </div>
         );
-    }
-
-    if (currentView === "navigation") {
+    }    if (currentView === "navigation") {
         return (
-            <QuizNavigation
-                totalQuestions={totalQuestions}
+            <QuizNavigation                totalQuestions={totalQuestions}
                 answeredQuestions={answers.map((a) => a.questionId)}
                 onNavigateToQuestion={handleNavigateToQuestion}
                 onBack={() => setCurrentView("question")}
+                language={language || 'id'}
             />
         );
     }
 
     if (currentView === "summary") {
-        return (
-            <QuizSummary
+        return (            <QuizSummary
                 quizData={quizData}
                 answers={answers}
                 totalPoints={totalPoints}
                 onBackToModule={handleBackToModule}
                 onRetakeQuiz={handleRetakeQuiz}
+                language={language || 'id'}
             />
         );
     }
@@ -430,12 +361,12 @@ export default function Quiz() {
             showResults={showResults}
             onAnswerSelect={handleAnswerSelect}
             onCheckAnswer={handleCheckAnswer}
-            onNextQuestion={handleNextQuestion}
-            onPrevQuestion={handlePrevQuestion}
+            onNextQuestion={handleNextQuestion}            onPrevQuestion={handlePrevQuestion}
             onBackToModule={handleBackToModule}
             canGoNext={showResults}
             canGoPrev={currentQuestionIndex > 0}
             onShowNavigation={handleShowNavigation}
+            language={language || 'id'}
         />
     );
 }

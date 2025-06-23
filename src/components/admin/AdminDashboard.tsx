@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { BookOpen, Users, Award, Plus, Eye, Settings } from "lucide-react";
+import { BookOpen, Users, Award, Plus, Eye, Settings, Target } from "lucide-react";
 
 interface DashboardStats {
   totalModules: number;
@@ -55,8 +55,7 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
-  const quickActions = [
+  };  const quickActions = [
     {
       title: "Create Module",
       description: "Add a new learning module",
@@ -70,6 +69,13 @@ export default function AdminDashboard() {
       icon: Settings,
       action: () => router.push("/admin/modules"),
       color: "bg-green-500",
+    },
+    {
+      title: "Level & Points Config",
+      description: "Configure progression system",
+      icon: Target,
+      action: () => router.push("/admin/level-config"),
+      color: "bg-purple-500",
     },
     {
       title: "App Settings",

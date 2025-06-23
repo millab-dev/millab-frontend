@@ -4,14 +4,20 @@ import { Button } from "@/components/ui/button";
 import React, { useState, useEffect } from "react";
 import cloud from "@/assets/cloudPattern.svg";
 import Image from "next/image";
-import bear from "@/assets/bear.svg";
-import squirrel from "@/assets/squirrel.svg";
-import rabbit from "@/assets/rabbitBook.svg";
+import owlRead from "/public/owl-read.png";
+import owlVibe from "/public/owl-vibe.png";
+import owlWave from "/public/owl-wave.png";
+import owlHappy from "/public/owl-happy.png";
 import { useRouter, useParams } from "next/navigation";
 import { Check, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import axiosClient from "@/lib/axios.client";
 import { awardSectionXP } from "@/utils/progressionApi";
+import { 
+    SectionProps, 
+    sectionModuleTranslations, 
+    Language 
+} from "./types";
 
 interface Module {
     id: string;
@@ -56,18 +62,22 @@ interface UserProgress {
     lastAccessedAt: string;
 }
 
-export default function SectionModule() {
+interface SectionModuleProps extends SectionProps {}
+
+export default function SectionModule({ language = 'id' }: SectionModuleProps) {
     const router = useRouter();
     const params = useParams();
     const moduleId = params.id as string;
     const sectionId = params.section as string;
 
-    const [module, setModule] = useState<Module | null>(null);
+    // Get translations based on language
+    const t = sectionModuleTranslations[language];const [module, setModule] = useState<Module | null>(null);
     const [currentSection, setCurrentSection] = useState<ModuleSection | null>(
         null
     );
     const [loading, setLoading] = useState(true);
     const [isMarkedAsDone, setIsMarkedAsDone] = useState(false);
+    const [isNavigating, setIsNavigating] = useState(false);
 
     useEffect(() => {
         if (moduleId && sectionId) {
@@ -96,18 +106,17 @@ export default function SectionModule() {
                         data.data.progress?.completedSections.includes(
                             sectionId
                         ) || false
-                    );
-                } else {
-                    toast.error("Section not found");
+                    );                } else {
+                    toast.error(t.sectionNotFound);
                     router.push(`/module/${moduleId}`);
                 }
             } else {
-                toast.error(data.error || "Failed to fetch module");
+                toast.error(data.error || t.fetchModuleError);
                 router.push("/module");
             }
         } catch (error) {
             console.error("Error fetching module:", error);
-            toast.error("Failed to fetch module");
+            toast.error(t.fetchModuleErrorGeneric);
             router.push("/module");
         } finally {
             setLoading(false);
@@ -143,17 +152,13 @@ export default function SectionModule() {
                             sectionId,
                             module.difficulty
                         );
-                        console.log("Progression result:", progressionResult);
-
-                        if (progressionResult.success) {
+                        console.log("Progression result:", progressionResult);                        if (progressionResult.success) {
                             if (progressionResult.message) {
                                 toast.success(progressionResult.message, {
                                     duration: 4000,
                                 });
                             } else {
-                                toast.success(
-                                    "Section completed successfully! XP awarded."
-                                );
+                                toast.success(t.sectionCompleted);
                             }
                         } else {
                             console.error(
@@ -161,28 +166,27 @@ export default function SectionModule() {
                                 progressionResult.error
                             );
                             toast.warning(
-                                progressionResult.error ||
-                                    "Section completed, but XP award failed"
+                                progressionResult.error || t.pointsError
                             );
                         }
                     } catch (xpError) {
                         console.error("Error awarding XP:", xpError);
-                        toast.warning("Section completed, but XP award failed");
+                        toast.warning(t.pointsError);
                     }
                 } else {
                     console.log(
                         "No module difficulty found, skipping XP award"
                     );
-                    toast.success("Section completed successfully!");
+                    toast.success(t.sectionCompleted);
                 }
             } else {
                 toast.error(
-                    data.error || "Failed to mark section as completed"
+                    data.error || t.completionError
                 );
             }
         } catch (error) {
             console.error("Error marking section as completed:", error);
-            toast.error("Failed to mark section as completed");
+            toast.error(t.completionError);
         }
     };
 
@@ -203,9 +207,8 @@ export default function SectionModule() {
         return currentIndex < activeSections.length - 1
             ? activeSections[currentIndex + 1].id
             : null;
-    };
-
-    const handleNext = () => {
+    };    const handleNext = () => {
+        setIsNavigating(true);
         const nextSectionId = getNextSectionId();
         if (nextSectionId) {
             router.push(`/module/${moduleId}/${nextSectionId}`);
@@ -217,20 +220,64 @@ export default function SectionModule() {
                 router.push(`/module/${moduleId}`);
             }
         }
-    };
-
-    if (loading) {
+    };if (loading) {
         return (
-            <div className="bg-primary min-h-screen flex items-center justify-center">
-                <div className="text-white text-xl">Loading section...</div>
+            <div className="bg-primary min-h-screen">
+                {/* Header Section Skeleton */}
+                <div className="px-4 py-6 relative">
+                    <div className="absolute top-0 left-0 w-full h-full">
+                        <Image
+                            src={cloud}
+                            alt="cloud pattern"
+                            fill
+                            className="object-cover"
+                        />
+                    </div>
+                    <div className="relative z-10 flex items-center gap-3 animate-pulse">
+                        <div className="w-12 h-12 bg-white/20 rounded-full"></div>
+                        <div className="space-y-2">
+                            <div className="h-6 bg-white/20 rounded w-48"></div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Content Section Skeleton */}
+                <div className="p-6 bg-white rounded-t-4xl flex-grow flex flex-col animate-pulse">
+                    <div className="mb-8">
+                        {/* Illustrations area skeleton */}
+                        <div className="rounded-xl py-6 px-4 mb-4 bg-gradient-to-b from-gray-200 to-gray-100 h-32">
+                            <div className="flex justify-between sm:justify-center items-end sm:gap-12">
+                                <div className="w-16 h-20 bg-gray-300 rounded"></div>
+                                <div className="w-14 h-18 bg-gray-300 rounded"></div>
+                                <div className="w-16 h-20 bg-gray-300 rounded"></div>
+                            </div>
+                        </div>
+
+                        {/* Content skeleton */}
+                        <div className="space-y-3">
+                            <div className="h-4 bg-gray-200 rounded w-full"></div>
+                            <div className="h-4 bg-gray-200 rounded w-11/12"></div>
+                            <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+                            <div className="h-4 bg-gray-200 rounded w-full"></div>
+                            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                            <div className="h-4 bg-gray-200 rounded w-full"></div>
+                            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                            <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                        </div>
+                    </div>
+
+                    {/* Navigation Buttons Skeleton */}
+                    <div className="flex flex-wrap flex-row-reverse gap-4 justify-between pt-6 md:px-6 border-t mt-auto items-center">
+                        <div className="h-10 bg-gray-200 rounded px-8 w-32"></div>
+                        <div className="h-10 bg-gray-200 rounded px-6 w-28"></div>
+                    </div>
+                </div>
             </div>
         );
-    }
-
-    if (!module || !currentSection) {
+    }    if (!module || !currentSection) {
         return (
             <div className="bg-primary min-h-screen flex items-center justify-center">
-                <div className="text-white text-xl">Section not found</div>
+                <div className="text-white text-xl">{t.sectionNotFound}</div>
             </div>
         );
     }
@@ -257,19 +304,27 @@ export default function SectionModule() {
 
             {/* Content Section */}
             <div className="p-6 bg-white rounded-t-4xl flex-grow flex flex-col">
-                <div className="mb-8">
-                    {/* Illustrations */}
-                    <div className="rounded-xl py-6 px-4 mb-4 flex justify-between sm:justify-center items-end sm:gap-12 bg-gradient-to-b from-[#FFB9DA] to-white">
-                        <Image src={bear} alt="bear" className="w-22 h-auto" />
-                        <Image
-                            src={rabbit}
-                            alt="rabbit"
-                            className="w-18 h-auto"
+                <div className="mb-8">                    {/* Illustrations */}
+                    <div className="rounded-xl py-6 px-4 mb-4 flex justify-between sm:justify-center items-end sm:gap-6 bg-gradient-to-b from-[#FFB9DA] to-white">
+                        <Image 
+                            src={owlRead} 
+                            alt="owl-read" 
+                            className="w-48 h-auto" 
                         />
                         <Image
-                            src={squirrel}
-                            alt="squirrel"
-                            className="w-22 h-auto"
+                            src={owlVibe}
+                            alt="owl-vibe"
+                            className="w-48 h-auto"
+                        />
+                        <Image
+                            src={owlWave}
+                            alt="owl-wave"
+                            className="w-48 h-auto"
+                        />
+                        <Image
+                            src={owlHappy}
+                            alt="owl-happy"
+                            className="w-48 h-auto"
                         />
                     </div>
 
@@ -283,29 +338,27 @@ export default function SectionModule() {
                 </div>
 
                 {/* Navigation Buttons */}
-                <div className="flex flex-wrap flex-row-reverse gap-4 justify-between pt-6 md:px-6 border-t mt-auto items-center">
-                    <Button
+                <div className="flex flex-wrap flex-row-reverse gap-4 justify-between pt-6 md:px-6 border-t mt-auto items-center">                    <Button
                         className={`px-8 flex items-center gap-2 cursor-pointer transition-all duration-300 ${
                             isMarkedAsDone
                                 ? " text-primary ring-1 ring-primary bg-white hover:bg-primary hover:text-white"
                                 : "bg-primary hover:bg-primary/90 text-white"
-                        }`}
+                        } ${isNavigating ? 'opacity-50' : ''}`}
                         onClick={isMarkedAsDone ? handleNext : handleMarkAsDone}
-                        disabled={!isMarkedAsDone && loading}
+                        disabled={(!isMarkedAsDone && loading) || isNavigating}
                     >
-                        <span>{isMarkedAsDone ? "Next" : "Mark as Done"}</span>
-                        {isMarkedAsDone ? (
+                        <span>{isNavigating ? t.loading : (isMarkedAsDone ? t.nextSection : t.markAsDone)}</span>
+                        {!isNavigating && (isMarkedAsDone ? (
                             <ArrowRight className="w-5 h-5" />
                         ) : (
                             <Check className="w-5 h-5" />
-                        )}
-                    </Button>
-                    <Button
+                        ))}
+                    </Button>                    <Button
                         variant="outline"
                         className="px-6 cursor-pointer"
                         onClick={() => router.push(`/module/${moduleId}`)}
                     >
-                        Back to Module
+                        {t.backToModule}
                     </Button>
                 </div>
             </div>

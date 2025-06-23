@@ -7,7 +7,7 @@ export interface User {
     birthdate: string
     socializationLocation: string
     email: string
-    phoneNumber: string
+    phoneNumber?: string // Make phone number optional
     createdAt: string
     updatedAt: string
   }

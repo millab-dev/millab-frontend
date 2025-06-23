@@ -12,7 +12,7 @@ interface User {
   birthplace: string;
   birthdate: string;
   socializationLocation: string;
-  phoneNumber: string;
+  phoneNumber?: string; // Make phone number optional
 }
 
 export function useAuth() {

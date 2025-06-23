@@ -7,20 +7,20 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 interface ProgressionResponse {
   success: boolean;
   message?: string;
-  data?: any;
   error?: string;
+  data?: any;
 }
 
 /**
- * Award XP for reading a section
+ * Award points for reading a section
  */
-export async function awardSectionXP(
+export async function awardSectionPoints(
   sectionId: string,
   moduleDifficulty: 'Easy' | 'Intermediate' | 'Advanced'
 ): Promise<ProgressionResponse> {
   try {
-    console.log('Calling XP award API:', { sectionId, moduleDifficulty });
-    const response = await fetch(`${API_BASE_URL}/api/v1/progression/award-exp/section`, {
+    console.log('Calling points award API:', { sectionId, moduleDifficulty });
+    const response = await fetch(`${API_BASE_URL}/api/v1/progression/award-points/section`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -32,34 +32,34 @@ export async function awardSectionXP(
       })
     });
 
-    console.log('XP API response status:', response.status);
+    console.log('Points API response status:', response.status);
     
     if (!response.ok) {
-      console.error('XP API failed with status:', response.status);
+      console.error('Points API failed with status:', response.status);
       const errorText = await response.text();
-      console.error('XP API error response:', errorText);
+      console.error('Points API error response:', errorText);
       return {
         success: false,
-        error: `Failed to award XP (${response.status})`
+        error: `Failed to award points (${response.status})`
       };
     }
 
     const result = await response.json();
-    console.log('XP API success result:', result);
+    console.log('Points API success result:', result);
     return result;
   } catch (error) {
-    console.error('Error awarding section XP:', error);
+    console.error('Error awarding section points:', error);
     return {
       success: false,
-      error: 'Failed to award section XP'
+      error: 'Failed to award section points'
     };
   }
 }
 
 /**
- * Award XP and points for quiz attempt
+ * Award points for quiz attempt
  */
-export async function awardQuizRewards(
+export async function awardQuizPoints(
   quizId: string,
   moduleDifficulty: 'Easy' | 'Intermediate' | 'Advanced',
   score: number,
@@ -68,7 +68,7 @@ export async function awardQuizRewards(
   isFirstAttempt: boolean
 ): Promise<ProgressionResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/progression/award-exp/quiz`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/progression/award-points/quiz`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -87,25 +87,26 @@ export async function awardQuizRewards(
     const result = await response.json();
     return result;
   } catch (error) {
-    console.error('Error awarding quiz rewards:', error);
+    console.error('Error awarding quiz points:', error);
     return {
       success: false,
-      error: 'Failed to award quiz rewards'
+      error: 'Failed to award quiz points'
     };
   }
 }
 
 /**
- * Award XP and points for final quiz attempt
+ * Award points for final quiz attempt
  */
-export async function awardFinalQuizRewards(
+export async function awardFinalQuizPoints(
   finalQuizId: string,
   score: number,
   maxScore: number,
-  isFirstAttempt: boolean
+  isFirstAttempt: boolean,
+  difficulty: 'easy' | 'intermediate' | 'advanced' = 'intermediate'
 ): Promise<ProgressionResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/progression/award-exp/final-quiz`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/progression/award-points/final-quiz`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -115,20 +116,26 @@ export async function awardFinalQuizRewards(
         finalQuizId,
         score,
         maxScore,
-        isFirstAttempt
+        isFirstAttempt,
+        difficulty
       })
     });
 
     const result = await response.json();
     return result;
   } catch (error) {
-    console.error('Error awarding final quiz rewards:', error);
+    console.error('Error awarding final quiz points:', error);
     return {
       success: false,
-      error: 'Failed to award final quiz rewards'
+      error: 'Failed to award final quiz points'
     };
   }
 }
+
+// Legacy XP functions for backward compatibility (they now award points)
+export const awardSectionXP = awardSectionPoints;
+export const awardQuizRewards = awardQuizPoints;
+export const awardFinalQuizRewards = awardFinalQuizPoints;
 
 /**
  * Get user progression data
@@ -136,8 +143,7 @@ export async function awardFinalQuizRewards(
 export async function getUserProgression(): Promise<ProgressionResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/progression/me`, {
-      method: 'GET',
-      credentials: 'include',
+      credentials: 'include'
     });
 
     const result = await response.json();
@@ -149,37 +155,4 @@ export async function getUserProgression(): Promise<ProgressionResponse> {
       error: 'Failed to fetch user progression'
     };
   }
-}
-
-/**
- * Get leaderboard data
- */
-export async function getLeaderboard(limit: number = 10): Promise<ProgressionResponse> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/progression/leaderboard?limit=${limit}`, {
-      method: 'GET',
-      credentials: 'include',
-    });
-
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    console.error('Error fetching leaderboard:', error);
-    return {
-      success: false,
-      error: 'Failed to fetch leaderboard'
-    };
-  }
-}
-
-/**
- * Show reward notification to user
- */
-export function showRewardNotification(message: string) {
-  // You can implement a toast notification system here
-  // For now, we'll just console.log
-  console.log('🎉 Reward:', message);
-  
-  // You could integrate with a toast library like react-hot-toast
-  // or create a custom notification system
 }
