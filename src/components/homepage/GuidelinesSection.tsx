@@ -34,13 +34,13 @@ const GuidelinesSection = ({ language = 'id' }: GuidelinesSectionProps) => {
       id: 1,
       key: 'website',
       icon: <Globe className="text-white w-6 h-6" />,
-      url:'https://drive.google.com/file/d/111uUaRNYBmp4p4hN4ycDMWcmIge2Isvi/view?usp=drive_link'
+      url:'https://drive.google.com/file/d/17pMw11sbHFbNbcTq0r62T8UHFWIyv39R/view?usp=drive_link'
     },
     {
       id: 2,
       key: 'offlineProduct',
       icon: <Package className="text-white w-6 h-6" />,
-      url: 'https://drive.google.com/file/d/1XR0rIkutxPKo8wocAIEXdzUSPoPj7zXH/view?usp=drive_link'
+      url: 'https://drive.google.com/file/d/1A0aDpKVLRZu6GnwtEaMJLSq3rs_Y5_ty/view?usp=drive_link'
     }
   ]
 
