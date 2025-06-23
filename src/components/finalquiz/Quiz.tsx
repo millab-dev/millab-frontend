@@ -8,10 +8,10 @@ import QuizSummary from "./QuizSummary";
 import QuizNavigation from "./QuizNavigation";
 import { Quiz as QuizType } from "@/actions/quiz.service";
 import { addUserScore } from "@/actions/userScore.add-score";
-import { awardFinalQuizRewards } from "@/utils/progressionApi";
+import { awardFinalQuizRewards, checkQuizAttemptStatus } from "@/utils/progressionApi";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
-import { Language } from "./types";
+import { Language, quizMessagesTranslations } from "./types";
 
 export interface QuizOption {
     id: string;
@@ -47,6 +47,9 @@ interface QuizProps {
 export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, language = 'id', difficulty = 'intermediate' }: QuizProps) {
     const router = useRouter();
 
+    // Get translations based on language
+    const qm = quizMessagesTranslations[language];
+
     // Map questions to add id and points if not present (for compatibility)
     const quizData = quiz.questions.map((q, idx) => ({
         id: idx + 1,
@@ -62,9 +65,10 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
     const [currentView, setCurrentView] = useState<QuizView>("question");
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState<QuizAnswer[]>([]);
-    const [hasLoaded, setHasLoaded] = useState(false);
-    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+    const [hasLoaded, setHasLoaded] = useState(false);    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const [showResults, setShowResults] = useState(false);
+    const [actualIsFirstAttempt, setActualIsFirstAttempt] = useState<boolean | null>(null);
+    const [showFinishConfirm, setShowFinishConfirm] = useState(false);
     const currentQuestion = quizData[currentQuestionIndex];
     const totalQuestions = quizData.length;
     const totalPoints = answers.reduce((sum, a) => sum + a.points, 0);
@@ -83,16 +87,28 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
             setSelectedAnswer(null);
             setShowResults(false);
         }
-    }, [currentQuestionIndex, answers, currentAnswer]);
-
-    // Load answers from localStorage on mount
+    }, [currentQuestionIndex, answers, currentAnswer]);    // Load answers from localStorage on mount
     useEffect(() => {
         const saved = localStorage.getItem(`quiz-answers-${quiz.id}`);
         if (saved) {
             setAnswers(JSON.parse(saved));
         }
         setHasLoaded(true);
+        checkFirstAttemptStatus();
     }, [quiz.id]);
+
+    const checkFirstAttemptStatus = async () => {
+        try {
+            const response = await checkQuizAttemptStatus('final_quiz', quiz.id);
+            if (response.success && response.data) {
+                setActualIsFirstAttempt(response.data.isFirstAttempt);
+            }
+        } catch (error) {
+            console.error('Error checking first attempt status:', error);
+            // Default to true if we can't check
+            setActualIsFirstAttempt(true);
+        }
+    };
 
     // Save answers to localStorage whenever they change
     useEffect(() => {
@@ -138,48 +154,47 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
             }
         });
         setShowResults(true);
-    };
-
-    const handleNextQuestion = async () => {
+    };    const handleNextQuestion = async () => {
         if (currentQuestionIndex < totalQuestions - 1) {
             setCurrentQuestionIndex((prev) => prev + 1);
         } else {
-            localStorage.removeItem(`quiz-answers-${quiz.id}`);
-            try {
-                // Add score to existing system
-                addUserScore(userId as string, totalPoints);                // Award XP and points through progression system
-                const progressionResult = await awardFinalQuizRewards(
-                    quiz.id,
-                    totalPoints,
-                    totalQuestions,
-                    isFirstAttempt,
-                    difficulty
-                );
+            // Show confirmation before finishing quiz
+            setShowFinishConfirm(true);
+        }
+    };
 
-                if (progressionResult.success && progressionResult.message) {
-                    toast.success(progressionResult.message, {
-                        duration: 4000,
-                    });
-                } else {
-                    if (language === 'id') {
-                        toast.success(`Kamu mendapatkan ${totalPoints} poin!`);
-                    } else {
-                        toast.success(`You scored ${totalPoints} points!`);
-                    }
-                }
+    const handleFinishQuiz = async () => {
+        setShowFinishConfirm(false);
+        
+        localStorage.removeItem(`quiz-answers-${quiz.id}`);
+        try {
+            // Add score to existing system
+            addUserScore(userId as string, totalPoints);                // Award XP and points through progression system
+            const progressionResult = await awardFinalQuizRewards(
+                quiz.id,
+                totalPoints,
+                totalQuestions,
+                actualIsFirstAttempt ?? isFirstAttempt,
+                difficulty
+            );            if (progressionResult.success && progressionResult.message) {
+                toast.success(progressionResult.message, {
+                    duration: 4000,
+                });
+            } else {
+                toast.success(qm.earnedPoints.replace('{points}', totalPoints.toString()));
+            }
 
-                setCurrentView("summary");
-            } catch (error: unknown) {
-                console.error("Error submitting final quiz:", error);
-                if (language === 'id') {
-                    toast.error("Gagal menambahkan skor", {
-                        description: error instanceof AxiosError ? error.response?.data.message : "Terjadi kesalahan",
-                    });
-                } else {
-                    toast.error("Failed to add score", {
-                        description: error instanceof AxiosError ? error.response?.data.message : "Unknown error",
-                    });
-                }
+            setCurrentView("summary");
+        } catch (error: unknown) {
+            console.error("Error submitting final quiz:", error);
+            if (language === 'id') {
+                toast.error("Gagal menambahkan skor", {
+                    description: error instanceof AxiosError ? error.response?.data.message : "Terjadi kesalahan",
+                });
+            } else {
+                toast.error("Failed to add score", {
+                    description: error instanceof AxiosError ? error.response?.data.message : "Unknown error",
+                });
             }
         }
     };
@@ -236,10 +251,52 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
                 language={language}
             />
         );
-    }
-
-    return (
+    }    return (
         <>
+            {/* Finish Quiz Confirmation Dialog */}
+            {showFinishConfirm && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">                    <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+                        <h3 className="text-xl font-bold mb-4">
+                            {actualIsFirstAttempt ? qm.finishQuizConfirm : qm.finishQuizRetake}
+                        </h3>
+                        <p className="text-gray-600 mb-6">
+                            {actualIsFirstAttempt 
+                                ? qm.finishQuizFirstAttempt
+                                : qm.finishQuizNoPoints
+                            }
+                        </p>
+                        <div className="flex justify-end space-x-3">
+                            <button
+                                onClick={() => setShowFinishConfirm(false)}
+                                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                            >
+                                {qm.cancel}
+                            </button>
+                            <button
+                                onClick={handleFinishQuiz}
+                                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+                            >
+                                {qm.finishQuiz}
+                            </button>
+                        </div>
+                    </div>
+                </div>            )}
+
+            {/* First Attempt Warning Banner */}
+            {actualIsFirstAttempt !== null && (
+                <div className={`mb-4 p-3 rounded-lg border-l-4 ${
+                    actualIsFirstAttempt 
+                        ? 'bg-blue-50 border-blue-400 text-blue-700' 
+                        : 'bg-yellow-50 border-yellow-400 text-yellow-700'
+                }`}>
+                    <div className="flex items-center">
+                        <div className="text-sm font-medium">
+                            {actualIsFirstAttempt ? qm.firstAttemptWarning : qm.retakeWarning}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <QuizQuestion
                 question={currentQuestion}
                 currentQuestionNumber={currentQuestionIndex + 1}

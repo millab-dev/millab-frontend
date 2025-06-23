@@ -23,6 +23,12 @@ export type QuizTranslationsType = {
     fetchError: string;
     fetchErrorGeneric: string;
     pointsAwarded: string;
+    finishQuizConfirm: string;
+    finishQuizRetake: string;
+    finishQuizFirstAttempt: string;
+    finishQuizNoPoints: string;
+    cancel: string;
+    finishQuiz: string;
   };
 };
 
@@ -76,8 +82,7 @@ export type QuizNavigationTranslationsType = {
 };
 
 // Quiz translations
-export const quizTranslations: QuizTranslationsType = {
-  id: {
+export const quizTranslations: QuizTranslationsType = {  id: {
     loading: "Memuat kuis...",
     moduleNotFound: "Modul tidak ditemukan",
     quizNotAvailable: "Kuis Tidak Tersedia",
@@ -91,7 +96,13 @@ export const quizTranslations: QuizTranslationsType = {
     submitErrorGeneric: "Gagal mengirim skor kuis",
     fetchError: "Gagal memuat modul",
     fetchErrorGeneric: "Gagal memuat modul",
-    pointsAwarded: "poin!"
+    pointsAwarded: "poin!",
+    finishQuizConfirm: "Selesaikan Kuis?",
+    finishQuizRetake: "Ulangi Kuis?",
+    finishQuizFirstAttempt: "n pertama Anda. Anda akan mendapat poin berdasarkan skor Anda.",
+    finishQuizNoPoints: "Anda sudah menyelesaikan kuis ini. Tidak ada poin yang akan diperoleh untuk percobaan ini.",
+    cancel: "Batal",
+    finishQuiz: "Selesaikan Kuis"
   },
   en: {
     loading: "Loading quiz...",
@@ -107,7 +118,13 @@ export const quizTranslations: QuizTranslationsType = {
     submitErrorGeneric: "Failed to submit quiz score",
     fetchError: "Failed to fetch module",
     fetchErrorGeneric: "Failed to fetch module",
-    pointsAwarded: "points!"
+    pointsAwarded: "points!",
+    finishQuizConfirm: "Finish Quiz?",
+    finishQuizRetake: "Retake Quiz?",
+    finishQuizFirstAttempt: "This is your first attempt. You will earn points based on your score.",
+    finishQuizNoPoints: "You have already completed this quiz. No points will be earned for this attempt.",
+    cancel: "Cancel",
+    finishQuiz: "Finish Quiz"
   }
 };
 

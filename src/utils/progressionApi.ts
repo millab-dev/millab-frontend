@@ -121,13 +121,35 @@ export async function awardFinalQuizPoints(
       })
     });
 
-    const result = await response.json();
-    return result;
+    const result = await response.json();    return result;
   } catch (error) {
     console.error('Error awarding final quiz points:', error);
     return {
       success: false,
       error: 'Failed to award final quiz points'
+    };
+  }
+}
+
+/**
+ * Check quiz attempt status (for warnings)
+ */
+export async function checkQuizAttemptStatus(
+  source: 'module_quiz' | 'final_quiz' | 'section_read',
+  sourceId: string
+): Promise<ProgressionResponse> {
+  try {
+    const response = await fetch(`/api/v1/progression/quiz-attempt-status/${source}/${sourceId}`, {
+      credentials: 'include'
+    });
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error checking quiz attempt status:', error);
+    return {
+      success: false,
+      error: 'Failed to check quiz attempt status'
     };
   }
 }

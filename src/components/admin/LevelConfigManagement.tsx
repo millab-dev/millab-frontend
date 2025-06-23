@@ -39,12 +39,6 @@ interface PointsConfig {
     intermediate: number;
     advanced: number;
   };
-  firstAttemptBonus: number;
-  streakBonus: {
-    enabled: boolean;
-    streakDays: number;
-    multiplier: number;
-  };
   createdAt: string;
   updatedAt: string;
 }
@@ -163,8 +157,7 @@ export default function LevelConfigManagement() {
             sectionPoints: config.sectionPoints,
             quizPoints: config.quizPoints,
             finalQuizPoints: config.finalQuizPoints,
-            firstAttemptBonus: config.firstAttemptBonus,
-            streakBonus: config.streakBonus,
+
           }),
         }
       );
@@ -357,10 +350,10 @@ export default function LevelConfigManagement() {
                     </div>
                   </div>                  {/* Final Quiz Points */}
                   <div>
-                    <Label>Final Quiz Points (per correct answer by difficulty)</Label>
+                    <Label className="text-base font-medium">Final Quiz Points (per correct answer)</Label>
                     <div className="grid grid-cols-3 gap-4 mt-2">
                       <div>
-                        <Label className="text-sm text-gray-600">Easy</Label>
+                        <Label>Easy</Label>
                         <Input
                           type="number"
                           value={pointsConfig.finalQuizPoints.easy}
@@ -376,7 +369,7 @@ export default function LevelConfigManagement() {
                         />
                       </div>
                       <div>
-                        <Label className="text-sm text-gray-600">Intermediate</Label>
+                        <Label>Intermediate</Label>
                         <Input
                           type="number"
                           value={pointsConfig.finalQuizPoints.intermediate}
@@ -392,7 +385,7 @@ export default function LevelConfigManagement() {
                         />
                       </div>
                       <div>
-                        <Label className="text-sm text-gray-600">Advanced</Label>
+                        <Label>Advanced</Label>
                         <Input
                           type="number"
                           value={pointsConfig.finalQuizPoints.advanced}
@@ -408,79 +401,6 @@ export default function LevelConfigManagement() {
                         />
                       </div>
                     </div>
-                  </div>
-
-                  {/* First Attempt Bonus */}
-                  <div>
-                    <Label>First Attempt Bonus Multiplier</Label>
-                    <Input
-                      type="number"
-                      step="0.1"
-                      value={pointsConfig.firstAttemptBonus}
-                      onChange={(e) =>
-                        setPointsConfig({
-                          ...pointsConfig,
-                          firstAttemptBonus: parseFloat(e.target.value) || 1.0,
-                        })
-                      }
-                      className="max-w-xs"
-                    />
-                  </div>
-
-                  {/* Streak Bonus */}
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={pointsConfig.streakBonus.enabled}
-                        onCheckedChange={(checked) =>
-                          setPointsConfig({
-                            ...pointsConfig,
-                            streakBonus: {
-                              ...pointsConfig.streakBonus,
-                              enabled: checked,
-                            },
-                          })
-                        }
-                      />
-                      <Label>Enable Streak Bonus</Label>
-                    </div>
-                    {pointsConfig.streakBonus.enabled && (
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label>Required Streak Days</Label>
-                          <Input
-                            type="number"
-                            value={pointsConfig.streakBonus.streakDays}
-                            onChange={(e) =>
-                              setPointsConfig({
-                                ...pointsConfig,
-                                streakBonus: {
-                                  ...pointsConfig.streakBonus,
-                                  streakDays: parseInt(e.target.value) || 1,
-                                },
-                              })
-                            }
-                          />
-                        </div>
-                        <div>
-                          <Label>Bonus Multiplier</Label>
-                          <Input
-                            type="number"
-                            step="0.1"
-                            value={pointsConfig.streakBonus.multiplier}
-                            onChange={(e) =>
-                              setPointsConfig({
-                                ...pointsConfig,
-                                streakBonus: {
-                                  ...pointsConfig.streakBonus,
-                                  multiplier: parseFloat(e.target.value) || 1.0,
-                                },
-                              })
-                            }
-                          />
-                        </div>
-                      </div>
-                    )}
                   </div>
 
                   <div className="flex gap-2">
@@ -517,18 +437,6 @@ export default function LevelConfigManagement() {
                         Easy: {pointsConfig.finalQuizPoints.easy}, 
                         Intermediate: {pointsConfig.finalQuizPoints.intermediate}, 
                         Advanced: {pointsConfig.finalQuizPoints.advanced} per correct answer
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium mb-2">Bonuses</h4>
-                      <p className="text-sm text-gray-600">
-                        First attempt: {pointsConfig.firstAttemptBonus}x
-                        {pointsConfig.streakBonus.enabled && (
-                          <>
-                            <br />
-                            Streak ({pointsConfig.streakBonus.streakDays}+ days): {pointsConfig.streakBonus.multiplier}x
-                          </>
-                        )}
                       </p>
                     </div>
                   </div>

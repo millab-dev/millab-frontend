@@ -79,6 +79,20 @@ export interface QuizSummaryTranslations {
   questionResults: string;
 }
 
+// Define Quiz Messages translations
+export interface QuizMessagesTranslations {
+  earnedPoints: string;
+  noPointsEarned: string;
+  firstAttemptWarning: string;
+  retakeWarning: string;
+  finishQuizConfirm: string;
+  finishQuizRetake: string;
+  finishQuizFirstAttempt: string;
+  finishQuizNoPoints: string;
+  cancel: string;
+  finishQuiz: string;
+}
+
 // QuizSummary available translations
 export const quizSummaryTranslations: Record<Language, QuizSummaryTranslations> = {
   id: {
@@ -139,8 +153,35 @@ export const quizSummaryTranslations: Record<Language, QuizSummaryTranslations> 
       retakeQuiz: 'Retake Quiz',
       goBack: 'Go Back',
     },
-    questionResults: 'Question Results',
+    questionResults: 'Question Results',  },
+};
+
+// QuizMessages available translations
+export const quizMessagesTranslations: Record<Language, QuizMessagesTranslations> = {
+  id: {
+    earnedPoints: 'Kamu mendapatkan {points} poin!',
+    noPointsEarned: 'Kamu sudah mengerjakan kuis ini, tidak ada poin yang diperoleh.',
+    firstAttemptWarning: 'Peringatan: Hanya percobaan pertama yang mendapat poin!',
+    retakeWarning: 'Ini adalah percobaan ulang. Kamu tidak akan mendapat poin.',
+    finishQuizConfirm: 'Selesaikan Kuis?',
+    finishQuizRetake: 'Ulangi Kuis?',
+    finishQuizFirstAttempt: 'Hanya percobaan pertama Anda yang akan mendapat poin berdasarkan skor Anda.',
+    finishQuizNoPoints: 'Anda sudah menyelesaikan kuis ini. Tidak ada poin yang akan diperoleh untuk percobaan ini.',
+    cancel: 'Batal',
+    finishQuiz: 'Selesaikan Kuis'
   },
+  en: {
+    earnedPoints: 'You earned {points} points!',
+    noPointsEarned: 'You have done the quiz, no points earned.',
+    firstAttemptWarning: 'Warning: Only first attempt gets points!',
+    retakeWarning: 'This is a retake. You will not earn points.',
+    finishQuizConfirm: 'Finish Quiz?',
+    finishQuizRetake: 'Retake Quiz?',
+    finishQuizFirstAttempt: 'This is your first attempt. You will earn points based on your score.',
+    finishQuizNoPoints: 'You have already completed this quiz. No points will be earned for this attempt.',
+    cancel: 'Cancel',
+    finishQuiz: 'Finish Quiz'
+  }
 };
 
 // Define available translations
