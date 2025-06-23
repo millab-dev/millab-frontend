@@ -15,6 +15,7 @@ type GuidelineItem = {
   id: number;
   key: GuidelineItemKey; // Use the specific type
   icon: React.ReactNode;
+  url: string;
 };
 
 type GuidelinesSectionProps = SectionProps;
@@ -22,6 +23,10 @@ type GuidelinesSectionProps = SectionProps;
 const GuidelinesSection = ({ language = 'id' }: GuidelinesSectionProps) => {
   // Get translations based on language
   const t = guidelinesTranslations[language];
+
+  const onClick = (url: string) => {
+    window.open(url, '_blank');
+  }
   
   // Define guidelines with properly typed keys
   const guidelines: GuidelineItem[] = [
@@ -29,11 +34,13 @@ const GuidelinesSection = ({ language = 'id' }: GuidelinesSectionProps) => {
       id: 1,
       key: 'website',
       icon: <Globe className="text-white w-6 h-6" />,
+      url:'https://drive.google.com/file/d/1-wU4s299ooEPmeVpVzbx3a51NOOM6gPT/view?usp=drive_link'
     },
     {
       id: 2,
       key: 'offlineProduct',
       icon: <Package className="text-white w-6 h-6" />,
+      url: 'https://drive.google.com/file/d/1dMdJQxKEgQlQiO32aWJyWNQYo9u5kcE9/view?usp=drive_link'
     }
   ]
 
@@ -60,6 +67,7 @@ const GuidelinesSection = ({ language = 'id' }: GuidelinesSectionProps) => {
         {guidelines.map((item, index) => (
           <motion.div
             key={item.id}
+            onClick={() => onClick(item.url)}
             id={`guide-${item.key}`}
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
