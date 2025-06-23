@@ -114,6 +114,8 @@ export type ContinueReadingTranslationsType = {
     seeAll: string;
     emptyStateTitle: string;
     emptyStateSubtitle: string;
+    tryAnotherKeyword: string;
+    resetButton: string;
     categories: {
       [key in ModuleCategory]: string;
     };
@@ -147,6 +149,8 @@ export const continueReadingTranslations: ContinueReadingTranslationsType = {
   en: {
     title: "Continue Reading",
     seeAll: "See All",
+    tryAnotherKeyword: "Try another keyword or reset search",
+    resetButton: "Reset",
     emptyStateTitle: "You haven't started reading our modules yet",
     emptyStateSubtitle: "Start learning by exploring the available modules",
     categories: {
