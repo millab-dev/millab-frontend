@@ -171,10 +171,9 @@ const ContinueReadingSection = ({ language = 'id', initialReadingStateData }: Co
           className="flex flex-col items-center justify-center py-8 px-4 text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
+          transition={{ duration: 0.6, delay: 0.1 }}        >
           <img 
-            src="/pet-chill.png" 
+            src="/owl-sad.png" 
             alt="Empty reading state" 
             className="w-32 h-32 mb-4 opacity-60"
           />

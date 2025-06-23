@@ -12,19 +12,23 @@ export default async function page({
     params,
 }: {
     params: Promise<{ difficulty: string }>;
-}) {
-
-    try {
-        const quiz = await quizService.getQuizByDifficulty(
-            (
-                await params
-            ).difficulty
-        );
+}) {    try {
+        const { difficulty } = await params;
+        const quiz = await quizService.getQuizByDifficulty(difficulty);
         const user = (await getProfileData()).data as Partial<User>;
+        
+        // Map difficulty values to expected format
+        const normalizedDifficulty = difficulty.toLowerCase() as 'easy' | 'intermediate' | 'advanced';
+        
         return (
             <>
                 <Navbar />
-                <Quiz quiz={quiz} userId={user.id as string} urlBase={`/final-quiz`} />
+                <Quiz 
+                    quiz={quiz} 
+                    userId={user.id as string} 
+                    urlBase={`/final-quiz`} 
+                    difficulty={normalizedDifficulty}
+                />
             </>
         );
     } catch (error: unknown) {

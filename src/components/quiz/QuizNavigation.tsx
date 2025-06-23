@@ -2,12 +2,14 @@
 
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Language, quizNavigationTranslations } from "./types";
 
 interface QuizNavigationProps {
     totalQuestions: number;
     answeredQuestions: number[];
     onNavigateToQuestion: (questionIndex: number) => void;
     onBack: () => void;
+    language: Language;
 }
 
 export default function QuizNavigation({
@@ -15,8 +17,10 @@ export default function QuizNavigation({
     answeredQuestions,
     onNavigateToQuestion,
     onBack,
+    language,
 }: QuizNavigationProps) {
     const questions = Array.from({ length: totalQuestions }, (_, i) => i + 1);
+    const t = quizNavigationTranslations[language || 'id'];
 
     return (
         <div className="min-h-screen bg-gray-50 font-jakarta">
@@ -31,7 +35,7 @@ export default function QuizNavigation({
                     >
                         <ArrowLeft size={20} />
                     </Button>
-                    <h1 className="text-xl font-bold">List of Questions</h1>
+                    <h1 className="text-xl font-bold">{t.questionNavigation}</h1>
                 </div>
             </div>
 
@@ -69,11 +73,11 @@ export default function QuizNavigation({
                 <div className="mt-8 flex flex-wrap gap-6 justify-center">
                     <div className="flex items-center gap-2">
                         <div className="w-4 h-4 bg-green-500 rounded"></div>
-                        <span className="text-sm text-gray-600">Answered</span>
+                        <span className="text-sm text-gray-600">{t.answered}</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="w-4 h-4 bg-white border-2 border-blue-500 rounded"></div>
-                        <span className="text-sm text-gray-600">Not Answered</span>
+                        <span className="text-sm text-gray-600">{t.unanswered}</span>
                     </div>
                 </div>
             </div>

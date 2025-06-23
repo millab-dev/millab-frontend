@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import React, { useState, useEffect } from "react";
 import cloud from "@/assets/cloudPattern.svg";
 import Image from "next/image";
-import bear from "@/assets/bear.svg";
-import squirrel from "@/assets/squirrel.svg";
-import rabbit from "@/assets/rabbitBook.svg";
+import owlRead from "/public/owl-read.png";
+import owlVibe from "/public/owl-vibe.png";
+import owlWave from "/public/owl-wave.png";
+import owlHappy from "/public/owl-happy.png";
 import { useRouter, useParams } from "next/navigation";
 import { Check, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
@@ -217,12 +218,58 @@ export default function SectionModule() {
                 router.push(`/module/${moduleId}`);
             }
         }
-    };
-
-    if (loading) {
+    };    if (loading) {
         return (
-            <div className="bg-primary min-h-screen flex items-center justify-center">
-                <div className="text-white text-xl">Loading section...</div>
+            <div className="bg-primary min-h-screen">
+                {/* Header Section Skeleton */}
+                <div className="px-4 py-6 relative">
+                    <div className="absolute top-0 left-0 w-full h-full">
+                        <Image
+                            src={cloud}
+                            alt="cloud pattern"
+                            fill
+                            className="object-cover"
+                        />
+                    </div>
+                    <div className="relative z-10 flex items-center gap-3 animate-pulse">
+                        <div className="w-12 h-12 bg-white/20 rounded-full"></div>
+                        <div className="space-y-2">
+                            <div className="h-6 bg-white/20 rounded w-48"></div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Content Section Skeleton */}
+                <div className="p-6 bg-white rounded-t-4xl flex-grow flex flex-col animate-pulse">
+                    <div className="mb-8">
+                        {/* Illustrations area skeleton */}
+                        <div className="rounded-xl py-6 px-4 mb-4 bg-gradient-to-b from-gray-200 to-gray-100 h-32">
+                            <div className="flex justify-between sm:justify-center items-end sm:gap-12">
+                                <div className="w-16 h-20 bg-gray-300 rounded"></div>
+                                <div className="w-14 h-18 bg-gray-300 rounded"></div>
+                                <div className="w-16 h-20 bg-gray-300 rounded"></div>
+                            </div>
+                        </div>
+
+                        {/* Content skeleton */}
+                        <div className="space-y-3">
+                            <div className="h-4 bg-gray-200 rounded w-full"></div>
+                            <div className="h-4 bg-gray-200 rounded w-11/12"></div>
+                            <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+                            <div className="h-4 bg-gray-200 rounded w-full"></div>
+                            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                            <div className="h-4 bg-gray-200 rounded w-full"></div>
+                            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                            <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                        </div>
+                    </div>
+
+                    {/* Navigation Buttons Skeleton */}
+                    <div className="flex flex-wrap flex-row-reverse gap-4 justify-between pt-6 md:px-6 border-t mt-auto items-center">
+                        <div className="h-10 bg-gray-200 rounded px-8 w-32"></div>
+                        <div className="h-10 bg-gray-200 rounded px-6 w-28"></div>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -257,19 +304,27 @@ export default function SectionModule() {
 
             {/* Content Section */}
             <div className="p-6 bg-white rounded-t-4xl flex-grow flex flex-col">
-                <div className="mb-8">
-                    {/* Illustrations */}
-                    <div className="rounded-xl py-6 px-4 mb-4 flex justify-between sm:justify-center items-end sm:gap-12 bg-gradient-to-b from-[#FFB9DA] to-white">
-                        <Image src={bear} alt="bear" className="w-22 h-auto" />
-                        <Image
-                            src={rabbit}
-                            alt="rabbit"
-                            className="w-18 h-auto"
+                <div className="mb-8">                    {/* Illustrations */}
+                    <div className="rounded-xl py-6 px-4 mb-4 flex justify-between sm:justify-center items-end sm:gap-6 bg-gradient-to-b from-[#FFB9DA] to-white">
+                        <Image 
+                            src={owlRead} 
+                            alt="owl-read" 
+                            className="w-16 h-auto" 
                         />
                         <Image
-                            src={squirrel}
-                            alt="squirrel"
-                            className="w-22 h-auto"
+                            src={owlVibe}
+                            alt="owl-vibe"
+                            className="w-16 h-auto"
+                        />
+                        <Image
+                            src={owlWave}
+                            alt="owl-wave"
+                            className="w-16 h-auto"
+                        />
+                        <Image
+                            src={owlHappy}
+                            alt="owl-happy"
+                            className="w-16 h-auto"
                         />
                     </div>
 
