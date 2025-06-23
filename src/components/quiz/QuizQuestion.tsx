@@ -175,7 +175,7 @@ export default function QuizQuestion({
                             disabled={!canGoPrev}
                             className="flex-1 h-12 text-blue-500 border-blue-500 hover:bg-blue-50 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Prev
+                            {t.previousQuestion}
                         </Button>
 
                         {!showResults ? (
