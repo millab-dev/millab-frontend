@@ -20,7 +20,7 @@ export async function awardSectionPoints(
 ): Promise<ProgressionResponse> {
   try {
     console.log('Calling points award API:', { sectionId, moduleDifficulty });
-    const response = await fetch(`${API_BASE_URL}/api/v1/progression/award-points/section`, {
+    const response = await fetch(`/api/v1/progression/award-points/section`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -68,7 +68,7 @@ export async function awardQuizPoints(
   isFirstAttempt: boolean
 ): Promise<ProgressionResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/progression/award-points/quiz`, {
+    const response = await fetch(`/api/v1/progression/award-points/quiz`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -106,7 +106,7 @@ export async function awardFinalQuizPoints(
   difficulty: 'easy' | 'intermediate' | 'advanced' = 'intermediate'
 ): Promise<ProgressionResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/progression/award-points/final-quiz`, {
+    const response = await fetch(`/api/v1/progression/award-points/final-quiz`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -142,7 +142,7 @@ export const awardFinalQuizRewards = awardFinalQuizPoints;
  */
 export async function getUserProgression(): Promise<ProgressionResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/progression/me`, {
+    const response = await fetch(`/api/v1/progression/me`, {
       credentials: 'include'
     });
 
