@@ -254,6 +254,7 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
                 canGoNext={showResults}
                 canGoPrev={currentQuestionIndex > 0}
                 onShowNavigation={handleShowNavigation}
+                language={language}
             />
         </>
     );

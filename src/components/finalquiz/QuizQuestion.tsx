@@ -5,6 +5,7 @@ import { ArrowLeft, List, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuizQuestionData, QuizOption } from "./Quiz";
 import cloud from "@/assets/cloudPatternBlue.svg";
+import { Language } from "../profile/types";
 
 interface QuizQuestionProps {
     question: QuizQuestionData;
@@ -20,6 +21,7 @@ interface QuizQuestionProps {
     canGoNext: boolean;
     canGoPrev: boolean;
     onShowNavigation: () => void;
+    language?: Language;
 }
 
 export default function QuizQuestion({
@@ -35,6 +37,7 @@ export default function QuizQuestion({
     onBackToModule,
     canGoPrev,
     onShowNavigation,
+    language = 'id',
 }: QuizQuestionProps) {
     const [hoveredOption, setHoveredOption] = useState<string | null>(null);
 
@@ -153,7 +156,7 @@ export default function QuizQuestion({
                             disabled={!canGoPrev}
                             className="flex-1 h-12 text-blue-500 border-blue-500 hover:bg-blue-50 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Prev
+                            {language === 'id' ? 'Sebelumnya' : 'Previous'}
                         </Button>
 
                         {!showResults ? (
@@ -163,7 +166,7 @@ export default function QuizQuestion({
                                 className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <Search size={16} className="mr-2" />
-                                Check Answer
+                                {language === 'id' ? 'Periksa Jawaban' : 'Check Answer'}
                             </Button>
                         ) : (
                             <Button
@@ -171,8 +174,8 @@ export default function QuizQuestion({
                                 className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium"
                             >
                                 {currentQuestionNumber === totalQuestions
-                                    ? "Finish Quiz"
-                                    : "Next Question"}{" "}
+                                    ? language === 'id' ? 'Selesai Kuis' : 'Finish Quiz'
+                                    : language === 'id' ? 'Soal Selanjutnya' : 'Next Question'}
                                 →
                             </Button>
                         )}
