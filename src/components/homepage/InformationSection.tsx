@@ -275,7 +275,7 @@ const InformationSection = ({ language = 'id', userData }: InformationSectionPro
                         <div className="flex justify-between mt-2 md:mt-3 text-xs md:text-sm">
                             <span className="font-semibold text-white">Level {progressData.level}</span>
                             <span className="font-semibold text-white">
-                                {progressData.currentPoints}/{progressData.totalPointsForNextLevel} pts
+                                {progressData.currentPoints}/{progressData.totalPointsForNextLevel} poin
                             </span>
                         </div>
                     </motion.div>
