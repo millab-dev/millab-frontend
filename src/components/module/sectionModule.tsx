@@ -208,7 +208,7 @@ export default function SectionModule() {
                 }}
             >
                 <div className="flex items-center gap-2 my-5">
-                    <div className="bg-white text-primary w-8 h-8 rounded-full flex items-center justify-center font-bold">
+                    <div className="bg-white text-primary w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0">
                         {currentSection.order}
                     </div>
                     <h1 className="text-xl font-bold">{currentSection.title}</h1>
@@ -245,10 +245,10 @@ export default function SectionModule() {
                 </div>
 
                 {/* Navigation Buttons */}
-                <div className="flex justify-between pt-6 px-6 border-t mt-auto items-center">
+                <div className="flex flex-wrap gap-4 justify-between pt-6 md:px-6 border-t mt-auto items-center">
                     <Button
                         variant="outline"
-                        className="px-8 cursor-pointer"
+                        className="px-6 cursor-pointer"
                         onClick={() => router.push(`/module/${moduleId}`)}
                     >
                         Back to Module
