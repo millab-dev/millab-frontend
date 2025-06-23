@@ -191,14 +191,15 @@ const ContinueReadingSection = ({ language = 'id', initialReadingStateData }: Co
   return (
     <div className="w-full" ref={sectionRef}>
       <motion.div 
-        className="flex justify-between items-center mb-4 px-1"
+        className="flex justify-between items-start mb-4 px-1 gap-2"
         initial={{ opacity: 0, y: -10 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="text-xl md:text-2xl font-bold text-primary">{t.title}</h2>        <motion.a 
+        <h2 className="text-xl md:text-2xl font-bold text-primary">{t.title}</h2>
+        <motion.a 
           href="/module" 
-          className="text-gray-500 flex items-center hover:text-primary transition-colors"
+          className="text-gray-500 flex items-center pl-4 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
