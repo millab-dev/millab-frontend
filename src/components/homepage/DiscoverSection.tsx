@@ -17,6 +17,7 @@ import {
   Module
 } from './types'
 import { useRouter } from 'next/navigation'
+import owlSad from '/public/owl-sad.png'
 
 
 // Use SectionProps for component props but extend with initialModulesData
@@ -289,15 +290,22 @@ const DiscoverSection = ({ language = 'id', initialModulesData }: DiscoverSectio
         )))
         : searchQuery ? (
           <motion.div 
-            className="w-full flex flex-col items-center justify-center py-10"
+            className="w-full flex flex-col items-center justify-center py-8 px-4 text-center"
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <div className="text-gray-500 text-center mb-2">
-              <p className="text-lg font-medium">{t.notFound}</p>
-              <p className="text-sm mt-2">{t.tryAnotherKeyword}</p>
-            </div>
+            <img 
+              src={owlSad.src} 
+              alt="Not found" 
+              className="w-64 h-64 mb-4 opacity-60"
+            />
+            <p className="text-gray-500 text-sm md:text-base">
+              {t.notFound}
+            </p>
+            <p className="text-gray-400 text-xs md:text-sm mt-2">
+              {t.tryAnotherKeyword}
+            </p>
           </motion.div>
         ) : null}
       </motion.div>
