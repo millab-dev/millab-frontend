@@ -253,13 +253,13 @@ export interface ReadingStateData {
 }
 
 export interface UserProgression {
-  currentExp: number;
+  currentPoints: number;
   level: number;
-  expForNextLevel: number;
-  totalExpForNextLevel: number;
+  levelTitle: string;
+  pointsForNextLevel: number;
+  totalPointsForNextLevel: number;
   dayStreak: number;
   progressPercentage: number;
-  points: number;
   rank: number;
 }
 

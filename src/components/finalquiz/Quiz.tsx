@@ -41,9 +41,10 @@ interface QuizProps {
     urlBase: string;
     isFirstAttempt?: boolean; // Track if this is the first attempt
     language?: Language;
+    difficulty?: 'easy' | 'intermediate' | 'advanced'; // Quiz difficulty for points calculation
 }
 
-export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, language = 'id' }: QuizProps) {
+export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, language = 'id', difficulty = 'intermediate' }: QuizProps) {
     const router = useRouter();
 
     // Map questions to add id and points if not present (for compatibility)
@@ -146,14 +147,13 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
             localStorage.removeItem(`quiz-answers-${quiz.id}`);
             try {
                 // Add score to existing system
-                addUserScore(userId as string, totalPoints);
-
-                // Award XP and points through progression system
+                addUserScore(userId as string, totalPoints);                // Award XP and points through progression system
                 const progressionResult = await awardFinalQuizRewards(
                     quiz.id,
                     totalPoints,
                     totalQuestions,
-                    isFirstAttempt
+                    isFirstAttempt,
+                    difficulty
                 );
 
                 if (progressionResult.success && progressionResult.message) {

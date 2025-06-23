@@ -2,7 +2,7 @@
 
 import { ArrowLeft, RotateCcw} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { QuizQuestionData, QuizAnswer } from "./Quiz";
+import { QuizQuestionData, QuizAnswer, QuizOption, Language, quizSummaryTranslations } from "./types";
 import cloud from "@/assets/cloudPatternBlue.svg";
 
 interface QuizSummaryProps {
@@ -11,6 +11,7 @@ interface QuizSummaryProps {
     totalPoints: number;
     onBackToModule: () => void;
     onRetakeQuiz: () => void;
+    language: Language;
 }
 
 export default function QuizSummary({
@@ -19,23 +20,22 @@ export default function QuizSummary({
     totalPoints,
     onBackToModule,
     onRetakeQuiz,
+    language,
 }: QuizSummaryProps) {
     const totalQuestions = quizData.length;
     const correctAnswers = answers.filter(a => a.isCorrect).length;
     const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+    const t = quizSummaryTranslations[language || 'id'];
     
     const getPerformanceLevel = () => {
-        if (percentage >= 80) return "Expert Level";
-        if (percentage >= 60) return "Intermediate Level";
-        if (percentage >= 40) return "Beginner Level";
-        return "Needs Practice";
-    };
-
-    const getPerformanceMessage = () => {
-        if (percentage >= 80) return "Outstanding performance! You handled this quiz like a pro!";
-        if (percentage >= 60) return "Great job! You have a good understanding of the material.";
-        if (percentage >= 40) return "Good effort! Keep practicing to improve your skills.";
-        return "Don't worry! Review the material and try again.";
+        if (percentage >= 80) return t.congratulations;
+        if (percentage >= 60) return t.wellDone;        if (percentage >= 40) return t.keepPracticing;
+        return t.keepPracticing;
+    };    const getPerformanceMessage = () => {
+        if (percentage >= 80) return t.excellentMessage;
+        if (percentage >= 60) return t.goodMessage;
+        if (percentage >= 40) return t.okayMessage;
+        return t.needsPracticeMessage;
     };
 
     const getProgressColor = () => {
@@ -84,15 +84,15 @@ export default function QuizSummary({
                     <div className="flex justify-around text-center">
                         <div>
                             <div className="text-2xl font-bold text-gray-800">{correctAnswers}/{totalQuestions}</div>
-                            <div className="text-sm text-gray-600">Correct</div>
+                            <div className="text-sm text-gray-600">{t.correctAnswers}</div>
                         </div>
                         <div>
                             <div className="text-2xl font-bold text-gray-800">{percentage}%</div>
-                            <div className="text-sm text-gray-600">Score</div>
+                            <div className="text-sm text-gray-600">{t.yourScore}</div>
                         </div>
                         <div>
                             <div className="text-2xl font-bold text-gray-800">{totalPoints}</div>
-                            <div className="text-sm text-gray-600">Points</div>
+                            <div className="text-sm text-gray-600">{t.points}</div>
                         </div>
                     </div>
                 </div>
@@ -113,7 +113,7 @@ export default function QuizSummary({
                                     </div>
                                     <div className="flex-1">                                        <div className="flex items-center justify-between mb-2">
                                             <span className="text-sm text-blue-600 font-medium">
-                                                {points} point{points !== 1 ? 's' : ''}
+                                                {points} {points !== 1 ? t.points.toLowerCase() : t.point}
                                             </span>
                                         </div>
                                         <div 
@@ -122,7 +122,7 @@ export default function QuizSummary({
                                         />
                                           {/* Answer Options */}
                                         <div className="space-y-2">
-                                            {question.options.map((option) => {
+                                            {question.options.map((option: QuizOption) => {
                                                 const isSelected = answer?.selectedOptionId === option.id;
                                                 const isCorrectOption = option.isCorrect;
                                                 
@@ -166,7 +166,7 @@ export default function QuizSummary({
                                                         </svg>
                                                     </div>
                                                     <div>
-                                                        <h5 className="text-sm font-semibold text-blue-900 mb-1">Explanation</h5>
+                                                        <h5 className="text-sm font-semibold text-blue-900 mb-1">{t.explanation}</h5>
                                                         <div 
                                                             className="text-sm text-blue-800 prose prose-sm max-w-none"
                                                             dangerouslySetInnerHTML={{ __html: question.explanation }}
@@ -190,13 +190,13 @@ export default function QuizSummary({
                         className="flex-1 h-12 text-blue-500 border-blue-500 hover:bg-blue-50 font-medium flex items-center justify-center gap-2"
                     >
                         <RotateCcw size={16} />
-                        Retake Quiz
+                        {t.retakeQuiz}
                     </Button>
                     <Button
                         onClick={onBackToModule}
                         className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium"
                     >
-                        Go Back
+                        {t.goBack}
                     </Button>
                 </div>
             </div>

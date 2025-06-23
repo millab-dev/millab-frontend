@@ -109,12 +109,86 @@ export default function DetailModule() {
 
     const getProgressPercentage = (): number => {
         return module?.progress?.completionPercentage || 0;
-    };
-
-    if (loading) {
+    };    if (loading) {
         return (
-            <div className="min-h-screen bg-primary flex items-center justify-center">
-                <div className="text-white text-xl">Loading module...</div>
+            <div
+                className="mx-auto font-jakarta bg-primary min-h-screen sm:px-24 lg:px-40 flex flex-col bg-repeat bg-[length:600px] lg:bg-[length:900px]"
+                style={{
+                    backgroundImage: `url(${cloud.src})`,
+                }}
+            >
+                {/* Content Section Skeleton */}
+                <div className="bg-white rounded-t-4xl p-6 sm:p-8 shadow-md relative flex-grow mt-30 flex flex-col">
+                    <div className="relative -top-24 flex flex-col gap-6 animate-pulse">
+                        {/* Module Card Skeleton */}
+                        <div className="bg-white rounded-3xl shadow-lg p-6 lg:w-2xl flex flex-col gap-2 self-center">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-gray-200 p-2 rounded-lg w-12 h-12"></div>
+                                    <div className="h-5 bg-gray-200 rounded w-20"></div>
+                                </div>
+                                <div className="w-8 h-8 bg-gray-200 rounded"></div>
+                            </div>
+                            <div className="mt-2 space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="h-6 bg-gray-200 rounded w-48"></div>
+                                    <div className="h-6 bg-gray-200 rounded w-16"></div>
+                                </div>
+                                <div className="h-4 bg-gray-200 rounded w-40"></div>
+                                <div className="flex items-center gap-2">
+                                    <div className="flex-1 h-2 bg-gray-200 rounded-full"></div>
+                                    <div className="h-4 bg-gray-200 rounded w-8"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Description Skeleton */}
+                        <div className="space-y-3">
+                            <div className="h-6 bg-gray-200 rounded w-32"></div>
+                            <div className="space-y-2">
+                                <div className="h-4 bg-gray-200 rounded w-full"></div>
+                                <div className="h-4 bg-gray-200 rounded w-11/12"></div>
+                                <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+                            </div>
+                        </div>
+
+                        {/* Sections Skeleton */}
+                        <div className="space-y-4">
+                            <div className="h-6 bg-gray-200 rounded w-24"></div>
+                            {[1, 2, 3].map((item) => (
+                                <div key={item} className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                                            <div className="space-y-2">
+                                                <div className="h-5 bg-gray-200 rounded w-32"></div>
+                                                <div className="h-3 bg-gray-200 rounded w-20"></div>
+                                            </div>
+                                        </div>
+                                        <div className="w-6 h-6 bg-gray-200 rounded-full"></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Quiz Skeleton */}
+                        <div className="space-y-4">
+                            <div className="h-6 bg-gray-200 rounded w-16"></div>
+                            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                                        <div className="space-y-2">
+                                            <div className="h-5 bg-gray-200 rounded w-28"></div>
+                                            <div className="h-3 bg-gray-200 rounded w-24"></div>
+                                        </div>
+                                    </div>
+                                    <div className="w-6 h-6 bg-gray-200 rounded-full"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
