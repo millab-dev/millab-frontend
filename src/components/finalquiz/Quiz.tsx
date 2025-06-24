@@ -59,7 +59,12 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
             text: opt.option,
             isCorrect: opt.isCorrect,
         })),
-        points: 1, // Default to 1 point per question, adjust if needed
+        pointView: {
+            easy: 1,
+            intermediate: 2,
+            advanced: 3,
+        }[difficulty],
+        points: 1 // Default to 1 point per question, adjust if needed
     }));
 
     const [currentView, setCurrentView] = useState<QuizView>("question");
@@ -137,7 +142,7 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
             questionId: currentQuestion.id,
             selectedOptionId: selectedAnswer,
             isCorrect,
-            points: isCorrect ? currentQuestion.points : 0,
+            points: isCorrect ? currentQuestion.pointView : 0,
         };
 
         setAnswers((prev) => {

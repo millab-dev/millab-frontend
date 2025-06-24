@@ -1,4 +1,3 @@
-
 import Quiz from "@/components/finalquiz/Quiz";
 import Navbar from "@/components/core/Navbar";
 import { quizService } from "@/actions/quiz.service";
@@ -12,21 +11,27 @@ export default async function page({
     params,
 }: {
     params: Promise<{ difficulty: string }>;
-}) {    try {
+}) {
+    try {
         const { difficulty } = await params;
         const quiz = await quizService.getQuizByDifficulty(difficulty);
+        const checkDiff =
+            difficulty.toLowerCase() === "beginner" ? "easy" : difficulty;
         const user = (await getProfileData()).data as Partial<User>;
-        
+
         // Map difficulty values to expected format
-        const normalizedDifficulty = difficulty.toLowerCase() as 'easy' | 'intermediate' | 'advanced';
-        
+        const normalizedDifficulty = checkDiff.toLowerCase() as
+            | "easy"
+            | "intermediate"
+            | "advanced";
+
         return (
             <>
                 <Navbar />
-                <Quiz 
-                    quiz={quiz} 
-                    userId={user.id as string} 
-                    urlBase={`/final-quiz`} 
+                <Quiz
+                    quiz={quiz}
+                    userId={user.id as string}
+                    urlBase={`/final-quiz`}
                     difficulty={normalizedDifficulty}
                 />
             </>
