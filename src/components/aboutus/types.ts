@@ -141,7 +141,7 @@ export const teamSectionTranslations: TeamSectionTranslationsType = {
       {
         imageUrl: "/member/irene.png",
         name: "Medeline Irene Tanjung",
-        role: "Co-Founder & Finance and Creative",
+        role: "Finance and Creative",
         description: "Medeline has a background in Social Welfare Science, with various experiences and achievements in community development, ESG, and sustainable development."
       }
     ]
