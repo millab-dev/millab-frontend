@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, List, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuizQuestionData, QuizOption, Language, quizQuestionTranslations } from "./types";
+import { QuizMessagesTranslations } from "../finalquiz/types";
 import cloud from "@/assets/cloudPatternBlue.svg";
 
 interface QuizQuestionProps {
@@ -21,6 +22,8 @@ interface QuizQuestionProps {
     canGoPrev: boolean;
     onShowNavigation: () => void;
     language: Language;
+    isFirstAttempt?: boolean | null;
+    quizMessages?: QuizMessagesTranslations;
 }
 
 export default function QuizQuestion({
@@ -37,6 +40,8 @@ export default function QuizQuestion({
     canGoPrev,
     onShowNavigation,
     language,
+    isFirstAttempt,
+    quizMessages,
 }: QuizQuestionProps) {
     const [hoveredOption, setHoveredOption] = useState<string | null>(null);
     const t = quizQuestionTranslations[language || 'id'];
@@ -83,6 +88,21 @@ export default function QuizQuestion({
             }}
         >
             <div className="max-w-2xl mx-auto">
+                {/* First Attempt Warning Banner */}
+                {isFirstAttempt !== null && (
+                    <div className={`mb-4 p-3 rounded-lg border-l-4 ${
+                        isFirstAttempt 
+                            ? 'bg-blue-50 border-blue-400 text-blue-700' 
+                            : 'bg-yellow-50 border-yellow-400 text-yellow-700'
+                    }`}>
+                        <div className="flex items-center">
+                            <div className="text-sm font-medium">
+                                {isFirstAttempt ? quizMessages?.firstAttemptWarning : quizMessages?.retakeWarning}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {/* Header */}
                 <div className="flex justify-between items-center mb-8 max-sm:p-4">
                     <Button

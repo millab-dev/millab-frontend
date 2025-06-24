@@ -282,21 +282,6 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
                     </div>
                 </div>            )}
 
-            {/* First Attempt Warning Banner */}
-            {actualIsFirstAttempt !== null && (
-                <div className={`mb-4 p-3 rounded-lg border-l-4 ${
-                    actualIsFirstAttempt 
-                        ? 'bg-blue-50 border-blue-400 text-blue-700' 
-                        : 'bg-yellow-50 border-yellow-400 text-yellow-700'
-                }`}>
-                    <div className="flex items-center">
-                        <div className="text-sm font-medium">
-                            {actualIsFirstAttempt ? qm.firstAttemptWarning : qm.retakeWarning}
-                        </div>
-                    </div>
-                </div>
-            )}
-
             <QuizQuestion
                 question={currentQuestion}
                 currentQuestionNumber={currentQuestionIndex + 1}
@@ -312,6 +297,8 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
                 canGoPrev={currentQuestionIndex > 0}
                 onShowNavigation={handleShowNavigation}
                 language={language}
+                actualIsFirstAttempt={actualIsFirstAttempt}
+                quizMessages={qm}
             />
         </>
     );

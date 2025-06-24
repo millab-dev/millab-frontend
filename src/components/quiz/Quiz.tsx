@@ -485,21 +485,6 @@ export default function Quiz({ language }: QuizProps) {
                     </div>
                 </div>            )}
 
-            {/* First Attempt Warning Banner */}
-            {isFirstAttempt !== null && (
-                <div className={`mb-4 p-3 rounded-lg border-l-4 ${
-                    isFirstAttempt 
-                        ? 'bg-blue-50 border-blue-400 text-blue-700' 
-                        : 'bg-yellow-50 border-yellow-400 text-yellow-700'
-                }`}>
-                    <div className="flex items-center">
-                        <div className="text-sm font-medium">
-                            {isFirstAttempt ? qm.firstAttemptWarning : qm.retakeWarning}
-                        </div>
-                    </div>
-                </div>
-            )}
-
             <QuizQuestion
                 question={currentQuestion}
                 currentQuestionNumber={currentQuestionIndex + 1}
@@ -508,12 +493,15 @@ export default function Quiz({ language }: QuizProps) {
                 showResults={showResults}
                 onAnswerSelect={handleAnswerSelect}
                 onCheckAnswer={handleCheckAnswer}
-                onNextQuestion={handleNextQuestion}            onPrevQuestion={handlePrevQuestion}
+                onNextQuestion={handleNextQuestion}            
+                onPrevQuestion={handlePrevQuestion}
                 onBackToModule={handleBackToModule}
                 canGoNext={showResults}
                 canGoPrev={currentQuestionIndex > 0}
                 onShowNavigation={handleShowNavigation}
                 language={language || 'id'}
+                isFirstAttempt={isFirstAttempt}
+                quizMessages={qm}
             />
         </>
     );

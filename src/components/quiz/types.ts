@@ -135,7 +135,7 @@ export const quizQuestionTranslations: QuizQuestionTranslationsType = {
     of: "dari",
     checkAnswer: "Periksa Jawaban",
     nextQuestion: "Pertanyaan Berikutnya",
-    previousQuestion: "Pertanyaan Sebelumnya",
+    previousQuestion: "Sebelumnya",
     finishQuiz: "Selesaikan Kuis",
     backToModule: "Kembali ke Modul",
     showNavigation: "Tampilkan Navigasi"
@@ -145,7 +145,7 @@ export const quizQuestionTranslations: QuizQuestionTranslationsType = {
     of: "of",
     checkAnswer: "Check Answer",
     nextQuestion: "Next Question",
-    previousQuestion: "Previous Question",
+    previousQuestion: "Previous",
     finishQuiz: "Finish Quiz",
     backToModule: "Back to Module",
     showNavigation: "Show Navigation"
