@@ -116,13 +116,13 @@ export default function QuizQuestion({
                     />                    {/* Options */}
                     <div className="space-y-4 mb-12">
                         {question.options.map((option: QuizOption) => (
-                            <div key={option.id} className="relative">
-                                <div
+                            <div key={option.id} className="relative">                                <div
                                     className={`
-                                        border-2 rounded-2xl p-4 cursor-pointer transition-all duration-200 flex items-center gap-4
+                                        border-2 rounded-2xl p-4 transition-all duration-200 flex items-center gap-4
                                         ${getOptionStyle(option)}
+                                        ${!showResults ? 'cursor-pointer' : 'cursor-default'}
                                     `}
-                                    onClick={() => onAnswerSelect(option.id)}
+                                    onClick={() => !showResults && onAnswerSelect(option.id)}
                                     onMouseEnter={() =>
                                         !showResults &&
                                         setHoveredOption(option.id)

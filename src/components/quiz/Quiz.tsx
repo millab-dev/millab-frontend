@@ -7,7 +7,9 @@ import QuizQuestion from "./QuizQuestion";
 import QuizSummary from "./QuizSummary";
 import QuizNavigation from "./QuizNavigation";
 import axiosClient from "@/lib/axios.client";
-import { awardQuizRewards } from "@/utils/progressionApi";
+import { awardQuizRewards, checkQuizAttemptStatus } from "@/utils/progressionApi";
+import { quizMessagesTranslations } from "../finalquiz/types";
+import cloud from "@/assets/cloudPatternBlue.svg";
 import { 
     QuizOption,
     QuizQuestionData,
@@ -30,20 +32,35 @@ export default function Quiz({ language }: QuizProps) {
     const params = useParams();
     const moduleId = params.id as string;    // Get translations based on language with fallback to Indonesian
     const t = quizTranslations[language || 'id'];
-
-    const [module, setModule] = useState<Module | null>(null);
+    const qm = quizMessagesTranslations[language || 'id'];const [module, setModule] = useState<Module | null>(null);
     const [loading, setLoading] = useState(true);
     const [currentView, setCurrentView] = useState<QuizView>("question");
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [answers, setAnswers] = useState<QuizAnswer[]>([]);
+    const [answers, setAnswers] = useState<QuizAnswer[]>([]);    const [hasLoaded, setHasLoaded] = useState(false);
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const [showResults, setShowResults] = useState(false);
-
-    useEffect(() => {
+    const [isFirstAttempt, setIsFirstAttempt] = useState<boolean | null>(null);
+    const [showFinishConfirm, setShowFinishConfirm] = useState(false);    useEffect(() => {
         if (moduleId) {
             fetchModuleData();
+            checkFirstAttemptStatus();
         }
-    }, [moduleId]);    const fetchModuleData = async () => {
+    }, [moduleId]);
+
+    const checkFirstAttemptStatus = async () => {
+        if (!moduleId) return;
+        
+        try {
+            const response = await checkQuizAttemptStatus('module_quiz', moduleId);
+            if (response.success && response.data) {
+                setIsFirstAttempt(response.data.isFirstAttempt);
+            }
+        } catch (error) {
+            console.error('Error checking first attempt status:', error);
+            // Default to true if we can't check
+            setIsFirstAttempt(true);
+        }
+    };const fetchModuleData = async () => {
         try {
             const response = await axiosClient.get(`/api/v1/modules/${moduleId}`);
             const data = response.data;
@@ -168,11 +185,45 @@ export default function Quiz({ language }: QuizProps) {
                 },
             ],
         },
-    ];
-
-    const currentQuestion = quizData[currentQuestionIndex];
+    ];    const currentQuestion = quizData[currentQuestionIndex];
     const totalQuestions = quizData.length;
-    const totalPoints = answers.reduce((sum, a) => sum + a.points, 0);    const submitQuizScore = async (score: number) => {
+    const totalPoints = answers.reduce((sum, a) => sum + a.points, 0);
+
+    // Find answer for current question
+    const currentAnswer = answers.find(
+        (a) => a.questionId === currentQuestion.id
+    );
+
+    // Sync selectedAnswer and showResults with currentAnswer and currentQuestionIndex
+    useEffect(() => {
+        if (currentAnswer) {
+            setSelectedAnswer(currentAnswer.selectedOptionId);
+            setShowResults(true);
+        } else {
+            setSelectedAnswer(null);
+            setShowResults(false);
+        }
+    }, [currentQuestionIndex, answers, currentAnswer]);
+
+    // Load answers from localStorage on mount
+    useEffect(() => {
+        if (moduleId) {
+            const saved = localStorage.getItem(`quiz-answers-${moduleId}`);
+            if (saved) {
+                setAnswers(JSON.parse(saved));
+            }
+            setHasLoaded(true);
+        }
+    }, [moduleId]);
+
+    // Save answers to localStorage whenever they change
+    useEffect(() => {
+        if (!hasLoaded || !moduleId) return; // Don't save until after loading
+        localStorage.setItem(
+            `quiz-answers-${moduleId}`,
+            JSON.stringify(answers)
+        );
+    }, [answers, moduleId, hasLoaded]);const submitQuizScore = async (score: number) => {
         try {
             // Submit score to existing endpoint
             const response = await axiosClient.post(`/api/v1/modules/${moduleId}/progress/quiz`, {
@@ -231,9 +282,7 @@ export default function Quiz({ language }: QuizProps) {
         if (!showResults) {
             setSelectedAnswer(optionId);
         }
-    };
-
-    const handleCheckAnswer = () => {
+    };    const handleCheckAnswer = () => {
         if (!selectedAnswer) return;
 
         const correctOption = currentQuestion.options.find(
@@ -248,32 +297,48 @@ export default function Quiz({ language }: QuizProps) {
             points: isCorrect ? currentQuestion.points : 0,
         };
 
-        setAnswers((prev) => [...prev, answer]);
+        setAnswers((prev) => {
+            // Update if already answered, else add
+            const existing = prev.find(
+                (a) => a.questionId === currentQuestion.id
+            );
+            if (existing) {
+                return prev.map((a) =>
+                    a.questionId === currentQuestion.id ? answer : a
+                );
+            } else {
+                return [...prev, answer];
+            }
+        });
         setShowResults(true);
     };    const handleNextQuestion = async () => {
         if (currentQuestionIndex < totalQuestions - 1) {
             setCurrentQuestionIndex((prev) => prev + 1);
-            setSelectedAnswer(null);
-            setShowResults(false);
         } else {
-            // Calculate final score and submit
-            const finalScore = Math.round((totalPoints / totalQuestions) * 100);
-            await submitQuizScore(finalScore);
-            
-            // Add delay to show the success toast before transitioning
-            setTimeout(() => {
-                setCurrentView("summary");
-            }, 2000); // 2 second delay
+            // Show confirmation before finishing quiz
+            setShowFinishConfirm(true);
         }
+    };
+
+    const handleFinishQuiz = async () => {
+        setShowFinishConfirm(false);
+        
+        // Calculate final score and submit
+        const finalScore = Math.round((totalPoints / totalQuestions) * 100);
+        await submitQuizScore(finalScore);
+        
+        // Clear localStorage after completion
+        localStorage.removeItem(`quiz-answers-${moduleId}`);
+        
+        // Add delay to show the success toast before transitioning
+        setTimeout(() => {
+            setCurrentView("summary");
+        }, 2000); // 2 second delay
     };
 
     const handlePrevQuestion = () => {
         if (currentQuestionIndex > 0) {
             setCurrentQuestionIndex((prev) => prev - 1);
-            setSelectedAnswer(null);
-            setShowResults(false);
-            // Remove the last answer if going back
-            setAnswers((prev) => prev.slice(0, -1));
         }
     };
 
@@ -283,13 +348,9 @@ export default function Quiz({ language }: QuizProps) {
 
     const handleShowNavigation = () => {
         setCurrentView("navigation");
-    };
-
-    const handleNavigateToQuestion = (questionIndex: number) => {
+    };    const handleNavigateToQuestion = (questionIndex: number) => {
         setCurrentQuestionIndex(questionIndex);
         setCurrentView("question");
-        setSelectedAnswer(null);
-        setShowResults(false);
     };
 
     const handleRetakeQuiz = () => {
@@ -298,10 +359,53 @@ export default function Quiz({ language }: QuizProps) {
         setAnswers([]);
         setSelectedAnswer(null);
         setShowResults(false);
+        // Clear localStorage when retaking quiz
+        localStorage.removeItem(`quiz-answers-${moduleId}`);
     };    if (loading) {
         return (
-            <div className="min-h-screen bg-primary flex items-center justify-center">
-                <div className="text-white text-xl">{t.loading}</div>
+            <div 
+                className="min-h-screen bg-[#F8F8F8] sm:p-4 font-jakarta bg-repeat bg-[length:600px] lg:bg-[length:800px]"
+                style={{
+                    backgroundImage: `url(${cloud.src})`,
+                }}
+            >
+                <div className="max-w-2xl mx-auto">
+                    {/* Header Skeleton */}
+                    <div className="flex justify-between items-center mb-8 max-sm:p-4 animate-pulse">
+                        <div className="w-12 h-12 bg-gray-200 rounded-2xl"></div>
+                        <div className="w-32 h-8 bg-gray-200 rounded-xl"></div>
+                    </div>
+
+                    {/* Quiz Card Skeleton */}
+                    <div className="bg-white rounded-xl p-4 sm:p-8 animate-pulse">
+                        {/* Question Number Skeleton */}
+                        <div className="flex justify-center mb-8">
+                            <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
+                        </div>
+                        
+                        {/* Question Text Skeleton */}
+                        <div className="mb-12 space-y-3">
+                            <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto"></div>
+                            <div className="h-6 bg-gray-200 rounded w-1/2 mx-auto"></div>
+                        </div>
+                        
+                        {/* Options Skeleton */}
+                        <div className="space-y-4 mb-12">
+                            {[1, 2, 3, 4].map((item) => (
+                                <div key={item} className="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-2xl">
+                                    <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+                                    <div className="flex-1 h-4 bg-gray-200 rounded"></div>
+                                </div>
+                            ))}
+                        </div>
+                        
+                        {/* Buttons Skeleton */}
+                        <div className="flex gap-4">
+                            <div className="flex-1 h-12 bg-gray-200 rounded-lg"></div>
+                            <div className="flex-1 h-12 bg-gray-200 rounded-lg"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -350,23 +454,67 @@ export default function Quiz({ language }: QuizProps) {
                 language={language || 'id'}
             />
         );
-    }
+    }    return (
+        <>
+            {/* Finish Quiz Confirmation Dialog */}
+            {showFinishConfirm && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">                    <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+                        <h3 className="text-xl font-bold mb-4">
+                            {isFirstAttempt ? qm.finishQuizConfirm : qm.finishQuizRetake}
+                        </h3>
+                        <p className="text-gray-600 mb-6">
+                            {isFirstAttempt 
+                                ? qm.finishQuizFirstAttempt
+                                : qm.finishQuizNoPoints
+                            }
+                        </p>
+                        <div className="flex justify-end space-x-3">
+                            <button
+                                onClick={() => setShowFinishConfirm(false)}
+                                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                            >
+                                {qm.cancel}
+                            </button>
+                            <button
+                                onClick={handleFinishQuiz}
+                                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+                            >
+                                {qm.finishQuiz}
+                            </button>
+                        </div>
+                    </div>
+                </div>            )}
 
-    return (
-        <QuizQuestion
-            question={currentQuestion}
-            currentQuestionNumber={currentQuestionIndex + 1}
-            totalQuestions={totalQuestions}
-            selectedAnswer={selectedAnswer}
-            showResults={showResults}
-            onAnswerSelect={handleAnswerSelect}
-            onCheckAnswer={handleCheckAnswer}
-            onNextQuestion={handleNextQuestion}            onPrevQuestion={handlePrevQuestion}
-            onBackToModule={handleBackToModule}
-            canGoNext={showResults}
-            canGoPrev={currentQuestionIndex > 0}
-            onShowNavigation={handleShowNavigation}
-            language={language || 'id'}
-        />
+            {/* First Attempt Warning Banner */}
+            {isFirstAttempt !== null && (
+                <div className={`mb-4 p-3 rounded-lg border-l-4 ${
+                    isFirstAttempt 
+                        ? 'bg-blue-50 border-blue-400 text-blue-700' 
+                        : 'bg-yellow-50 border-yellow-400 text-yellow-700'
+                }`}>
+                    <div className="flex items-center">
+                        <div className="text-sm font-medium">
+                            {isFirstAttempt ? qm.firstAttemptWarning : qm.retakeWarning}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <QuizQuestion
+                question={currentQuestion}
+                currentQuestionNumber={currentQuestionIndex + 1}
+                totalQuestions={totalQuestions}
+                selectedAnswer={selectedAnswer}
+                showResults={showResults}
+                onAnswerSelect={handleAnswerSelect}
+                onCheckAnswer={handleCheckAnswer}
+                onNextQuestion={handleNextQuestion}            onPrevQuestion={handlePrevQuestion}
+                onBackToModule={handleBackToModule}
+                canGoNext={showResults}
+                canGoPrev={currentQuestionIndex > 0}
+                onShowNavigation={handleShowNavigation}
+                language={language || 'id'}
+            />
+        </>
     );
 }
