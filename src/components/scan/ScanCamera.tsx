@@ -31,6 +31,7 @@ const ScanCamera = ({ isActive, setIsActive, language = 'id' }: ScanCameraProps)
   const handleStartCamera = () => {
     setIsActive(true);
     setError('');
+    setScanResult(''); // Reset scan result to prevent infinite loading
   };
 
   // Handle successful scan
@@ -170,6 +171,7 @@ const ScanCamera = ({ isActive, setIsActive, language = 'id' }: ScanCameraProps)
           </button>
 
           <QrScanner
+            sound={false}
             onScan={onScanSuccess}
             onError={onScanError}
             styles={{
