@@ -89,7 +89,7 @@ export const teamSectionTranslations: TeamSectionTranslationsType = {
         imageUrl: "/member/faishal.png",
         name: "Muhammad Faishal Nelwan",
         role: "Co-Founder & Full Stack Developer",
-        description: "Faishal berlatar belakang Ilmu Komputer dengan pengalaman akademis sebagai asisten dosen dan praktis menjurai berbagai kompetisi serta implementasi proyek, terus mengaplikasikan inovasi teknologi terkini untuk kesejahteraan masyarakat."
+        description: "Faishal adalah software engineer berlatar belakang Ilmu Komputer dengan pengalaman akademis sebagai asisten dosen dan praktis menjurai berbagai kompetisi serta implementasi proyek, terus mengaplikasikan inovasi teknologi terkini untuk kesejahteraan masyarakat."
       },
       {
         imageUrl: "/member/dwiky.png",
@@ -100,7 +100,7 @@ export const teamSectionTranslations: TeamSectionTranslationsType = {
       {
         imageUrl: "/member/irene.png",
         name: "Medeline Irene Tanjung",
-        role: "Co-Founder & Finance and Creative",
+        role: "Finance and Creative",
         description: "Medeline memiliki latar belakang Ilmu Kesejahteraan Sosial, dengan berbagai pengalaman dan pencapaian di bidang pengembangan masyarakat, ESG, dan pembangunan berkelanjutan."
       }
     ]

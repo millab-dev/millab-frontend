@@ -99,7 +99,7 @@ export const quizTranslations: QuizTranslationsType = {  id: {
     pointsAwarded: "poin!",
     finishQuizConfirm: "Selesaikan Kuis?",
     finishQuizRetake: "Ulangi Kuis?",
-    finishQuizFirstAttempt: "n pertama Anda. Anda akan mendapat poin berdasarkan skor Anda.",
+    finishQuizFirstAttempt: 'Hanya percobaan pertama Anda yang akan mendapat poin berdasarkan skor Anda.',
     finishQuizNoPoints: "Anda sudah menyelesaikan kuis ini. Tidak ada poin yang akan diperoleh untuk percobaan ini.",
     cancel: "Batal",
     finishQuiz: "Selesaikan Kuis"
