@@ -43,17 +43,22 @@ export default function Quiz({ language }: QuizProps) {
     const [showFinishConfirm, setShowFinishConfirm] = useState(false);    useEffect(() => {
         if (moduleId) {
             fetchModuleData();
-            checkFirstAttemptStatus();
         }
     }, [moduleId]);
 
-    const checkFirstAttemptStatus = async () => {
-        if (!moduleId) return;
+    // Check first attempt status after module is loaded
+    useEffect(() => {
+        if (module?.quiz?.id) {
+            checkFirstAttemptStatus();
+        }
+    }, [module?.quiz?.id]);const checkFirstAttemptStatus = async () => {
+        if (!module?.quiz?.id) return;
         
         try {
-            const response = await checkQuizAttemptStatus('module_quiz', moduleId);
+            const response = await checkQuizAttemptStatus('module_quiz', module.quiz.id);
             if (response.success && response.data) {
                 setIsFirstAttempt(response.data.isFirstAttempt);
+                console.log('First attempt status:', response.data.isFirstAttempt);
             }
         } catch (error) {
             console.error('Error checking first attempt status:', error);
