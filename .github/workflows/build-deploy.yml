@@ -1,43 +1,27 @@
-name: Deploy to Kubernetes via pendeploy-simple API
+name: Deploy to Kubesa
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  # Untuk memicu workflow secara manual dari UI GitHub
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Trigger Deployment API
-        env:
-          PENDEPLOY_API_KEY: ${{ secrets.API_KEY }}
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Deploy to Kubesa
         run: |
-          # Check if API key is set
-          if [ -z "$PENDEPLOY_API_KEY" ]; then
-            echo "❌ ERROR: PENDEPLOY_API_KEY is not set in GitHub secrets"
-            exit 1
-          fi
-          curl -X POST \
+          echo "Triggering deployment..."          
+          curl -X POST https://kubernetes-deployment-platform-main.52bda5.app.isacitra.com/api/v1/deployments/git \
             -H "Content-Type: application/json" \
-            -H "X-API-Key: $PENDEPLOY_API_KEY" \
             -d '{
-              "githubUrl": "https://github.com/${{ github.repository }}",
-              "env": {
-                "IMAGE_REGISTRY": "localhost:5000/millab-frontend:${{ github.sha }}",
-                "NEXT_PUBLIC_API_URL": "https://api.millabindonesia.com",
-                "NODE_ENV": "production",
-                "NEXT_TELEMETRY_DISABLED": "1",
-                "NEXT_FORCE_DOWNLOAD_BINARY": "1"
-              }
-            }' \
-            https://api.millab-kubernetes.isacitra.com/create-deployment
-        
-      - name: Deployment Details
-        run: |
-          echo "Deployment request sent to pendeploy-simple API"
-          echo "Repository: ${{ github.repository }}"
-          echo "Branch: ${{ github.ref_name }}"
-          echo "Commit: ${{ github.sha }}"
-          echo "Image: localhost:5000/millab-frontend:${{ github.sha }}"
+              "serviceId": "f6729004-4568-4c2c-9a38-87ae701f7fc2",
+              "apiKey": "${{ secrets.KUBESA_API_KEY }}",
+              "commitId": "${{ github.sha }}",
+              "commitMessage": "${{ github.event.head_commit.message }}"
+            }'
+          
+          echo "Deployment initiated. Check deployment status and logs in the Kubesa web interface."
