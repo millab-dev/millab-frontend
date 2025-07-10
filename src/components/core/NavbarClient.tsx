@@ -3,32 +3,41 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import authLogo from "@/assets/authLogo.svg";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Menu, X, ChevronDown, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { navbarTranslations } from "./types";
-
-
+import axios from "axios";
 
 interface NavbarClientProps {
   isLoggedIn: boolean;
-  language?: 'id' | 'en';
+  lang?: 'id' | 'en';
 }
 
-const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
+const NavbarClient = ({ isLoggedIn, lang = 'en' }: NavbarClientProps) => {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   
-  // Get translations based on language
-  const t = navbarTranslations[language];
+  // Get translations based on current language
+  const t = navbarTranslations[lang];
   
   const isAboutUsPage = pathname === "/about-us";
   const [isMilboardMenuOpen, setIsMilboardMenuOpen] = useState(false);
   const [isMilboardMobileMenuOpen, setIsMilboardMobileMenuOpen] = useState(false);
+  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
+  const [isLanguageMobileMenuOpen, setIsLanguageMobileMenuOpen] = useState(false);
   const milboardMenuRef = useRef<HTMLDivElement>(null);
   const milboardMobileMenuRef = useRef<HTMLDivElement>(null);
+  const languageMenuRef = useRef<HTMLDivElement>(null);
+  const languageMobileMenuRef = useRef<HTMLDivElement>(null);
+
+  // Language options
+  const languageOptions = [
+    { code: 'en', label: 'English' },
+    { code: 'id', label: 'Indonesia' }
+  ];
 
   // Dropdown items for MilBoard based on login status
   const milboardItems = isLoggedIn
@@ -44,7 +53,6 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
       ];
 
   // Filter navigation items based on login status and current page
-  // On about-us page, don't show any regular nav items (only "Tentang Kami" and "MilBoard" will be shown separately)
   const navItems = isAboutUsPage
     ? [] // No regular items on about-us page
     : isLoggedIn
@@ -59,6 +67,27 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
           { name: t.navItems[5].name, path: t.navItems[5].path }, // Sign In
           { name: t.navItems[6].name, path: t.navItems[6].path }, // Sign Up
         ];
+
+  // Language change handler
+  const handleLanguageChange = async (languageCode: 'id' | 'en') => {
+    try {
+      await fetch('/api/language', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ language: languageCode }),
+      });
+      setIsLanguageMenuOpen(false);
+      setIsLanguageMobileMenuOpen(false);
+      setIsMenuOpen(false); // Close mobile menu when language is changed
+      // Refresh from server to get new language
+      router.refresh();
+    } catch (error) {
+      console.error('Failed to update language:', error);
+    }
+  };
   
   // Handle scroll effect for navbar shrinking
   useEffect(() => {
@@ -78,6 +107,12 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
       if (milboardMobileMenuRef.current && !milboardMobileMenuRef.current.contains(event.target as Node)) {
         setIsMilboardMobileMenuOpen(false);
       }
+      if (languageMenuRef.current && !languageMenuRef.current.contains(event.target as Node)) {
+        setIsLanguageMenuOpen(false);
+      }
+      if (languageMobileMenuRef.current && !languageMobileMenuRef.current.contains(event.target as Node)) {
+        setIsLanguageMobileMenuOpen(false);
+      }
     };
     
     window.addEventListener('scroll', handleScroll);
@@ -89,16 +124,20 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
     };
   }, []);
   
-  // Close MilBoard menus when changing routes
+  // Close all menus when changing routes
   useEffect(() => {
     setIsMilboardMenuOpen(false);
     setIsMilboardMobileMenuOpen(false);
+    setIsLanguageMenuOpen(false);
+    setIsLanguageMobileMenuOpen(false);
   }, [pathname]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-    setIsMilboardMenuOpen(false); // Close milboard menu if mobile menu is toggled
+    setIsMilboardMenuOpen(false);
     setIsMilboardMobileMenuOpen(false);
+    setIsLanguageMenuOpen(false);
+    setIsLanguageMobileMenuOpen(false);
   };
 
   const toggleMilboardMenu = () => {
@@ -107,6 +146,14 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
   
   const toggleMilboardMobileMenu = () => {
     setIsMilboardMobileMenuOpen(!isMilboardMobileMenuOpen);
+  };
+
+  const toggleLanguageMenu = () => {
+    setIsLanguageMenuOpen(!isLanguageMenuOpen);
+  };
+  
+  const toggleLanguageMobileMenu = () => {
+    setIsLanguageMobileMenuOpen(!isLanguageMobileMenuOpen);
   };
 
   return (
@@ -196,6 +243,43 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
                   </Link>
                 ))
               )}
+              
+              {/* Language Dropdown - Desktop (inline with navigation) */}
+              <div className="relative border-l border-gray-200 pl-6" ref={languageMenuRef}>
+                <button 
+                  onClick={toggleLanguageMenu}
+                  className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+                >
+                  <Globe className="h-4 w-4" />
+                  <span>{lang === 'id' ? 'ID' : 'EN'}</span>
+                  <ChevronDown size={14} className={`transition-transform duration-200 ${isLanguageMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {/* Language Dropdown Menu */}
+                <AnimatePresence>
+                  {isLanguageMenuOpen && (
+                    <motion.div 
+                      className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {languageOptions.map((language) => (
+                        <button
+                          key={language.code}
+                          onClick={() => handleLanguageChange(language.code as 'id' | 'en')}
+                          className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 hover:text-primary transition-colors duration-200 ${
+                            lang === language.code ? 'text-primary bg-gray-50' : 'text-gray-700'
+                          }`}
+                        >
+                          {language.label}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
 
@@ -294,6 +378,50 @@ const NavbarClient = ({ isLoggedIn, language = 'id' }: NavbarClientProps) => {
                   </Link>
                 ))
               )}
+            </div>
+            
+            {/* Language Dropdown - Mobile (in sidebar) */}
+            <div className="border-t border-gray-200 pt-4 mt-4">
+              <div className="relative" ref={languageMobileMenuRef}>
+                <button 
+                  onClick={toggleLanguageMobileMenu}
+                  className="flex items-center justify-between w-full px-4 py-3 text-base font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+                >
+                  <div className="flex items-center space-x-2">
+                    <Globe className="h-5 w-5" />
+                    <span>Language</span>
+                  </div>
+                  <ChevronDown 
+                    size={16} 
+                    className={`transition-transform duration-200 ${isLanguageMobileMenuOpen ? 'rotate-180' : ''}`} 
+                  />
+                </button>
+                
+                {/* Mobile Language Dropdown Menu */}
+                <AnimatePresence>
+                  {isLanguageMobileMenuOpen && (
+                    <motion.div 
+                      className="bg-gray-50 rounded-md mt-1 overflow-hidden"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {languageOptions.map((language) => (
+                        <button
+                          key={language.code}
+                          onClick={() => handleLanguageChange(language.code as 'id' | 'en')}
+                          className={`w-full text-left px-6 py-3 text-base font-medium hover:text-primary hover:bg-gray-100 transition-colors duration-200 ${
+                            lang === language.code ? 'text-primary bg-gray-100' : 'text-gray-700'
+                          }`}
+                        >
+                          {language.label}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
         </motion.div>

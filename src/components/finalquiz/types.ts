@@ -91,6 +91,7 @@ export interface QuizMessagesTranslations {
   finishQuizNoPoints: string;
   cancel: string;
   finishQuiz: string;
+  of: string;
 }
 
 // QuizSummary available translations
@@ -168,7 +169,8 @@ export const quizMessagesTranslations: Record<Language, QuizMessagesTranslations
     finishQuizFirstAttempt: 'Hanya percobaan pertama Anda yang akan mendapat poin berdasarkan skor Anda.',
     finishQuizNoPoints: 'Anda sudah menyelesaikan kuis ini. Tidak ada poin yang akan diperoleh untuk percobaan ini.',
     cancel: 'Batal',
-    finishQuiz: 'Selesaikan Kuis'
+    finishQuiz: 'Selesaikan Kuis',
+    of: 'dari'
   },
   en: {
     earnedPoints: 'You earned {points} points!',
@@ -180,7 +182,8 @@ export const quizMessagesTranslations: Record<Language, QuizMessagesTranslations
     finishQuizFirstAttempt: 'This is your first attempt. You will earn points based on your score.',
     finishQuizNoPoints: 'You have already completed this quiz. No points will be earned for this attempt.',
     cancel: 'Cancel',
-    finishQuiz: 'Finish Quiz'
+    finishQuiz: 'Finish Quiz',
+    of: 'of'
   }
 };
 

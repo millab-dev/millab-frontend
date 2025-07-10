@@ -1,9 +1,7 @@
 "use client"
-import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { motion } from 'framer-motion'
 import MillabSection from './MillabSection'
 import OurTeamSection from './OurTeamSection'
-import WhatHaveWeMade from './WhatHaveWeMade'
 import AwardSection from './AwardSection'
 import ConnectWithUsSection from './ConnectWithUsSection'
 import { SectionProps } from './types'

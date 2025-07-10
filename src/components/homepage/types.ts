@@ -45,6 +45,149 @@ export type FeaturedImageTranslationsType = {
   };
 };
 
+// Define Onboarding translations structure
+export type OnboardingTranslationsType = {
+  [key: string]: {
+    tour: {
+      title: string;
+      content: string;
+      skip: string;
+      next: string;
+      prev: string;
+      skipTour: string;
+      of: string;
+    };
+    steps: {
+      streakProgress: {
+        title: string;
+        content: string;
+      };
+      fyi: {
+        title: string;
+        content: string;
+      };
+      discover: {
+        title: string;
+        content: string;
+      };
+      moduleList: {
+        title: string;
+        content: string;
+      };
+      continueReading: {
+        title: string;
+        content: string;
+      };
+      finalQuiz: {
+        title: string;
+        content: string;
+      };
+      guideWebsite: {
+        title: string;
+        content: string;
+      };
+      guideOffline: {
+        title: string;
+        content: string;
+      };
+    };
+  };
+};
+
+// Define onboarding translations
+export const onboardingTranslations: OnboardingTranslationsType = {
+  id: {
+    tour: {
+      title: "Tour MILBoard",
+      content: "Mari kita jelajahi fitur-fitur MILBoard bersama!",
+      skip: "Lewati",
+      next: "Lanjut",
+      prev: "Kembali",
+      skipTour: "Lewati Tour",
+      of: "dari"
+    },
+    steps: {
+      streakProgress: {
+        title: "Semakin aktif, semakin tinggi levelmu!",
+        content: "Kumpulkan XP dari membaca modul dan menjawab kuis untuk naik level"
+      },
+      fyi: {
+        title: "Belajar sambil seru-seruan!",
+        content: "Temukan fakta menarik dan inspiratif seputar literasi media & digital setiap kali kamu membuka aplikasi."
+      },
+      discover: {
+        title: "Mulai belajar dari dasar",
+        content: "Temukan berbagai modul belajar berdasarkan level (Beginner, Intermediate, Advance) yang dirancang untuk membantumu belajar secara bertahap."
+      },
+      moduleList: {
+        title: "Lihat semua modul",
+        content: "Akses daftar lengkap modul yang tersedia dan pilih topik yang paling kamu minati."
+      },
+      continueReading: {
+        title: "Lanjutkan belajarmu",
+        content: "Temukan modul-modul yang sudah kamu mulai dan lanjutkan belajarmu dari sini."
+      },
+      finalQuiz: {
+        title: "Siap uji kemampuanmu?",
+        content: "Setelah menyelesaikan modul, ikuti kuis akhir untuk mengukur pemahamanmu dan kumpulkan poin tambahan."
+      },
+      guideWebsite: {
+        title: "Panduan penggunaan versi web",
+        content: "Pelajari cara menggunakan MilBoard dari situs web dengan mudah dan efektif."
+      },
+      guideOffline: {
+        title: "Gunakan MilBoard secara offline",
+        content: "Ikuti petunjuk penggunaan untuk produk offline seperti board game atau modul cetak agar pengalaman belajarmu tetap maksimal meski tanpa internet."
+      }
+    }
+  },
+  en: {
+    tour: {
+      title: "MILBoard Tour",
+      content: "Let's explore MILBoard features together!",
+      skip: "Skip",
+      next: "Next",
+      prev: "Previous",
+      skipTour: "Skip Tour",
+      of: "of"
+    },
+    steps: {
+      streakProgress: {
+        title: "The more active, the higher your level!",
+        content: "Collect XP from reading modules and answering quizzes to level up"
+      },
+      fyi: {
+        title: "Learn while having fun!",
+        content: "Discover interesting and inspiring facts about media & digital literacy every time you open the app."
+      },
+      discover: {
+        title: "Start learning from the basics",
+        content: "Find various learning modules based on levels (Beginner, Intermediate, Advanced) designed to help you learn gradually."
+      },
+      moduleList: {
+        title: "View all modules",
+        content: "Access the complete list of available modules and choose your favorite topics."
+      },
+      continueReading: {
+        title: "Continue your learning",
+        content: "Find the modules you've started and continue your learning from here."
+      },
+      finalQuiz: {
+        title: "Ready to test your skills?",
+        content: "After completing a module, take the final quiz to measure your understanding and collect bonus points."
+      },
+      guideWebsite: {
+        title: "Web version user guide",
+        content: "Learn how to use MilBoard from the website easily and effectively."
+      },
+      guideOffline: {
+        title: "Use MilBoard offline",
+        content: "Follow the usage instructions for offline products like board games or printed modules to ensure your learning experience remains optimal even without internet."
+      }
+    }
+  }
+};
+
 // Define InformationSection translations structure
 export type InformationTranslationsType = {
   [key: string]: {

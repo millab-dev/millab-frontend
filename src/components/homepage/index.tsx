@@ -1,9 +1,7 @@
 "use client";
 
-import { NextStep, NextStepProvider, Tour,} from "nextstepjs";
-import { ReadingStateData } from "./types";
-import { UserData } from "./types";
-import { HomepageModulesData } from "./types";
+import { NextStep, NextStepProvider, Tour } from "nextstepjs";
+import { ReadingStateData, UserData, HomepageModulesData, onboardingTranslations } from "./types";
 
 import HomepageContent from "./OnboardingOverlay";
 
@@ -11,9 +9,10 @@ interface HomepageProps {
   readingStateData: ReadingStateData;
   homepageModulesData: HomepageModulesData;
   userData: UserData;
+  lang?: 'id' | 'en';
 }
 
-const Homepage = ({ readingStateData, homepageModulesData, userData }: HomepageProps) => {
+const Homepage = ({ readingStateData, homepageModulesData, userData, lang }: HomepageProps) => {
 
     const steps: Tour[] = [
         {
@@ -21,9 +20,8 @@ const Homepage = ({ readingStateData, homepageModulesData, userData }: HomepageP
             steps: [
                 {
                     icon: "👋",
-                    title: "Semakin aktif, semakin tinggi levelmu!",
-                    content:
-                        "Kumpulkan XP dari membaca modul dan menjawab kuis untuk naik level",
+                    title: onboardingTranslations[lang || 'id'].steps.streakProgress.title,
+                    content: onboardingTranslations[lang || 'id'].steps.streakProgress.content,
                     selector: "#streak-progress",
                     side: "bottom",
                     showControls: true,
@@ -31,9 +29,8 @@ const Homepage = ({ readingStateData, homepageModulesData, userData }: HomepageP
                 },
                 {
                     icon: "👋",
-                    title: "Belajar sambil seru-seruan!",
-                    content:
-                        "Temukan fakta menarik dan inspiratif seputar literasi media & digital setiap kali kamu membuka aplikasi.",
+                    title: onboardingTranslations[lang || 'id'].steps.fyi.title,
+                    content: onboardingTranslations[lang || 'id'].steps.fyi.content,
                     selector: "#fyi",
                     side: "bottom",
                     showControls: true,
@@ -41,9 +38,8 @@ const Homepage = ({ readingStateData, homepageModulesData, userData }: HomepageP
                 },
                 {
                     icon: "👋",
-                    title: "Mulai belajar dari dasar",
-                    content:
-                        "Temukan berbagai modul belajar berdasarkan level (Beginner, Intermediate, Advance) yang dirancang untuk membantumu belajar secara bertahap.",
+                    title: onboardingTranslations[lang || 'id'].steps.discover.title,
+                    content: onboardingTranslations[lang || 'id'].steps.discover.content,
                     selector: "#discover-section",
                     side: "bottom",
                     showControls: true,
@@ -51,9 +47,8 @@ const Homepage = ({ readingStateData, homepageModulesData, userData }: HomepageP
                 },
                 {
                     icon: "👋",
-                    title: "Lihat semua modul",
-                    content:
-                        "Akses daftar lengkap modul yang tersedia dan pilih topik yang paling kamu minati.",
+                    title: onboardingTranslations[lang || 'id'].steps.moduleList.title,
+                    content: onboardingTranslations[lang || 'id'].steps.moduleList.content,
                     selector: "#module-list",
                     side: "top",
                     showControls: true,
@@ -61,9 +56,8 @@ const Homepage = ({ readingStateData, homepageModulesData, userData }: HomepageP
                 },
                 {
                     icon: "👋",
-                    title: "Lanjutkan dari yang terakhir",
-                    content:
-                        "Kembali ke modul yang sebelumnya kamu baca tanpa harus mencari dari awal. Praktis dan efisien!",
+                    title: onboardingTranslations[lang || 'id'].steps.continueReading.title,
+                    content: onboardingTranslations[lang || 'id'].steps.continueReading.content,
                     selector: "#continue-reading",
                     side: "bottom",
                     showControls: true,
@@ -99,15 +93,6 @@ const Homepage = ({ readingStateData, homepageModulesData, userData }: HomepageP
                     showControls: true,
                     showSkip: true,
                 },
-                // {
-                //   icon: "👋",
-                //   title: "Pindai Challenge Card milikmu",
-                //   content: "Gunakan kamera untuk memindai kode QR di kartu tantangan MilBoard dan akses modul terkait.",
-                //   selector: "#scan",
-                //   side: "top",
-                //   showControls: true,
-                //   showSkip: true
-                // },
             ],
         },
     ];
@@ -121,7 +106,9 @@ const Homepage = ({ readingStateData, homepageModulesData, userData }: HomepageP
                 onSkip={() => {
                     localStorage.setItem("completedTour", "true");
                 }}>
+                
                     <HomepageContent 
+                        lang={lang}
                         readingStateData={readingStateData}
                         homepageModulesData={homepageModulesData}
                         userData={userData}

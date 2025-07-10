@@ -4,6 +4,7 @@ import { quizService } from "@/actions/quiz.service";
 import { AxiosError } from "axios";
 import { getProfileData } from "@/actions/profile.get-profile-data";
 import { User } from "@/types/user";
+import { getLanguage } from "@/actions/core.get-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,7 @@ export default async function page({
 }) {
     try {
         const { difficulty } = await params;
+        const language = await getLanguage();
         const quiz = await quizService.getQuizByDifficulty(difficulty);
         const checkDiff =
             difficulty.toLowerCase() === "beginner" ? "easy" : difficulty;
@@ -33,6 +35,7 @@ export default async function page({
                     userId={user.id as string}
                     urlBase={`/final-quiz`}
                     difficulty={normalizedDifficulty}
+                    language={language}
                 />
             </>
         );

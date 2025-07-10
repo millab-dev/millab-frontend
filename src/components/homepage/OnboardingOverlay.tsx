@@ -11,9 +11,10 @@ interface HomepageContentProps {
     readingStateData: ReadingStateData;
     homepageModulesData: HomepageModulesData;
     userData: UserData;
+    lang?: 'id' | 'en';
 }
 
-const HomepageContent = ({ readingStateData, homepageModulesData, userData }: HomepageContentProps) => {
+const HomepageContent = ({ readingStateData, homepageModulesData, userData, lang }: HomepageContentProps) => {
 
     const { startNextStep } = useNextStep();
 
@@ -62,12 +63,13 @@ const HomepageContent = ({ readingStateData, homepageModulesData, userData }: Ho
                     {/* Top section with information */}
                     <div className="h-[14.43rem] md:h-[16.43rem] w-full">
                         <div className="h-full flex items-center">
-                            <InformationSection userData={userData} />
+                            <InformationSection language={lang} userData={userData} />
                         </div>
                     </div>
 
                     {/* Bottom sheet with rounded top corners and animations */}
                     <BottomSheetSection 
+                        language={lang}
                         readingStateData={readingStateData}
                         homepageModulesData={homepageModulesData}
                     />

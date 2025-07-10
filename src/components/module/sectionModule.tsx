@@ -15,8 +15,7 @@ import axiosClient from "@/lib/axios.client";
 import { awardSectionXP } from "@/utils/progressionApi";
 import { 
     SectionProps, 
-    sectionModuleTranslations, 
-    Language 
+    sectionModuleTranslations,  
 } from "./types";
 
 interface Module {

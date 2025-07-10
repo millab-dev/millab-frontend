@@ -1,16 +1,12 @@
-import { SectionProps } from "./types";
-import NavbarClient from "./NavbarClient";
 import { checkAuthStatus } from "@/actions/auth.check-auth-status";
+import { getLanguage } from "@/actions/core.get-lang";
+import NavbarClient from "./NavbarClient";
 
-
-async function Navbar({ language = 'id' }: SectionProps) {
-  
-  // Check if user is logged in
+async function Navbar() {
   const isLoggedIn = await checkAuthStatus();
-
-  // Render the client-side component with isLoggedIn status and language
-  // Let the client component handle which nav items to display based on login status
-  return <NavbarClient isLoggedIn={isLoggedIn} language={language} />;
+  const lang = await getLanguage();
+  
+  return <NavbarClient isLoggedIn={isLoggedIn} lang={lang} />;
 }
 
 export default Navbar;

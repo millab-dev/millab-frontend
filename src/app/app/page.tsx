@@ -3,6 +3,7 @@ import Homepage from "@/components/homepage";
 import { getLastAccessedReading } from "@/actions/homepage/get-reading-state";
 import { getHomepageModules } from "@/actions/homepage/get-homepage-modules";
 import { getUserData } from "@/actions/homepage/get-user-data";
+import { getLanguage } from "@/actions/core.get-lang";
 
 export default async function Page() {
     // Call all server actions in parallel for better performance
@@ -11,6 +12,7 @@ export default async function Page() {
         getHomepageModules(),
         getUserData()
     ]);
+    const lang = await getLanguage();
     
     return (
         <>
@@ -21,6 +23,7 @@ export default async function Page() {
                 readingStateData={readingStateData}
                 homepageModulesData={homepageModulesData}
                 userData={userData}
+                lang={lang}
             />
         </>
     );

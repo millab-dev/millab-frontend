@@ -12,9 +12,10 @@ import { ReadingStateData } from './types'
 interface BottomSheetSectionProps {
   readingStateData: ReadingStateData;
   homepageModulesData: HomepageModulesData;
+  language?: 'id' | 'en';
 }
 
-const BottomSheetSection = ({ readingStateData, homepageModulesData }: BottomSheetSectionProps) => {
+const BottomSheetSection = ({ readingStateData, homepageModulesData, language }: BottomSheetSectionProps) => {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.1 })
   
@@ -31,21 +32,21 @@ const BottomSheetSection = ({ readingStateData, homepageModulesData }: BottomShe
     >
       <div className="flex flex-col gap-y-4 md:gap-y-8 px-4 pt-4 pb-24 lg:pt-12 lg:pb-12 max-w-6xl mx-auto">
         {/* Featured image with animations */}
-        <FeaturedImageSection />
+        <FeaturedImageSection language={language} />
        
         {/* Discover Modules section */}
-        <DiscoverSection initialModulesData={homepageModulesData} />
+        <DiscoverSection initialModulesData={homepageModulesData} language={language} />
 
          {/* Continue Reading section */}
          <div id="continue-reading">
-           <ContinueReadingSection initialReadingStateData={readingStateData} />
+           <ContinueReadingSection initialReadingStateData={readingStateData} language={language} />
          </div>
 
           {/* Final Test section */}
-        <FinalTestSection />
+        <FinalTestSection language={language} />
         
         {/* Guidelines section */}
-        <GuidelinesSection />
+        <GuidelinesSection language={language} />
         
        
       </div>

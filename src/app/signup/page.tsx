@@ -1,3 +1,4 @@
+import { getLanguage } from "@/actions/core.get-lang";
 import SignupForm from "@/components/auth/signupForm";
 import { Metadata } from "next";
 
@@ -6,6 +7,7 @@ export const metadata: Metadata = {
   description: "Create a new MILBoard account",
 };
 
-export default function SignupPage() {
-  return <SignupForm language="id" />;
+export default async function SignupPage() {
+  const language = await getLanguage();
+  return <SignupForm language={language} />;
 }

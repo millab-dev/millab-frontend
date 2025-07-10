@@ -5,7 +5,7 @@ import { ArrowLeft, List, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuizQuestionData, QuizOption } from "./Quiz";
 import cloud from "@/assets/cloudPatternBlue.svg";
-import { Language, QuizMessagesTranslations } from "./types";
+import { Language, quizMessagesTranslations, QuizMessagesTranslations } from "./types";
 
 interface QuizQuestionProps {
     question: QuizQuestionData;
@@ -119,7 +119,7 @@ export default function QuizQuestion({
                         onClick={onShowNavigation}
                     >
                         <List size={16} />
-                        {currentQuestionNumber} dari {totalQuestions}
+                        {currentQuestionNumber} {quizMessagesTranslations[language].of} {totalQuestions}
                     </div>
                 </div>
 
