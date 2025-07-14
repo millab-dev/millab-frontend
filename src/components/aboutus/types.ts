@@ -234,3 +234,26 @@ export const connectWithUsSectionTranslations: ConnectWithUsSectionTranslationsT
     }
   }
 };
+
+// Define Video Section translations structure
+export type VideoSectionTranslationsType = {
+  [key: string]: {
+    title: string;
+    description: string;
+    videoTitle: string;
+  };
+};
+
+// Video Section translations
+export const videoSectionTranslations: VideoSectionTranslationsType = {
+  id: {
+    title: "Kenali MILBoard Lebih Dekat",
+    description: "Video singkat tentang MILBoard, produk unggulan kami dalam meningkatkan literasi digital untuk generasi muda Indonesia.",
+    videoTitle: "MILBoard - Solusi Inovatif untuk Literasi Media dan Informasi"
+  },
+  en: {
+    title: "Get to Know MILBoard",
+    description: "A brief video about MILBoard, our flagship product in advancing digital literacy for Indonesian youth.",
+    videoTitle: "MILBoard - Innovative Solution for Media and Information Literacy"
+  }
+};

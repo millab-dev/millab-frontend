@@ -51,10 +51,10 @@ const AwardSection: React.FC<SectionProps> = ({ language = 'id' }) => {
 
   return (
     <div className="py-12 px-4 md:px-8 max-w-7xl mx-auto" ref={sectionRef}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
         {/* Text Content - First on mobile, second on desktop (order changes) */}
         <motion.div
-          className="flex flex-col items-start order-1 md:order-2 md:col-span-2"
+          className="flex flex-col items-start order-1 md:order-2"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ delay: 0.3, duration: 0.7 }}
@@ -80,7 +80,7 @@ const AwardSection: React.FC<SectionProps> = ({ language = 'id' }) => {
         
         {/* Carousel - Second on mobile, first on desktop (order changes) */}
         <motion.div 
-          className="relative order-2 md:order-1 md:col-span-1"
+          className="relative order-2 md:order-1"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
           transition={{ delay: 0.2, duration: 0.7 }}
@@ -96,7 +96,7 @@ const AwardSection: React.FC<SectionProps> = ({ language = 'id' }) => {
                   transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
                 >
                   <div className="rounded-xl overflow-hidden">
-                    <div className="relative w-full h-72">
+                    <div className="relative w-full h-60 md:h-80">
                       <Image 
                         src={item.imageUrl}
                         alt={item.alt}

@@ -4,6 +4,7 @@ import MillabSection from './MillabSection'
 import OurTeamSection from './OurTeamSection'
 import AwardSection from './AwardSection'
 import ConnectWithUsSection from './ConnectWithUsSection'
+import VideoSection from './VideoSection'
 import { SectionProps } from './types'
 
 const BottomSheetSection = ({ language = 'id' }: SectionProps) => {
@@ -35,6 +36,13 @@ const BottomSheetSection = ({ language = 'id' }: SectionProps) => {
         {/* Award section */}
         <div className="">
           <AwardSection language={language} />
+        </div>
+        
+        <hr className="my-4 border-t-2 border-gray-300" />
+        
+        {/* Video section */}
+        <div className="">
+          <VideoSection language={language} />
         </div>
         
         <hr className="my-4 border-t-2 border-gray-300" />
