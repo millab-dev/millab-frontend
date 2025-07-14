@@ -23,7 +23,7 @@ const NavbarClient = ({ isLoggedIn, lang = 'en' }: NavbarClientProps) => {
   // Get translations based on current language
   const t = navbarTranslations[lang];
   
-  const isAboutUsPage = pathname === "/about-us";
+  const isAboutUsPage = pathname === "/" || pathname === "/about-us";
   const [isMilboardMenuOpen, setIsMilboardMenuOpen] = useState(false);
   const [isMilboardMobileMenuOpen, setIsMilboardMobileMenuOpen] = useState(false);
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
@@ -63,7 +63,7 @@ const NavbarClient = ({ isLoggedIn, lang = 'en' }: NavbarClientProps) => {
           { name: t.navItems[3].name, path: t.navItems[3].path }, // Profile
         ]
       : [
-          { name: t.navItems[4].name, path: t.navItems[4].path }, // About Us
+          { name: t.navItems[4].name, path: "/" }, // About Us
           { name: t.navItems[5].name, path: t.navItems[5].path }, // Sign In
           { name: t.navItems[6].name, path: t.navItems[6].path }, // Sign Up
         ];

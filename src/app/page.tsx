@@ -1,19 +1,13 @@
-'use client'
+import { getLanguage } from "@/actions/core.get-lang";
+import AboutUs from "@/components/aboutus"
+import type { Metadata } from "next"
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+export const metadata: Metadata = {
+  title: "MIL Lab Indonesia",
+  description: "Learn more about MIL Lab Indonesia and our mission.",
+}
 
-export default function RootPage() {
-  const router = useRouter()
-  
-  useEffect(() => {
-    console.log('Root page loaded')
-    router.push('/about-us')
-  }, [router])
-  
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <p className="text-lg">Redirecting to About Us page...</p>
-    </div>
-  )
+export default async function RootPage() {
+  const language = await getLanguage();
+  return <AboutUs language={language} />
 }

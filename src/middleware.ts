@@ -7,16 +7,12 @@ import axiosServer from "./lib/axios.server";
 export async function middleware(request: NextRequest) {
 
     console.log("middleware")
-    // Check if the path is the root - handle it first
-    if(request.nextUrl.pathname === '/') {
-        console.log("Redirecting to about-us page...");
-        return NextResponse.redirect(new URL('/about-us', request.url));
-    }
     
     const isAuthPage =
         request.nextUrl.pathname === "/signin" ||
         request.nextUrl.pathname === "/signup" ||
-        request.nextUrl.pathname === "/about-us";
+        request.nextUrl.pathname === "/about-us" ||
+        request.nextUrl.pathname === "/";
     
     const isAdminPage = request.nextUrl.pathname.startsWith("/admin");
     
