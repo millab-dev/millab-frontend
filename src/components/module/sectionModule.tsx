@@ -96,10 +96,24 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
 
     const fetchModuleData = async () => {
         try {
+            // More aggressive debugging with alerts and different console methods
+            console.warn("🔍 FETCH MODULE DATA STARTED");
+            console.error("📍 Module ID:", moduleId, "Section ID:", sectionId);
+            
+            // Also show a toast to confirm the function is running
+            toast.info(`Debug: Loading module ${moduleId}, section ${sectionId}`);
+            
             const response = await axiosClient.get(
                 `/api/v1/modules/${moduleId}`
             );
             const data = response.data;
+            
+            console.error("📊 API RESPONSE:", data);
+            console.table({ 
+                success: data.success, 
+                hasProgress: !!data.data?.progress,
+                progressType: typeof data.data?.progress 
+            });
 
             if (data.success) {
                 setModule(data.data);
@@ -110,9 +124,24 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
                 );
                 if (section) {
                     setCurrentSection(section);
+                    
+                    // More aggressive debugging
+                    console.error("🎯 SECTION COMPLETION CHECK:");
+                    console.warn("Current sectionId:", sectionId);
+                    console.warn("Progress object:", data.data.progress);
+                    console.warn("Completed sections array:", data.data.progress?.completedSections);
+                    console.warn("Array type check:", Array.isArray(data.data.progress?.completedSections));
+                    console.warn("Section in array?", data.data.progress?.completedSections?.includes(sectionId));
+                    
+                    // Show toast with the actual values
+                    toast.info(`Progress check: ${data.data.progress?.completedSections?.includes(sectionId) ? 'COMPLETED' : 'NOT COMPLETED'}`);
+                    
+                    // Use debugger to force a breakpoint
+                    debugger;
+                    
                     // Check if section is already completed
                     setIsMarkedAsDone(
-                        data.data.progress?.completedSections.includes(
+                        data.data.progress?.completedSections?.includes(
                             sectionId
                         ) || false
                     );                } else {
@@ -134,11 +163,17 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
 
     const markSectionAsCompleted = async () => {
         try {
+            console.log("=== MARKING SECTION COMPLETE DEBUG ===");
+            console.log("Marking section:", sectionId, "in module:", moduleId);
+            
             // Mark section as completed in existing system
             const response = await axiosClient.post(
                 `/api/v1/modules/${moduleId}/sections/${sectionId}/complete`
             );
             const data = response.data;
+            
+            console.log("=== COMPLETION API RESPONSE DEBUG ===");
+            console.log("Completion response:", data);
 
             if (data.success) {
                 setIsMarkedAsDone(true);
