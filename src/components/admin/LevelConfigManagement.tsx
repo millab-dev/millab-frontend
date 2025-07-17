@@ -59,13 +59,13 @@ export default function LevelConfigManagement() {
     try {
       // Fetch levels
       const levelsResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/level-config/levels`,
+        `/api/v1/level-config/levels`,
         { credentials: "include" }
       );
 
       // Fetch points config
       const pointsResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/level-config/points`,
+        `/api/v1/level-config/points`,
         { credentials: "include" }
       );
 
@@ -93,7 +93,7 @@ export default function LevelConfigManagement() {
   const initializeDefaults = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/level-config/init`,
+        `/api/v1/level-config/init`,
         {
           method: "POST",
           credentials: "include",
@@ -116,7 +116,7 @@ export default function LevelConfigManagement() {
   const updateLevel = async (level: LevelConfig) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/level-config/levels/${level.id}`,
+        `/api/v1/level-config/levels/${level.id}`,
         {
           method: "PUT",
           credentials: "include",
@@ -148,7 +148,7 @@ export default function LevelConfigManagement() {
   const updatePointsConfig = async (config: PointsConfig) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/level-config/points/${config.id}`,
+        `/api/v1/level-config/points/${config.id}`,
         {
           method: "PUT",
           credentials: "include",

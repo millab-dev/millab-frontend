@@ -161,7 +161,7 @@ export default function CreateModuleForm() {
       };
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/admin/create`,
+        `/api/v1/modules/admin/create`,
         {
           method: "POST",
           headers: {

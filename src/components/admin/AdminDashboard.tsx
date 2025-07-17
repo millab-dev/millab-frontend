@@ -31,7 +31,7 @@ export default function AdminDashboard() {
     try {
       // Fetch modules data to calculate stats
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/admin/all`,
+        `/api/v1/modules/admin/all`,
         {
           credentials: "include",
         }

@@ -20,7 +20,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
     try {
       // Make a request to check if user is admin
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/auth/me`,
+        `/api/v1/auth/me`,
         {
           credentials: "include",
         }

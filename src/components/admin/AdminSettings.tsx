@@ -71,7 +71,7 @@ export default function AdminSettings() {
   const fetchSettings = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/settings/admin`,
+        `/api/v1/settings/admin`,
         {
           credentials: "include",
         }
@@ -97,7 +97,7 @@ export default function AdminSettings() {
     setIsSubmitting(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/settings/admin`,
+        `/api/v1/settings/admin`,
         {
           method: "PUT",
           credentials: "include",

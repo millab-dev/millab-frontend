@@ -50,7 +50,7 @@ export default function AdminModuleList() {
   const fetchModules = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/admin/all`,
+        `/api/v1/modules/admin/all`,
         {
           credentials: "include",
         }
@@ -78,7 +78,7 @@ export default function AdminModuleList() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/admin/${id}`,
+        `/api/v1/modules/admin/${id}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -102,7 +102,7 @@ export default function AdminModuleList() {
   const toggleModuleStatus = async (id: string, currentStatus: boolean) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/v1/modules/admin/${id}`,
+        `/api/v1/modules/admin/${id}`,
         {
           method: "PUT",
           headers: {
