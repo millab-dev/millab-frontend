@@ -12,6 +12,7 @@ import {
     detailModuleTranslations, 
     Language 
 } from "./types";
+import { getModuleDescription } from "@/utils/moduleLanguageUtils";
 
 interface Module {
     id: string;
@@ -159,8 +160,9 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
         let fullText = '';
         
         // Add module description
-        if (module.description) {
-            fullText += `${t.moduleDescription}: ${cleanTextForSpeech(module.description)}. `;
+        if (module) {
+            const moduleDescription = getModuleDescription(module, language)
+            fullText += `${t.moduleDescription}: ${cleanTextForSpeech(moduleDescription)}. `;
         }
         
         // Add sections information
@@ -193,6 +195,7 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
 
         const utterance = new SpeechSynthesisUtterance(fullText);
         utterance.lang = language === 'en' ? 'en-US' : 'id-ID';
+        console.log(utterance.lang);
         utterance.rate = 0.9;
         utterance.pitch = 1;
 

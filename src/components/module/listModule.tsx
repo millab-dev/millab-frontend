@@ -25,6 +25,7 @@ import {
 interface ListModuleProps extends SectionProps {}
 
 export default function ListModule({ language = 'id' }: ListModuleProps) {
+    console.log(language);
     const router = useRouter();
     const [modules, setModules] = useState<Module[]>([]);
     const [loading, setLoading] = useState(true);
