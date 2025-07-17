@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { toast } from "sonner";
-import QuizQuestion from "./QuizQuestion";
+import QuizQuestionComponent from "./QuizQuestion";
 import QuizSummary from "./QuizSummary";
 import QuizNavigation from "./QuizNavigation";
 import axiosClient from "@/lib/axios.client";
@@ -14,16 +14,18 @@ import {
     QuizOption,
     QuizQuestionData,
     QuizAnswer,
-    DatabaseQuizQuestion,
-    Module,
-    ModuleSection,
-    ModuleQuiz,
-    UserProgress,
     QuizView,
     SectionProps,
     quizTranslations,
     Language
 } from "./types";
+import {
+    Module,
+    ModuleSection,
+    ModuleQuiz,
+    QuizQuestion,
+    UserProgress
+} from "../module/types";
 
 interface QuizProps extends SectionProps {}
 
@@ -88,16 +90,19 @@ export default function Quiz({ language }: QuizProps) {
         } finally {
             setLoading(false);
         }
-    };// Transform database quiz questions into UI format
-    const transformQuizQuestions = (dbQuestions: DatabaseQuizQuestion[]): QuizQuestionData[] => {
+    };    // Transform database quiz questions into UI format
+    const transformQuizQuestions = (dbQuestions: QuizQuestion[]): QuizQuestionData[] => {
         return dbQuestions
             .sort((a, b) => a.order - b.order)
             .map((dbQuestion, index) => ({
                 id: index + 1,
-                question: dbQuestion.question,
+                question: language === 'en' && dbQuestion.questionEn ? dbQuestion.questionEn : dbQuestion.question,
                 points: 1,
-                explanation: dbQuestion.explanation,
-                options: dbQuestion.options.map((option, optionIndex) => ({
+                explanation: language === 'en' && dbQuestion.explanationEn ? dbQuestion.explanationEn : dbQuestion.explanation,
+                options: (language === 'en' && dbQuestion.optionsEn && dbQuestion.optionsEn.length > 0 
+                    ? dbQuestion.optionsEn 
+                    : dbQuestion.options
+                ).map((option: string, optionIndex: number) => ({
                     id: String.fromCharCode(65 + optionIndex), // A, B, C, D
                     text: option,
                     isCorrect: optionIndex === dbQuestion.correctAnswer
@@ -490,7 +495,7 @@ export default function Quiz({ language }: QuizProps) {
                     </div>
                 </div>            )}
 
-            <QuizQuestion
+            <QuizQuestionComponent
                 question={currentQuestion}
                 currentQuestionNumber={currentQuestionIndex + 1}
                 totalQuestions={totalQuestions}

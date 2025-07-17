@@ -15,6 +15,12 @@ import {
     SectionProps, 
     listModuleTranslations, 
 } from "./types";
+import { 
+    getModuleTitle, 
+    getModuleDescription, 
+    getLanguageVersionBadge,
+    hasEnglishVersion 
+} from '@/utils/moduleLanguageUtils';
 
 interface ListModuleProps extends SectionProps {}
 
@@ -81,11 +87,13 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
         let content = '';
         
         // Module title and difficulty
-        content += `${t.aria.moduleTitle}: ${module.title}. `;
+        const displayTitle = getModuleTitle(module, language, '', module.order);
+        content += `${t.aria.moduleTitle}: ${displayTitle}. `;
         content += `${t.aria.difficultyBadge}: ${t.difficulty[module.difficulty]}. `;
         
         // Module description
-        const cleanDesc = cleanTextForSpeech(module.description);
+        const displayDescription = getModuleDescription(module, language);
+        const cleanDesc = cleanTextForSpeech(displayDescription);
         if (cleanDesc) {
             content += `Deskripsi: ${cleanDesc}. `;
         }
@@ -210,7 +218,7 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
 
     const downloadAllModules = async () => {
         try {
-            const success = await downloadAllPdf();
+            const success = await downloadAllPdf(language);
             if (!success) {
                 toast.info(t.downloadNotConfigured);
             }
@@ -410,14 +418,14 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
                                             navigatingModuleId === module.id ? 'opacity-50 pointer-events-none' : ''
                                         }`}
                                         role="article"
-                                        aria-label={`${t.aria.moduleCard}: ${module.title}`}
+                                        aria-label={`${t.aria.moduleCard}: ${getModuleTitle(module, language, '', module.order)}`}
                                     >
                                         <div className="flex items-center justify-between gap-4">
                                             <button
                                                 className="flex items-center gap-4 w-full text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg p-2"
                                                 onClick={() => handleModuleClick(module.id)}
                                                 disabled={navigatingModuleId === module.id}
-                                                aria-label={`${t.aria.moduleItem}: ${module.title}, ${t.difficulty[module.difficulty]}, ${progress}% ${t.completed}`}
+                                                aria-label={`${t.aria.moduleItem}: ${getModuleTitle(module, language, '', module.order)}, ${t.difficulty[module.difficulty]}, ${progress}% ${t.completed}`}
                                             >
                                                 <div className="bg-gradient-to-r from-primary to-primary/80 p-3 rounded-lg">
                                                     <FileText
@@ -430,29 +438,69 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
                                                 <div className="w-full">
                                                     <div className="flex items-center gap-2 mb-1">
                                                         <h3 className="font-semibold text-primary max-sm:text-sm">
-                                                            {module.order}. {module.title}
+                                                            {module.order}. {getModuleTitle(module, language, '', 0).replace(/^\d+\.\s*/, '')}
                                                         </h3>
                                                         
-                                                        <span
-                                                            className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                                module.difficulty === "Easy"
-                                                                    ? "bg-green-100 text-green-800"
-                                                                    : module.difficulty === "Intermediate"
-                                                                    ? "bg-yellow-100 text-yellow-800"
-                                                                    : "bg-red-100 text-red-800"
-                                                            }`}
-                                                            aria-label={`${t.aria.difficultyBadge}: ${t.difficulty[module.difficulty]}`}
-                                                        >
-                                                            {t.difficulty[module.difficulty]}
-                                                        </span>
+                                                        <div className="flex items-center gap-2">
+                                                            <span
+                                                                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                                    module.difficulty === "Easy"
+                                                                        ? "bg-green-100 text-green-800"
+                                                                        : module.difficulty === "Intermediate"
+                                                                        ? "bg-yellow-100 text-yellow-800"
+                                                                        : "bg-red-100 text-red-800"
+                                                                }`}
+                                                                aria-label={`${t.aria.difficultyBadge}: ${t.difficulty[module.difficulty]}`}
+                                                            >
+                                                                {t.difficulty[module.difficulty]}
+                                                            </span>
+                                                            
+                                                            {/* Language version indicator with ID fallback */}
+                                                            {(() => {
+                                                                const languageInfo = getLanguageVersionBadge(module, language);
+                                                                
+                                                                // First try to show language version indicator
+                                                                if (languageInfo.badge) {
+                                                                    return (
+                                                                        <span 
+                                                                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                                                languageInfo.fallback 
+                                                                                    ? 'bg-orange-100 text-orange-800' 
+                                                                                    : language === 'en' 
+                                                                                        ? 'bg-blue-100 text-blue-800' 
+                                                                                        : 'bg-green-100 text-green-800'
+                                                                            }`}
+                                                                            title={languageInfo.fallback 
+                                                                                ? `Content shown in fallback language` 
+                                                                                : `Content available in ${language === 'en' ? 'English' : 'Indonesian'}`
+                                                                            }
+                                                                        >
+                                                                            {languageInfo.badge}
+                                                                        </span>
+                                                                    );
+                                                                }
+                                                                
+                                                                // Fallback to showing module ID
+                                                                return (
+                                                                    <span 
+                                                                        className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                                                        title="Module ID"
+                                                                    >
+                                                                        ID: {module.id}
+                                                                    </span>
+                                                                );
+                                                            })()}
+                                                        </div>
                                                     </div>
                                                     
                                                     <div 
-                                                        className="text-gray-600 text-sm mt-1 max-sm:text-xs prose prose-sm max-w-none line-clamp-2"
-                                                        dangerouslySetInnerHTML={{ 
-                                                            __html: module.description.length > 150 
-                                                                ? module.description.substring(0, 150) + '...' 
-                                                                : module.description 
+                                                        className="text-gray-600 text-sm mt-1 max-sm:text-xs prose prose-sm max-w-none line-clamp-2"                                                        dangerouslySetInnerHTML={{
+                                                            __html: (() => {
+                                                                const displayDescription = getModuleDescription(module, language);
+                                                                return displayDescription.length > 150 
+                                                                    ? displayDescription.substring(0, 150) + '...' 
+                                                                    : displayDescription;
+                                                            })()
                                                         }}
                                                     />
                                                     
@@ -564,7 +612,7 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
                                                             toast.info(t.noPdfAvailable);
                                                         }
                                                     }}
-                                                    aria-label={`${t.aria.downloadModule}: ${module.title}`}
+                                                    aria-label={`${t.aria.downloadModule}: ${language === 'en' && module.titleEn ? module.titleEn : module.title}`}
                                                 >
                                                     <Download size={20} />
                                                 </Button>

@@ -6,6 +6,7 @@ export type TranslationsType = {
   [key: string]: {
     title: string;
     seeAll: string;
+    modulePrefix: string; // For "Modul" / "Module" prefix
     searchPlaceholder?: string; // Optional - only used in DiscoverSection
     notFound?: string; // For displaying when no modules match the search
     tryAnotherKeyword?: string; // Message shown when search returns no results
@@ -225,6 +226,7 @@ export const discoverTranslations: TranslationsType = {
   id: {
     title: "Temukan Modul Pilihanmu",
     seeAll: "Lihat Semua",
+    modulePrefix: "Modul",
     searchPlaceholder: "Cari modul...",
     notFound: "Tidak ada modul yang ditemukan",
     tryAnotherKeyword: "Coba kata kunci lain atau reset pencarian",
@@ -238,6 +240,7 @@ export const discoverTranslations: TranslationsType = {
   en: {
     title: "Discover Modules",
     seeAll: "See All",
+    modulePrefix: "Module",
     searchPlaceholder: "Search modules...",
     notFound: "No modules found",
     tryAnotherKeyword: "Try another keyword or reset search",
@@ -255,6 +258,7 @@ export type ContinueReadingTranslationsType = {
   [key: string]: {
     title: string;
     seeAll: string;
+    modulePrefix: string;
     emptyStateTitle: string;
     emptyStateSubtitle: string;
     tryAnotherKeyword: string;
@@ -274,6 +278,7 @@ export const continueReadingTranslations: ContinueReadingTranslationsType = {
   id: {
     title: "Lanjutkan Membaca",
     seeAll: "Lihat Semua",
+    modulePrefix: "Modul",
     tryAnotherKeyword: "Coba kata kunci lain atau reset pencarian",
     resetButton: "Reset",
     emptyStateTitle: "Kamu belum mulai baca modul kami",
@@ -292,6 +297,7 @@ export const continueReadingTranslations: ContinueReadingTranslationsType = {
   en: {
     title: "Continue Reading",
     seeAll: "See All",
+    modulePrefix: "Module",
     tryAnotherKeyword: "Try another keyword or reset search",
     resetButton: "Reset",
     emptyStateTitle: "You haven't started reading our modules yet",
@@ -409,12 +415,20 @@ export type Module = BaseModule & {
   description?: string;
   sections?: any[];
   quiz?: any;
+  hasEnglishVersion?: boolean;
+  languageInfo?: {
+    available: boolean;
+    fallback: boolean;
+    badge?: string;
+  };
 };
 
 export interface BackendModule {
   id: string;
   title: string;
+  titleEn?: string;
   description: string;
+  descriptionEn?: string;
   difficulty: 'Easy' | 'Intermediate' | 'Advanced';
   order: number;
   sections: any[];

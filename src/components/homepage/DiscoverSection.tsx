@@ -18,6 +18,12 @@ import {
 } from './types'
 import { useRouter } from 'next/navigation'
 import owlSad from '/public/owl-sad.png'
+import { 
+  getModuleTitle, 
+  getModuleDescription, 
+  getLanguageVersionBadge,
+  hasEnglishVersion 
+} from '@/utils/moduleLanguageUtils'
 
 
 // Use SectionProps for component props but extend with initialModulesData
@@ -46,16 +52,19 @@ const DiscoverSection = ({ language = 'id', initialModulesData }: DiscoverSectio
   const processModulesData = () => {
     try {
       if (initialModulesData && initialModulesData.success && initialModulesData.data) {
-        // Transform backend modules to frontend format
+        // Transform backend modules to frontend format with language support
         const transformedModules: Module[] = initialModulesData.data.map((module: BackendModule) => ({
           id: module.id,
-          title: `Modul ${module.order}: ${module.title}`,
+          title: getModuleTitle(module, language, t.modulePrefix, module.order),
           progress: module.progress?.completionPercentage || 0,
           category: module.difficulty === 'Easy' ? 'beginner' : 
                    module.difficulty === 'Intermediate' ? 'intermediate' : 'advanced',
-          description: module.description,
+          description: getModuleDescription(module, language),
           sections: module.sections,
-          quiz: module.quiz
+          quiz: module.quiz,
+          // Add language version info
+          hasEnglishVersion: hasEnglishVersion(module),
+          languageInfo: getLanguageVersionBadge(module, language)
         }));
         setModules(transformedModules);
       }
@@ -234,8 +243,8 @@ const DiscoverSection = ({ language = 'id', initialModulesData }: DiscoverSectio
                 {/* Module card content */}
                 <div className="flex flex-col h-full p-4">
                   <div className="space-y-3 flex-shrink-0">
-                    {/* Level badge */}
-                    <div>
+                    {/* Level badge and language version indicator */}
+                    <div className="flex items-center justify-between gap-2">
                       <span 
                         className="text-xs  py-1 px-2.5 rounded-md text-white"                        style={{ 
                           backgroundColor: 
@@ -245,6 +254,40 @@ const DiscoverSection = ({ language = 'id', initialModulesData }: DiscoverSectio
                       >
                         {t.categories[module.category as ModuleCategory]}
                       </span>
+                      
+                      {/* Language version indicator with ID fallback */}
+                      {(() => {
+                        // First try to show language version indicator
+                        if (module.languageInfo && module.languageInfo.badge) {
+                          return (
+                            <span 
+                              className={`text-xs py-1 px-2 rounded-md text-white ${
+                                module.languageInfo.fallback 
+                                  ? 'bg-orange-500' 
+                                  : language === 'en' 
+                                    ? 'bg-blue-500' 
+                                    : 'bg-green-600'
+                              }`}
+                              title={module.languageInfo.fallback 
+                                ? `Content shown in fallback language` 
+                                : `Content available in ${language === 'en' ? 'English' : 'Indonesian'}`
+                              }
+                            >
+                              {module.languageInfo.badge}
+                            </span>
+                          );
+                        }
+                        
+                        // Fallback to showing module ID
+                        return (
+                          <span 
+                            className="text-xs py-1 px-2 rounded-md text-white bg-gray-500"
+                            title="Module ID"
+                          >
+                            ID: {module.id}
+                          </span>
+                        );
+                      })()}
                     </div>
                     
                     {/* Icon contained within the card with rounded corners */}

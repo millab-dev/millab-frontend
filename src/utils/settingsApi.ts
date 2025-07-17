@@ -13,9 +13,12 @@ interface AppSettingsResponse {
 /**
  * Get download all PDF URL
  */
-export async function getDownloadAllPdfUrl(): Promise<string | null> {
+export async function getDownloadAllPdfUrl(language: 'id' | 'en' = 'id'): Promise<string | null> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/settings/download-all-pdf-url`, {
+    const url = new URL(`${API_BASE_URL}/api/v1/settings/download-all-pdf-url`);
+    url.searchParams.append('lang', language);
+    
+    const response = await fetch(url.toString(), {
       credentials: 'include',
     });
 
@@ -35,9 +38,9 @@ export async function getDownloadAllPdfUrl(): Promise<string | null> {
 /**
  * Download all PDF if URL is available
  */
-export async function downloadAllPdf(): Promise<boolean> {
+export async function downloadAllPdf(language: 'id' | 'en' = 'id'): Promise<boolean> {
   try {
-    const pdfUrl = await getDownloadAllPdfUrl();
+    const pdfUrl = await getDownloadAllPdfUrl(language);
     
     if (pdfUrl) {
       window.open(pdfUrl, '_blank');
