@@ -25,6 +25,10 @@ export type GuidelinesTranslationsType = {
       website: string;
       offlineProduct: string;
     };
+    urls: {
+      website: string;
+      offlineProduct: string;
+    };
   };
 };
 
@@ -322,6 +326,10 @@ export const guidelinesTranslations: GuidelinesTranslationsType = {
     items: {
       website: "Website",
       offlineProduct: "Produk Offline"
+    },
+    urls: {
+      website: "https://drive.google.com/file/d/17pMw11sbHFbNbcTq0r62T8UHFWIyv39R/view?usp=drive_link",
+      offlineProduct: "https://drive.google.com/file/d/1A0aDpKVLRZu6GnwtEaMJLSq3rs_Y5_ty/view?usp=drive_link"
     }
   },
   en: {
@@ -329,6 +337,10 @@ export const guidelinesTranslations: GuidelinesTranslationsType = {
     items: {
       website: "Website",
       offlineProduct: "Offline Product"
+    },
+    urls: {
+      website: "https://drive.google.com/file/d/18_DiyKxtolJS9LQ8ZyWMta6xQNrReuwY/view?usp=sharing",
+      offlineProduct: "https://drive.google.com/file/d/1OYL-dCW1yrOLgwZNtFy6o2L5LjhldLlx/view?usp=sharing"
     }
   }
 };

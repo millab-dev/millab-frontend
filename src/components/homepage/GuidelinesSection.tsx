@@ -15,7 +15,6 @@ type GuidelineItem = {
   id: number;
   key: GuidelineItemKey; // Use the specific type
   icon: React.ReactNode;
-  url: string;
 };
 
 type GuidelinesSectionProps = SectionProps;
@@ -24,7 +23,8 @@ const GuidelinesSection = ({ language = 'id' }: GuidelinesSectionProps) => {
   // Get translations based on language
   const t = guidelinesTranslations[language];
 
-  const onClick = (url: string) => {
+  const onClick = (key: GuidelineItemKey) => {
+    const url = t.urls[key];
     window.open(url, '_blank');
   }
   
@@ -33,14 +33,12 @@ const GuidelinesSection = ({ language = 'id' }: GuidelinesSectionProps) => {
     {
       id: 1,
       key: 'website',
-      icon: <Globe className="text-white w-6 h-6" />,
-      url:'https://drive.google.com/file/d/17pMw11sbHFbNbcTq0r62T8UHFWIyv39R/view?usp=drive_link'
+      icon: <Globe className="text-white w-6 h-6" />
     },
     {
       id: 2,
       key: 'offlineProduct',
-      icon: <Package className="text-white w-6 h-6" />,
-      url: 'https://drive.google.com/file/d/1A0aDpKVLRZu6GnwtEaMJLSq3rs_Y5_ty/view?usp=drive_link'
+      icon: <Package className="text-white w-6 h-6" />
     }
   ]
 
@@ -67,7 +65,7 @@ const GuidelinesSection = ({ language = 'id' }: GuidelinesSectionProps) => {
         {guidelines.map((item, index) => (
           <motion.div
             key={item.id}
-            onClick={() => onClick(item.url)}
+            onClick={() => onClick(item.key)}
             id={`guide-${item.key}`}
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}

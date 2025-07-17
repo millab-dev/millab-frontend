@@ -37,10 +37,10 @@ export async function middleware(request: NextRequest) {
                 if (isAdminPage) {
                     const user = response.data.data;
                     
-                    // TEMPORARY BYPASS: Admin checker disabled for debugging
-                    // TODO: Re-enable admin checking after production issue is resolved
-                    // if (!user.isAdmin) {
-                    if (false) {
+     
+                    if (!user.isAdmin) {
+                        //bypass
+                    // if (false) {
                         console.log("Non-admin user trying to access admin page");
                         return NextResponse.redirect(new URL("/app", request.url));
                     }
