@@ -490,7 +490,7 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
                             <Volume2 className="w-4 h-4" />
                         )}
                         <span className="ml-2">
-                            {isSpeaking ? (isPaused ? t.nextSection : 'Jeda') : 'Baca'}
+                            {isSpeaking ? (isPaused ? t.resumeText : t.pauseText) : t.readText}
                         </span>
                     </Button>
                     

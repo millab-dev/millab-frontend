@@ -68,6 +68,10 @@ export type SectionModuleTranslationsType = {
     pointsError: string;
     fetchModuleError: string;
     fetchModuleErrorGeneric: string;
+    readText: string;
+    pauseText: string;
+    resumeText: string;
+    stopText: string;
     aria: {
       moduleMain: string;
       skipToContent: string;
@@ -246,6 +250,10 @@ export const sectionModuleTranslations: SectionModuleTranslationsType = {
     pointsError: "Bagian selesai, tetapi pemberian poin gagal",
     fetchModuleError: "Gagal memuat modul",
     fetchModuleErrorGeneric: "Gagal memuat modul",
+    readText: "Baca",
+    pauseText: "Jeda",
+    resumeText: "Lanjutkan",
+    stopText: "Berhenti",
     aria: {
       moduleMain: "Modul pembelajaran",
       skipToContent: "Langsung ke konten",
@@ -280,6 +288,10 @@ export const sectionModuleTranslations: SectionModuleTranslationsType = {
     pointsError: "Section completed, but points award failed",
     fetchModuleError: "Failed to fetch module",
     fetchModuleErrorGeneric: "Failed to fetch module",
+    readText: "Read",
+    pauseText: "Pause",
+    resumeText: "Resume",
+    stopText: "Stop",
     aria: {
       moduleMain: "Learning module",
       skipToContent: "Skip to content",
