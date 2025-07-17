@@ -89,8 +89,9 @@ const DiscoverSection = ({ language = 'id', initialModulesData }: DiscoverSectio
     }
     
     // If no search query, only show priority modules (orders 1, 5, and 11)
-    // Extract the order number from the module title (format: "Modul X: Title")
-    const orderMatch = module.title.match(/Modul (\d+):/i);
+    // Extract the order number from the module title
+    // Format: "Modul X: Title" (Indonesian) or "Module X: Title" (English)
+    const orderMatch = module.title.match(/(?:Modul|Module) (\d+):/i);
     if (!orderMatch) return false;
     
     const orderNum = parseInt(orderMatch[1], 10);
