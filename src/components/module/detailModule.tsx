@@ -1,10 +1,10 @@
 "use client";
 
-import { Download, FileText, CheckCircle, HelpCircle } from "lucide-react";
+import { Download, FileText, CheckCircle, HelpCircle, Play, Pause, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import cloud from "@/assets/cloudPattern.svg";
 import { useRouter, useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import axiosClient from "@/lib/axios.client";
 import { 
@@ -69,6 +69,12 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
     const [navigatingSectionId, setNavigatingSectionId] = useState<string | null>(null);
     const [navigatingToQuiz, setNavigatingToQuiz] = useState(false);
 
+    // TTS state
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
+    const [isIntentionalStop, setIsIntentionalStop] = useState(false);
+    const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
+
     useEffect(() => {
         if (id) {
             fetchModule();
@@ -77,7 +83,8 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
     const fetchModule = async () => {
         try {
             const response = await axiosClient.get(`/api/v1/modules/${id}`);
-            const data = response.data;            if (data.success) {
+            const data = response.data;            
+            if (data.success) {
                 setModule(data.data);
                 // Module access is automatically tracked on the backend when fetching module details
             } else {
@@ -123,16 +130,182 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
     const handleQuizClick = () => {
         setNavigatingToQuiz(true);
         router.push(`/module/${id}/quiz`);
-    };if (loading) {
+    };
+
+    // TTS Helper Functions
+    const cleanTextForSpeech = (html: string): string => {
+        // Remove HTML tags and clean up text for TTS
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        return tempDiv.textContent || tempDiv.innerText || '';
+    };
+
+    const startSpeaking = () => {
+        if (!module) return;
+        
+        if (!window.speechSynthesis) {
+            toast.error(t.aria.browserNotSupported);
+            return;
+        }
+
+        // Build complete text content including description, sections, and quiz
+        let fullText = '';
+        
+        // Add module description
+        if (module.description) {
+            fullText += `${t.moduleDescription}: ${cleanTextForSpeech(module.description)}. `;
+        }
+        
+        // Add sections information
+        const activeSections = module.sections
+            .filter(section => section.isActive)
+            .sort((a, b) => a.order - b.order);
+            
+        if (activeSections.length > 0) {
+            fullText += `${t.materials}: `;
+            activeSections.forEach((section, idx) => {
+                const status = isSectionCompleted(section.id) ? t.aria.completedSection : t.aria.availableSection;
+                fullText += `${idx + 1}. ${section.title}, ${status}, ${section.duration}. `;
+            });
+        }
+        
+        // Add quiz information
+        if (module.quiz.isActive) {
+            const quizStatus = isQuizCompleted() ? t.aria.completedQuiz : t.aria.availableQuiz;
+            fullText += `${t.quiz}: ${module.quiz.title}, ${quizStatus}, ${module.quiz.duration}, ${module.quiz.totalQuestions} ${t.questions}`;
+            
+            if (isQuizCompleted() && getQuizScore() !== undefined) {
+                fullText += `, ${t.score}: ${getQuizScore()}%`;
+            }
+            fullText += '. ';
+        }
+
+        if (!fullText.trim()) return;
+
+        const utterance = new SpeechSynthesisUtterance(fullText);
+        utterance.lang = language === 'en' ? 'en-US' : 'id-ID';
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+
+        utterance.onstart = () => {
+            setIsSpeaking(true);
+            setIsPaused(false);
+            setIsIntentionalStop(false);
+        };
+
+        utterance.onend = () => {
+            if (!isIntentionalStop) {
+                setIsSpeaking(false);
+                setIsPaused(false);
+            }
+        };
+
+        utterance.onerror = () => {
+            if (!isIntentionalStop) {
+                setIsSpeaking(false);
+                setIsPaused(false);
+            }
+        };
+
+        speechRef.current = utterance;
+        window.speechSynthesis.speak(utterance);
+    };
+
+    const pauseSpeaking = () => {
+        if (window.speechSynthesis && isSpeaking) {
+            window.speechSynthesis.pause();
+            setIsPaused(true);
+        }
+    };
+
+    const resumeSpeaking = () => {
+        if (window.speechSynthesis && isPaused) {
+            window.speechSynthesis.resume();
+            setIsPaused(false);
+        }
+    };
+
+    const stopSpeaking = () => {
+        setIsIntentionalStop(true);
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+        setIsSpeaking(false);
+        setIsPaused(false);
+    };
+
+    const toggleSpeech = () => {
+        if (isSpeaking) {
+            if (isPaused) {
+                resumeSpeaking();
+            } else {
+                pauseSpeaking();
+            }
+        } else {
+            startSpeaking();
+        }
+    };
+
+    // Keyboard shortcuts
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.altKey) {
+                switch (event.code) {
+                    case 'KeyP':
+                        event.preventDefault();
+                        toggleSpeech();
+                        break;
+                    case 'KeyS':
+                        event.preventDefault();
+                        stopSpeaking();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+        };
+    }, []);
+
+    if (loading) {
         return (
             <div
                 className="mx-auto font-jakarta bg-primary min-h-screen sm:px-24 lg:px-40 flex flex-col bg-repeat bg-[length:600px] lg:bg-[length:900px]"
                 style={{
                     backgroundImage: `url(${cloud.src})`,
                 }}
+                role="main"
+                aria-label={t.aria.moduleMain}
+                aria-live="polite"
+                aria-busy="true"
             >
+                {/* Skip to content link for keyboard users */}
+                <a 
+                    href="#main-content" 
+                    className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-white text-primary px-4 py-2 rounded z-50"
+                >
+                    {t.aria.skipToContent}
+                </a>
+
                 {/* Content Section Skeleton */}
-                <div className="bg-white rounded-t-4xl p-6 sm:p-8 shadow-md relative flex-grow mt-30 flex flex-col">
+                <div 
+                    className="bg-white rounded-t-4xl p-6 sm:p-8 shadow-md relative flex-grow mt-30 flex flex-col"
+                    id="main-content"
+                    aria-label="Loading module content..."
+                >
                     <div className="relative -top-24 flex flex-col gap-6 animate-pulse">
                         {/* Module Card Skeleton */}
                         <div className="bg-white rounded-3xl shadow-lg p-6 lg:w-2xl flex flex-col gap-2 self-center">
@@ -219,16 +392,36 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
             style={{
                 backgroundImage: `url(${cloud.src})`,
             }}
+            role="main"
+            aria-label={t.aria.moduleMain}
         >
+            {/* Skip to content link for keyboard users */}
+            <a 
+                href="#main-content" 
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-white text-primary px-4 py-2 rounded z-50"
+            >
+                {t.aria.skipToContent}
+            </a>
+
             {/* Content Section */}
-            <div className="bg-white rounded-t-4xl p-6 sm:p-8 shadow-md relative flex-grow mt-30 flex flex-col">
+            <main 
+                className="bg-white rounded-t-4xl p-6 sm:p-8 shadow-md relative flex-grow mt-30 flex flex-col"
+                id="main-content"
+            >
                 <div className="relative -top-24 flex flex-col gap-6">
                     {/* Card */}
-                    <div className=" bg-white rounded-3xl shadow-lg p-6 lg:w-2xl flex flex-col gap-2 self-center">
-                        <div className="flex items-center justify-between">
-                            {" "}
+                    <article 
+                        className="bg-white rounded-3xl shadow-lg p-6 lg:w-2xl flex flex-col gap-2 self-center"
+                        aria-labelledby="module-title"
+                        aria-describedby="module-info"
+                        role="article"
+                    >
+                        <header className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="bg-primary p-2 rounded-lg">
+                                <div 
+                                    className="bg-primary p-2 rounded-lg"
+                                    aria-hidden="true"
+                                >
                                     <FileText
                                         className="text-white"
                                         size={28}
@@ -237,46 +430,101 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                                 <span className="text-primary text-md font-bold">
                                     Module {module.order}
                                 </span>
-                            </div>{" "}
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-primary"
-                                onClick={() => {
-                                    if (module.pdfUrl) {
-                                        window.open(module.pdfUrl, "_blank");                                    } else {
-                                        toast.info(
-                                            t.noPdfAvailable
-                                        );
-                                    }
-                                }}
-                            >
-                                <Download size={22} />
-                            </Button>
-                        </div>{" "}
-                        <div className="mt-2">
+                            </div>
+                            <div className="flex items-center gap-2">
+                                {/* TTS Controls */}
+                                <div className="flex items-center gap-1">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-primary hover:text-primary/80 hover:bg-primary/10"
+                                        onClick={toggleSpeech}
+                                        aria-label={
+                                            isSpeaking 
+                                                ? (isPaused ? t.aria.resumeTTS : t.aria.pauseTTS)
+                                                : t.aria.playTTS
+                                        }
+                                        title={
+                                            isSpeaking 
+                                                ? (isPaused ? t.aria.resumeTTS : t.aria.pauseTTS)
+                                                : t.aria.playTTS
+                                        }
+                                    >
+                                        {isSpeaking && !isPaused ? (
+                                            <Pause size={20} />
+                                        ) : (
+                                            <Play size={20} />
+                                        )}
+                                    </Button>
+                                    
+                                    {isSpeaking && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-primary hover:text-primary/80 hover:bg-primary/10"
+                                            onClick={stopSpeaking}
+                                            aria-label={t.aria.stopTTS}
+                                            title={t.aria.stopTTS}
+                                        >
+                                            <Square size={20} />
+                                        </Button>
+                                    )}
+                                </div>
+                                
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="text-primary"
+                                    onClick={() => {
+                                        if (module.pdfUrl) {
+                                            window.open(module.pdfUrl, "_blank");
+                                        } else {
+                                            toast.info(t.noPdfAvailable);
+                                        }
+                                    }}
+                                    aria-label={`${t.aria.downloadModule}: ${module.title}`}
+                                    title={t.aria.downloadModule}
+                                >
+                                    <Download size={22} />
+                                </Button>
+                            </div>
+                        </header>
+                        
+                        <div className="mt-2" id="module-info">
                             <div className="flex items-center gap-2 mb-2">
-                                <div className="text-md sm:text-xl font-semibold text-primary">
+                                <h1 
+                                    className="text-md sm:text-xl font-semibold text-primary"
+                                    id="module-title"
+                                >
                                     {module.title}
-                                </div>                                <span
+                                </h1>
+                                <span
                                     className={`px-2 py-1 rounded-full text-xs font-medium ${
                                         module.difficulty === "Easy"
                                             ? "bg-green-100 text-green-800"
-                                            : module.difficulty ===
-                                              "Intermediate"
+                                            : module.difficulty === "Intermediate"
                                             ? "bg-yellow-100 text-yellow-800"
                                             : "bg-red-100 text-red-800"
                                     }`}
+                                    aria-label={`${t.aria.difficultyBadge}: ${t.difficulty[module.difficulty]}`}
                                 >
                                     {t.difficulty[module.difficulty]}
                                 </span>
-                            </div>                            <div className="text-gray-400 text-sm mt-1">
+                            </div>
+                            <div className="text-gray-400 text-sm mt-1">
                                 {t.sections} {getCompletedSectionsCount()}/
                                 {getTotalSectionsCount()} | {t.quiz}{" "}
                                 {isQuizCompleted() ? "1/1" : "0/1"}
                             </div>
                             <div className="flex items-center gap-2 mt-2">
-                                <div className="flex-1 h-2 bg-gray-200 rounded-full">
+                                <div 
+                                    className="flex-1 h-2 bg-gray-200 rounded-full"
+                                    role="progressbar"
+                                    aria-valuenow={getProgressPercentage()}
+                                    aria-valuemin={0}
+                                    aria-valuemax={100}
+                                    aria-label={`${t.aria.moduleProgress}: ${getProgressPercentage()}%`}
+                                >
                                     <div
                                         className="h-2 bg-pink-500 rounded-full transition-all duration-300"
                                         style={{
@@ -289,8 +537,10 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                                 </span>
                             </div>
                         </div>
-                    </div>{" "}                    {/* Module Description */}
-                    <div className="bg-white rounded-xl shadow-sm p-6">
+                    </article>
+
+                    {/* Module Description */}
+                    <section className="bg-white rounded-xl shadow-sm p-6">
                         <h2 className="text-lg font-bold text-primary mb-3">
                             {t.moduleDescription}
                         </h2>
@@ -299,12 +549,32 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                             dangerouslySetInnerHTML={{
                                 __html: module.description,
                             }}
+                            role="article"
+                            aria-labelledby="module-description-title"
                         />
-                    </div>                    {/* Sections Heading */}
+                    </section>
+
+                    {/* Hidden keyboard instructions for screen readers */}
+                    <div className="sr-only">
+                        {t.aria.keyboardInstructions}
+                    </div>
+
+                    {/* Sections Heading */}
                     <h2 className="text-xl font-bold text-primary">{t.materials}</h2>
-                    <div className="relative flex flex-col gap-3">
+                    
+                    {/* Hidden navigation instructions for screen readers */}
+                    <div className="sr-only">
+                        {t.aria.navigationInstructions}
+                    </div>
+                    
+                    <nav 
+                        className="relative flex flex-col gap-3"
+                        aria-label={t.aria.sectionList}
+                        role="navigation"
+                    >
                         {/* Vertical line */}
-                        <div className="absolute left-[14px] top-0 bottom-0 w-1 bg-gray-200 z-0 rounded-full" />
+                        <div className="absolute left-[14px] top-0 bottom-0 w-1 bg-gray-200 z-0 rounded-full" aria-hidden="true" />
+                        
                         {/* Stepper + Cards */}
                         {module.sections
                             .filter((section) => section.isActive)
@@ -315,7 +585,10 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                                     className="flex items-center relative z-10"
                                 >
                                     {/* Stepper Icon */}
-                                    <div className="w-8 flex justify-center items-center">
+                                    <div 
+                                        className="w-8 flex justify-center items-center"
+                                        aria-hidden="true"
+                                    >
                                         {isSectionCompleted(section.id) ? (
                                             <CheckCircle
                                                 className="text-green-500 bg-white rounded-full border-2 border-green-500"
@@ -327,13 +600,19 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                                                 size={28}
                                             />
                                         )}
-                                    </div>                                    {/* Section Card */}
+                                    </div>
+
+                                    {/* Section Card */}
                                     <div className="flex-1 ml-2">
-                                        <div
-                                            className={`bg-white border rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-all duration-200 shadow-md ${
+                                        <button
+                                            className={`w-full bg-white border rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-all duration-200 shadow-md text-left ${
                                                 navigatingSectionId === section.id ? 'opacity-50 pointer-events-none' : ''
                                             }`}
                                             onClick={() => handleSectionClick(section.id)}
+                                            aria-label={`${t.aria.sectionButton} ${idx + 1}: ${section.title}. ${
+                                                isSectionCompleted(section.id) ? t.aria.completedSection : t.aria.availableSection
+                                            }. ${section.duration}`}
+                                            disabled={navigatingSectionId === section.id}
                                         >
                                             <div>
                                                 <div className="text-primary font-medium">
@@ -342,29 +621,25 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                                                 <div className="text-xs text-gray-400">
                                                     {section.duration}
                                                 </div>
-                                            </div>{" "}
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg cursor-pointer"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleSectionClick(section.id);
-                                                }}
-                                            >
-                                                <FileText size={20} />
-                                            </Button>
-                                        </div>
+                                            </div>
+                                            <div aria-hidden="true">
+                                                <FileText className="text-primary mr-2" size={16} />
+                                            </div>
+                                        </button>
                                     </div>
                                 </div>
-                            ))}{" "}
+                            ))}
+
                         {/* Quiz row */}
                         {module.quiz.isActive && (
                             <div
                                 key={`quiz-${module.quiz.id}`}
                                 className="flex items-center mt-2 relative z-10"
                             >
-                                <div className="w-8 flex justify-center items-center">
+                                <div 
+                                    className="w-8 flex justify-center items-center"
+                                    aria-hidden="true"
+                                >
                                     {isQuizCompleted() ? (
                                         <CheckCircle
                                             className="text-green-500 bg-white rounded-full border-2 border-green-500"
@@ -376,23 +651,33 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                                             size={28}
                                         />
                                     )}
-                                </div>                                <div className="flex-1 ml-2">
-                                    <div
-                                        className={`bg-gradient-to-r shadow-md from-primary to-blue-400 text-white rounded-xl p-3 flex items-center justify-between cursor-pointer hover:opacity-90 transition ${
+                                </div>
+                                
+                                <div className="flex-1 ml-2">
+                                    <button
+                                        className={`w-full bg-gradient-to-r shadow-md from-primary to-blue-400 text-white rounded-xl p-3 flex items-center justify-between cursor-pointer hover:opacity-90 transition text-left ${
                                             navigatingToQuiz ? 'opacity-50 pointer-events-none' : ''
                                         }`}
                                         onClick={handleQuizClick}
+                                        aria-label={`${t.aria.quizButton}: ${module.quiz.title}. ${
+                                            isQuizCompleted() ? t.aria.completedQuiz : t.aria.availableQuiz
+                                        }. ${module.quiz.duration}, ${module.quiz.totalQuestions} ${t.questions}${
+                                            isQuizCompleted() && getQuizScore() !== undefined 
+                                                ? `. ${t.score}: ${getQuizScore()}%` 
+                                                : ''
+                                        }`}
+                                        disabled={navigatingToQuiz}
                                     >
                                         <div>
                                             <div className="font-semibold">
                                                 {module.quiz.title}
-                                            </div>                                            <div className="text-xs">
+                                            </div>
+                                            <div className="text-xs">
                                                 {module.quiz.duration} •{" "}
                                                 {module.quiz.totalQuestions}{" "}
                                                 {t.questions}
                                                 {isQuizCompleted() &&
-                                                    getQuizScore() !==
-                                                        undefined && (
+                                                    getQuizScore() !== undefined && (
                                                         <span>
                                                             {" "}
                                                             • {t.score}:{" "}
@@ -401,17 +686,19 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                                                     )}
                                             </div>
                                         </div>
-                                        <FileText
-                                            className="text-white opacity-60"
-                                            size={28}
-                                        />
-                                    </div>
+                                        <div aria-hidden="true">
+                                            <FileText
+                                                className="text-white opacity-60"
+                                                size={28}
+                                            />
+                                        </div>
+                                    </button>
                                 </div>
                             </div>
                         )}
-                    </div>
+                    </nav>
                 </div>
-            </div>
+            </main>
         </div>
     );
 }

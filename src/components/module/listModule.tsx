@@ -1,24 +1,19 @@
 "use client";
 
-import { Download, FileText } from "lucide-react";
+import { Download, FileText, Play, Pause, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import cloud from "@/assets/cloudPattern.svg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
-import Navbar from "../core/Navbar";
 import axiosClient from "@/lib/axios.client";
 import { downloadAllPdf } from "@/utils/settingsApi";
 import owlComputer from "/public/owl-computer.png";
 import { 
     Module, 
-    ModuleSection,
-    ModuleQuiz,
-    UserProgress,
     SectionProps, 
-    listModuleTranslations,
-    Language 
+    listModuleTranslations, 
 } from "./types";
 
 interface ListModuleProps extends SectionProps {}
@@ -29,12 +24,168 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
     const [loading, setLoading] = useState(true);
     const [navigatingModuleId, setNavigatingModuleId] = useState<string | null>(null);
 
+    // TTS state
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
+    const [isIntentionalStop, setIsIntentionalStop] = useState(false);
+    const [currentSpeakingModule, setCurrentSpeakingModule] = useState<string | null>(null);
+    const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
+
     // Get translations based on language
     const t = listModuleTranslations[language];
 
     useEffect(() => {
         fetchModules();
-    }, []);    const fetchModules = async () => {
+    }, []);
+
+    // Cleanup TTS on unmount
+    useEffect(() => {
+        return () => {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+        };
+    }, []);
+
+    // Keyboard shortcuts
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.altKey) {
+                switch (event.code) {
+                    case 'KeyP':
+                        event.preventDefault();
+                        toggleSpeech();
+                        break;
+                    case 'KeyS':
+                        event.preventDefault();
+                        stopSpeaking();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isSpeaking, isPaused, currentSpeakingModule]);
+
+    // TTS Helper Functions
+    const cleanTextForSpeech = (html: string): string => {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        return tempDiv.textContent || tempDiv.innerText || '';
+    };
+
+    const buildModuleContentForSpeech = (module: Module): string => {
+        let content = '';
+        
+        // Module title and difficulty
+        content += `${t.aria.moduleTitle}: ${module.title}. `;
+        content += `${t.aria.difficultyBadge}: ${t.difficulty[module.difficulty]}. `;
+        
+        // Module description
+        const cleanDesc = cleanTextForSpeech(module.description);
+        if (cleanDesc) {
+            content += `Deskripsi: ${cleanDesc}. `;
+        }
+        
+        // Progress information
+        const progress = module.progress?.completionPercentage || 0;
+        content += `${t.aria.moduleProgress}: ${progress}% ${t.completed}. `;
+        
+        // Sections information
+        content += `${module.sections.length} ${t.sections}. `;
+        
+        // Quiz information
+        content += `${t.quiz}: ${module.quiz.totalQuestions} ${t.questions}. `;
+        
+        // Quiz score if completed
+        if (module.progress?.quizCompleted && module.progress?.quizScore) {
+            content += `${t.score}: ${module.progress.quizScore}%. `;
+        }
+        
+        return content;
+    };
+
+    const startSpeaking = (module: Module) => {
+        if (!window.speechSynthesis) {
+            toast.error(t.aria.browserNotSupported);
+            return;
+        }
+
+        const content = buildModuleContentForSpeech(module);
+        if (!content.trim()) return;
+
+        const utterance = new SpeechSynthesisUtterance(content);
+        utterance.lang = language === 'en' ? 'en-US' : 'id-ID';
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+
+        utterance.onstart = () => {
+            setIsSpeaking(true);
+            setIsPaused(false);
+            setIsIntentionalStop(false);
+            setCurrentSpeakingModule(module.id);
+        };
+
+        utterance.onend = () => {
+            setIsSpeaking(false);
+            setIsPaused(false);
+            setCurrentSpeakingModule(null);
+        };
+
+        utterance.onerror = () => {
+            setIsSpeaking(false);
+            setIsPaused(false);
+            setCurrentSpeakingModule(null);
+           
+        };
+
+        speechRef.current = utterance;
+        window.speechSynthesis.speak(utterance);
+    };
+
+    const pauseSpeaking = () => {
+        if (window.speechSynthesis && isSpeaking) {
+            window.speechSynthesis.pause();
+            setIsPaused(true);
+        }
+    };
+
+    const resumeSpeaking = () => {
+        if (window.speechSynthesis && isPaused) {
+            window.speechSynthesis.resume();
+            setIsPaused(false);
+        }
+    };
+
+    const stopSpeaking = () => {
+        setIsIntentionalStop(true);
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+        setIsSpeaking(false);
+        setIsPaused(false);
+        setCurrentSpeakingModule(null);
+    };
+
+    const toggleSpeech = () => {
+        if (isSpeaking) {
+            if (isPaused) {
+                resumeSpeaking();
+            } else {
+                pauseSpeaking();
+            }
+        } else {
+            // Start speaking the first module if no module is currently selected
+            if (modules.length > 0) {
+                startSpeaking(modules[0]);
+            }
+        }
+    };
+
+    const fetchModules = async () => {
         try {
             const response = await axiosClient.get('/api/v1/modules/');
             const data = response.data;
@@ -50,10 +201,14 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
         } finally {
             setLoading(false);
         }
-    };    const handleModuleClick = (id: string) => {
+    };
+
+    const handleModuleClick = (id: string) => {
         setNavigatingModuleId(id);
         router.push(`/module/${id}`);
-    };const downloadAllModules = async () => {
+    };
+
+    const downloadAllModules = async () => {
         try {
             const success = await downloadAllPdf();
             if (!success) {
@@ -63,7 +218,9 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
             console.error("Error downloading all modules:", error);
             toast.error(t.downloadError);
         }
-    };if (loading) {
+    };
+
+    if (loading) {
         return (
             <div
                 className="mx-auto font-jakarta bg-primary sm:px-24 lg:px-40 min-h-screen flex flex-col 
@@ -122,130 +279,304 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
 
     return (
         <>
-           
-            <div
+            
+            
+            {/* Skip to content link for accessibility */}
+            <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
+            >
+                {t.aria.skipToContent}
+            </a>
+            
+            {/* Hidden instructions for screen readers */}
+            <div className="sr-only">
+                <p>{t.aria.keyboardInstructions}</p>
+                <p>{t.aria.navigationInstructions}</p>
+            </div>
+            
+            <main
+                id="main-content"
+                role="main"
+                aria-label={t.aria.moduleMain}
                 className="mx-auto font-jakarta bg-primary sm:px-24 lg:px-40 min-h-screen flex flex-col 
                 bg-repeat bg-[length:600px] lg:bg-[length:900px]"
                 style={{
                     backgroundImage: `url(${cloud.src})`,
                 }}
-            >                {/* Header Section with blue background */}
-                <div className="p-8 flex justify-between items-center relative overflow-hidden">
+            >
+                {/* Header Section with blue background */}
+                <header className="p-8 flex justify-between items-center relative overflow-hidden">
                     <div className="z-0">
                         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2">
                             {t.pageTitle}
                         </h1>
                         <p className="text-white/90 mb-4">{modules.length} {t.moduleCount}</p>
-                        <Button
-                            variant="secondary"
-                            className="flex items-center gap-2"
-                            onClick={downloadAllModules}
-                        >
-                            <Download size={18} />
-                            {t.downloadAll}
-                        </Button>                        <Image
+                        <div className="flex items-center gap-2">
+                            <Button
+                                variant="secondary"
+                                className="flex items-center gap-2"
+                                onClick={downloadAllModules}
+                                aria-label={t.aria.downloadAllButton}
+                            >
+                                <Download size={18} />
+                                {t.downloadAll}
+                            </Button>
+                            
+                            {/* TTS Controls */}
+                            <div className="flex items-center gap-1">
+                                <Button
+                                    variant="secondary"
+                                    size="icon"
+                                    onClick={toggleSpeech}
+                                    aria-label={
+                                        isSpeaking
+                                            ? isPaused
+                                                ? t.aria.resumeTTS
+                                                : t.aria.pauseTTS
+                                            : t.aria.playTTS
+                                    }
+                                    title={
+                                        isSpeaking
+                                            ? isPaused
+                                                ? t.aria.resumeTTS
+                                                : t.aria.pauseTTS
+                                            : t.aria.playTTS
+                                    }
+                                >
+                                    {isSpeaking ? (
+                                        isPaused ? (
+                                            <Play size={16} />
+                                        ) : (
+                                            <Pause size={16} />
+                                        )
+                                    ) : (
+                                        <Play size={16} />
+                                    )}
+                                </Button>
+                                
+                                {isSpeaking && (
+                                    <Button
+                                        variant="secondary"
+                                        size="icon"
+                                        onClick={stopSpeaking}
+                                        aria-label={t.aria.stopTTS}
+                                        title={t.aria.stopTTS}
+                                    >
+                                        <Square size={16} />
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                        
+                        <Image
                             src={owlComputer}
-                            alt="owl-computer"
+                            alt=""
+                            aria-hidden="true"
                             width={156}
                             height={156}
                             className="absolute top-10 right-5"
                         />
                     </div>
-                </div>                {/* Content Section with white background */}
-                <div className="bg-white rounded-t-4xl p-6 sm:p-8 shadow-md flex-grow">
+                </header>
+
+                {/* Content Section with white background */}
+                <section className="bg-white rounded-t-4xl p-6 sm:p-8 shadow-md flex-grow">
                     <h2 className="text-xl font-bold text-primary mb-6">
                         {t.moduleList}
                     </h2>
+                    
                     {/* Module List */}
-                    <div className="space-y-4">
+                    <div 
+                        className="space-y-4"
+                        role="region"
+                        aria-label={t.aria.moduleListSection}
+                    >
                         {modules.length === 0 ? (
-                            <div className="text-center py-8">
-                                <p className="text-gray-500">{t.noModules}</p>
+                            <div className="text-center py-8" role="status">
+                                <p className="text-gray-500" aria-label={t.aria.noModulesMessage}>
+                                    {t.noModules}
+                                </p>
                             </div>
                         ) : (
                             modules.map((module) => {
                                 const progress = module.progress?.completionPercentage || 0;
-                                return (                                    <div
+                                const isCurrentSpeaking = currentSpeakingModule === module.id;
+                                
+                                return (
+                                    <article
                                         key={module.id}
-                                        className={`border rounded-xl p-4 flex items-center justify-between gap-4 cursor-pointer shadow-md hover:bg-gray-50 transition-all duration-100 ${
+                                        className={`border rounded-xl p-4 shadow-md hover:bg-gray-50 transition-all duration-100 ${
                                             navigatingModuleId === module.id ? 'opacity-50 pointer-events-none' : ''
                                         }`}
-                                        onClick={() => handleModuleClick(module.id)}
+                                        role="article"
+                                        aria-label={`${t.aria.moduleCard}: ${module.title}`}
                                     >
-                                        <div className="flex items-center gap-4 w-full">
-                                            <div className="bg-gradient-to-r from-primary to-primary/80 p-3 rounded-lg">
-                                                <FileText
-                                                    className="text-white"
-                                                    size={24}
-                                                />
-                                            </div>                                            <div className="w-full">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <h3 className="font-semibold text-primary max-sm:text-sm">
-                                                        {module.order}. {module.title}
-                                                    </h3>                                                    <span
-                                                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                            module.difficulty === "Easy"
-                                                                ? "bg-green-100 text-green-800"
-                                                                : module.difficulty === "Intermediate"
-                                                                ? "bg-yellow-100 text-yellow-800"
-                                                                : "bg-red-100 text-red-800"
-                                                        }`}
-                                                    >
-                                                        {t.difficulty[module.difficulty]}
-                                                    </span>
+                                        <div className="flex items-center justify-between gap-4">
+                                            <button
+                                                className="flex items-center gap-4 w-full text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg p-2"
+                                                onClick={() => handleModuleClick(module.id)}
+                                                disabled={navigatingModuleId === module.id}
+                                                aria-label={`${t.aria.moduleItem}: ${module.title}, ${t.difficulty[module.difficulty]}, ${progress}% ${t.completed}`}
+                                            >
+                                                <div className="bg-gradient-to-r from-primary to-primary/80 p-3 rounded-lg">
+                                                    <FileText
+                                                        className="text-white"
+                                                        size={24}
+                                                        aria-hidden="true"
+                                                    />
                                                 </div>
-                                                <div 
-                                                    className="text-gray-600 text-sm mt-1 max-sm:text-xs prose prose-sm max-w-none line-clamp-2"
-                                                    dangerouslySetInnerHTML={{ 
-                                                        __html: module.description.length > 150 
-                                                            ? module.description.substring(0, 150) + '...' 
-                                                            : module.description 
-                                                    }}
-                                                />                                                <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-                                                    <span>{module.sections.length} {t.sections}</span>
-                                                    <span>•</span>
-                                                    <span>{t.quiz}: {module.quiz.totalQuestions} {t.questions}</span>
-                                                    {module.progress?.quizCompleted && (
-                                                        <>
-                                                            <span>•</span>
-                                                            <span className="text-green-600 font-medium">
-                                                                {t.score}: {module.progress.quizScore}%
-                                                            </span>
-                                                        </>
-                                                    )}
-                                                </div>
-                                                <div className="h-2 bg-gray-200 rounded-full mt-2">
-                                                    <div
-                                                        className="h-2 bg-pink-500 rounded-full transition-all duration-300"
-                                                        style={{
-                                                            width: `${progress}%`,
+                                                
+                                                <div className="w-full">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <h3 className="font-semibold text-primary max-sm:text-sm">
+                                                            {module.order}. {module.title}
+                                                        </h3>
+                                                        
+                                                        <span
+                                                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                                module.difficulty === "Easy"
+                                                                    ? "bg-green-100 text-green-800"
+                                                                    : module.difficulty === "Intermediate"
+                                                                    ? "bg-yellow-100 text-yellow-800"
+                                                                    : "bg-red-100 text-red-800"
+                                                            }`}
+                                                            aria-label={`${t.aria.difficultyBadge}: ${t.difficulty[module.difficulty]}`}
+                                                        >
+                                                            {t.difficulty[module.difficulty]}
+                                                        </span>
+                                                    </div>
+                                                    
+                                                    <div 
+                                                        className="text-gray-600 text-sm mt-1 max-sm:text-xs prose prose-sm max-w-none line-clamp-2"
+                                                        dangerouslySetInnerHTML={{ 
+                                                            __html: module.description.length > 150 
+                                                                ? module.description.substring(0, 150) + '...' 
+                                                                : module.description 
                                                         }}
-                                                    ></div>
-                                                </div>                                                <div className="text-xs text-gray-500 mt-1">
-                                                    {progress}% {t.completed}
+                                                    />
+                                                    
+                                                    <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                                                        <span>{module.sections.length} {t.sections}</span>
+                                                        <span>•</span>
+                                                        <span>{t.quiz}: {module.quiz.totalQuestions} {t.questions}</span>
+                                                        {module.progress?.quizCompleted && (
+                                                            <>
+                                                                <span>•</span>
+                                                                <span className="text-green-600 font-medium">
+                                                                    {t.score}: {module.progress.quizScore}%
+                                                                </span>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                    
+                                                    <div 
+                                                        className="h-2 bg-gray-200 rounded-full mt-2"
+                                                        role="progressbar"
+                                                        aria-valuenow={progress}
+                                                        aria-valuemin={0}
+                                                        aria-valuemax={100}
+                                                        aria-label={`${t.aria.moduleProgress}: ${progress}% ${t.completed}`}
+                                                    >
+                                                        <div
+                                                            className="h-2 bg-pink-500 rounded-full transition-all duration-300"
+                                                            style={{
+                                                                width: `${progress}%`,
+                                                            }}
+                                                        ></div>
+                                                    </div>
+                                                    
+                                                    <div className="text-xs text-gray-500 mt-1">
+                                                        {progress}% {t.completed}
+                                                    </div>
                                                 </div>
+                                            </button>
+                                            
+                                            <div className="flex items-center gap-1">
+                                                {/* Individual TTS Controls for this module */}
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (isCurrentSpeaking) {
+                                                            if (isPaused) {
+                                                                resumeSpeaking();
+                                                            } else {
+                                                                pauseSpeaking();
+                                                            }
+                                                        } else {
+                                                            startSpeaking(module);
+                                                        }
+                                                    }}
+                                                    aria-label={
+                                                        isCurrentSpeaking
+                                                            ? isPaused
+                                                                ? t.aria.resumeTTS
+                                                                : t.aria.pauseTTS
+                                                            : t.aria.playTTS
+                                                    }
+                                                    title={
+                                                        isCurrentSpeaking
+                                                            ? isPaused
+                                                                ? t.aria.resumeTTS
+                                                                : t.aria.pauseTTS
+                                                            : t.aria.playTTS
+                                                    }
+                                                    className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg"
+                                                >
+                                                    {isCurrentSpeaking ? (
+                                                        isPaused ? (
+                                                            <Play size={16} />
+                                                        ) : (
+                                                            <Pause size={16} />
+                                                        )
+                                                    ) : (
+                                                        <Play size={16} />
+                                                    )}
+                                                </Button>
+                                                
+                                                {isCurrentSpeaking && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            stopSpeaking();
+                                                        }}
+                                                        aria-label={t.aria.stopTTS}
+                                                        title={t.aria.stopTTS}
+                                                        className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg"
+                                                    >
+                                                        <Square size={16} />
+                                                    </Button>
+                                                )}
+                                                
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg cursor-pointer"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (module.pdfUrl) {
+                                                            window.open(module.pdfUrl, '_blank');
+                                                        } else {
+                                                            toast.info(t.noPdfAvailable);
+                                                        }
+                                                    }}
+                                                    aria-label={`${t.aria.downloadModule}: ${module.title}`}
+                                                >
+                                                    <Download size={20} />
+                                                </Button>
                                             </div>
-                                        </div>                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg cursor-pointer"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                if (module.pdfUrl) {
-                                                    window.open(module.pdfUrl, '_blank');                                                } else {
-                                                    toast.info(t.noPdfAvailable);
-                                                }
-                                            }}
-                                        >
-                                            <Download size={20} />
-                                        </Button>
-                                    </div>
+                                        </div>
+                                    </article>
                                 );
                             })
                         )}
                     </div>
-                </div>
-            </div>
+                </section>
+            </main>
         </>
     );
 }

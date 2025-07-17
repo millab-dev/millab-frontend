@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import cloud from "@/assets/cloudPattern.svg";
 import Image from "next/image";
 import owlRead from "/public/owl-read.png";
@@ -9,7 +9,7 @@ import owlVibe from "/public/owl-vibe.png";
 import owlWave from "/public/owl-wave.png";
 import owlHappy from "/public/owl-happy.png";
 import { useRouter, useParams } from "next/navigation";
-import { Check, ArrowRight } from "lucide-react";
+import { Check, ArrowRight, Volume2, VolumeX, Pause, Play } from "lucide-react";
 import { toast } from "sonner";
 import axiosClient from "@/lib/axios.client";
 import { awardSectionXP } from "@/utils/progressionApi";
@@ -70,13 +70,23 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
     const sectionId = params.section as string;
 
     // Get translations based on language
-    const t = sectionModuleTranslations[language];const [module, setModule] = useState<Module | null>(null);
+    const t = sectionModuleTranslations[language];
+    
+    // Existing state
+    const [module, setModule] = useState<Module | null>(null);
     const [currentSection, setCurrentSection] = useState<ModuleSection | null>(
         null
     );
     const [loading, setLoading] = useState(true);
     const [isMarkedAsDone, setIsMarkedAsDone] = useState(false);
     const [isNavigating, setIsNavigating] = useState(false);
+    
+    // TTS state
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
+    const [isIntentionalStop, setIsIntentionalStop] = useState(false);
+    const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (moduleId && sectionId) {
@@ -121,6 +131,7 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
             setLoading(false);
         }
     };
+
     const markSectionAsCompleted = async () => {
         try {
             // Mark section as completed in existing system
@@ -219,7 +230,130 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
                 router.push(`/module/${moduleId}`);
             }
         }
-    };if (loading) {
+    };
+
+    // TTS Functions
+    const getTextContent = () => {
+        if (!currentSection) return '';
+        
+        // Extract clean text from HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = currentSection.content;
+        return tempDiv.textContent || tempDiv.innerText || '';
+    };
+
+    const startSpeaking = () => {
+        if ('speechSynthesis' in window) {
+            // Stop any ongoing speech
+            setIsIntentionalStop(true);
+            window.speechSynthesis.cancel();
+            setIsIntentionalStop(false);
+            
+            const text = getTextContent();
+            if (!text) return;
+            
+            speechRef.current = new SpeechSynthesisUtterance(text);
+            speechRef.current.lang = language === 'id' ? 'id-ID' : 'en-US';
+            speechRef.current.rate = 0.9;
+            speechRef.current.pitch = 1;
+            
+            speechRef.current.onstart = () => {
+                setIsSpeaking(true);
+                setIsPaused(false);
+            };
+            
+            speechRef.current.onend = () => {
+                setIsSpeaking(false);
+                setIsPaused(false);
+            };
+            
+            speechRef.current.onerror = () => {
+                setIsSpeaking(false);
+                setIsPaused(false);
+                
+            };
+            
+            window.speechSynthesis.speak(speechRef.current);
+        } else {
+            toast.error(t.aria.browserNotSupported);
+        }
+    };
+
+    const pauseSpeaking = () => {
+        if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+            window.speechSynthesis.pause();
+            setIsPaused(true);
+        }
+    };
+
+    const resumeSpeaking = () => {
+        if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+            setIsPaused(false);
+        }
+    };
+
+    const stopSpeaking = () => {
+        setIsIntentionalStop(true);
+        window.speechSynthesis.cancel();
+        setIsSpeaking(false);
+        setIsPaused(false);
+        // Reset flag after a brief delay to ensure error handler has processed
+        setTimeout(() => setIsIntentionalStop(false), 100);
+    };
+
+    const toggleSpeech = () => {
+        if (isSpeaking && !isPaused) {
+            pauseSpeaking();
+        } else if (isPaused) {
+            resumeSpeaking();
+        } else {
+            startSpeaking();
+        }
+    };
+
+    // Keyboard navigation
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            // Alt + P: Toggle speech
+            if (event.altKey && event.key === 'p') {
+                event.preventDefault();
+                toggleSpeech();
+            }
+            
+            // Alt + S: Stop speech
+            if (event.altKey && event.key === 's') {
+                event.preventDefault();
+                stopSpeaking();
+            }
+            
+            // Alt + N: Next section (if marked as done)
+            if (event.altKey && event.key === 'n' && isMarkedAsDone) {
+                event.preventDefault();
+                handleNext();
+            }
+            
+            // Alt + M: Mark as done
+            if (event.altKey && event.key === 'm' && !isMarkedAsDone) {
+                event.preventDefault();
+                handleMarkAsDone();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isMarkedAsDone, isSpeaking, isPaused]);
+
+    // Cleanup speech on unmount
+    useEffect(() => {
+        return () => {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+        };
+    }, []);
+
+    if (loading) {
         return (
             <div className="bg-primary min-h-screen">
                 {/* Header Section Skeleton */}
@@ -281,63 +415,150 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
         );
     }
     return (
-        <div className="bg-primary min-h-screen font-jakarta sm:px-24 lg:px-50 mx-auto flex flex-col">
+        <div 
+            className="bg-primary min-h-screen font-jakarta sm:px-24 lg:px-50 mx-auto flex flex-col"
+            role="main"
+            aria-label={`${t.aria.moduleMain}: ${currentSection.title}`}
+        >
+            {/* Skip to content link for keyboard users */}
+            <a 
+                href="#main-content" 
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-white text-primary px-4 py-2 rounded z-50"
+            >
+                {t.aria.skipToContent}
+            </a>
+            
             {/* Header with section number and title */}
-            <div
+            <header
                 className="bg-primary text-white p-6"
                 style={{
                     backgroundImage: `url(${cloud.src})`,
                     backgroundRepeat: "repeat",
                     backgroundSize: "600px",
                 }}
+                role="banner"
             >
                 <div className="flex items-center gap-2 my-5">
-                    <div className="bg-white text-primary w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0">
+                    <div 
+                        className="bg-white text-primary w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0"
+                        aria-label={`${t.aria.sectionNumber} ${currentSection.order}`}
+                    >
                         {currentSection.order}
                     </div>
-                    <h1 className="text-xl font-bold">
+                    <h1 className="text-xl font-bold" id="section-title">
                         {currentSection.title}
                     </h1>
                 </div>
-            </div>
+                
+                {/* TTS Controls */}
+                <div className="flex items-center gap-2 mt-4">
+                    <Button
+                        onClick={toggleSpeech}
+                        variant="outline"
+                        size="sm"
+                        className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+                        aria-label={
+                            isSpeaking 
+                                ? (isPaused ? t.aria.resumeTTS : t.aria.pauseTTS)
+                                : t.aria.playTTS
+                        }
+                        aria-describedby="tts-instructions"
+                    >
+                        {isSpeaking ? (
+                            isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />
+                        ) : (
+                            <Volume2 className="w-4 h-4" />
+                        )}
+                        <span className="ml-2">
+                            {isSpeaking ? (isPaused ? t.nextSection : 'Jeda') : 'Baca'}
+                        </span>
+                    </Button>
+                    
+                    {isSpeaking && (
+                        <Button
+                            onClick={stopSpeaking}
+                            variant="outline"
+                            size="sm"
+                            className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+                            aria-label={t.aria.stopTTS}
+                        >
+                            <VolumeX className="w-4 h-4" />
+                            <span className="ml-2">Stop</span>
+                        </Button>
+                    )}
+                </div>
+                
+                {/* Hidden instructions for screen readers */}
+                <div id="tts-instructions" className="sr-only">
+                    {t.aria.keyboardInstructions}
+                </div>
+            </header>
 
             {/* Content Section */}
-            <div className="p-6 bg-white rounded-t-4xl flex-grow flex flex-col">
-                <div className="mb-8">                    {/* Illustrations */}
-                    <div className="rounded-xl py-6 px-4 mb-4 flex justify-between sm:justify-center items-end sm:gap-6 bg-gradient-to-b from-orange-unesco to-white [x">
+            <main 
+                className="p-6 bg-white rounded-t-4xl flex-grow flex flex-col"
+                id="main-content"
+                role="main"
+            >
+                <div className="mb-8">
+                    {/* Illustrations - Hidden from screen readers as they're decorative */}
+                    <div 
+                        className="rounded-xl py-6 px-4 mb-4 flex justify-between sm:justify-center items-end sm:gap-6 bg-gradient-to-b from-orange-unesco to-white"
+                        aria-hidden="true"
+                        role="img"
+                        aria-label={t.aria.decorativeIllustration}
+                    >
                         <Image 
                             src={owlRead} 
-                            alt="owl-read" 
+                            alt=""
                             className="w-1/4 h-auto" 
+                            role="presentation"
                         />
                         <Image
                             src={owlVibe}
-                            alt="owl-vibe"
+                            alt=""
                             className="w-1/4 h-auto"
+                            role="presentation"
                         />
                         <Image
                             src={owlWave}
-                            alt="owl-wave"
+                            alt=""
                             className="w-1/4 h-auto"
+                            role="presentation"
                         />
                         <Image
                             src={owlHappy}
-                            alt="owl-happy"
+                            alt=""
                             className="w-1/4 h-auto"
+                            role="presentation"
                         />
                     </div>
 
                     {/* Section Content */}
                     <div
+                        ref={contentRef}
                         className="text-sm mb-4 prose prose-sm max-w-none"
                         dangerouslySetInnerHTML={{
                             __html: currentSection.content,
                         }}
+                        role="article"
+                        aria-labelledby="section-title"
+                        tabIndex={0}
+                        aria-describedby="content-instructions"
                     />
+                    
+                    <div id="content-instructions" className="sr-only">
+                        {t.aria.contentInstructions}
+                    </div>
                 </div>
 
                 {/* Navigation Buttons */}
-                <div className="flex flex-wrap flex-row-reverse gap-4 justify-between pt-6 md:px-6 border-t mt-auto items-center">                    <Button
+                <nav 
+                    className="flex flex-wrap flex-row-reverse gap-4 justify-between pt-6 md:px-6 border-t mt-auto items-center"
+                    role="navigation"
+                    aria-label={t.aria.navigationMain}
+                >
+                    <Button
                         className={`px-8 flex items-center gap-2 cursor-pointer transition-all duration-300 ${
                             isMarkedAsDone
                                 ? " text-primary ring-1 ring-primary bg-white hover:bg-primary hover:text-white"
@@ -345,22 +566,38 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
                         } ${isNavigating ? 'opacity-50' : ''}`}
                         onClick={isMarkedAsDone ? handleNext : handleMarkAsDone}
                         disabled={(!isMarkedAsDone && loading) || isNavigating}
+                        aria-label={
+                            isMarkedAsDone 
+                                ? t.aria.nextSectionButton
+                                : t.aria.markAsDoneButton
+                        }
+                        aria-describedby="primary-button-desc"
                     >
                         <span>{isNavigating ? t.loading : (isMarkedAsDone ? t.nextSection : t.markAsDone)}</span>
                         {!isNavigating && (isMarkedAsDone ? (
-                            <ArrowRight className="w-5 h-5" />
+                            <ArrowRight className="w-5 h-5" aria-hidden="true" />
                         ) : (
-                            <Check className="w-5 h-5" />
+                            <Check className="w-5 h-5" aria-hidden="true" />
                         ))}
-                    </Button>                    <Button
+                    </Button>
+
+                    <Button
                         variant="outline"
                         className="px-6 cursor-pointer"
                         onClick={() => router.push(`/module/${moduleId}`)}
+                        aria-label={t.aria.backToModuleButton}
                     >
                         {t.backToModule}
                     </Button>
-                </div>
-            </div>
+                    
+                    <div id="primary-button-desc" className="sr-only">
+                        {isMarkedAsDone 
+                            ? t.aria.primaryButtonDescNext
+                            : t.aria.primaryButtonDesc
+                        }
+                    </div>
+                </nav>
+            </main>
         </div>
     );
 }

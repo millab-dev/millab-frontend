@@ -237,7 +237,7 @@ const NavbarClient = ({ isLoggedIn, lang = 'en' }: NavbarClientProps) => {
                   <Link
                     href={item.path}
                     key={item.name}
-                    className={`text-sm font-medium ${pathname === item.path ? "text-primary" : "text-gray-700 hover:text-primary"} transition-colors duration-200`}
+                    className={`text-sm font-medium ${pathname.includes(item.path) ? "text-primary" : "text-gray-700 hover:text-primary"} transition-colors duration-200`}
                   >
                     {item.name}
                   </Link>
