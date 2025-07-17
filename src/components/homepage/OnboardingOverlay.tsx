@@ -76,7 +76,7 @@ const HomepageContent = ({ readingStateData, homepageModulesData, userData, lang
                 </div>
             </div>
             <div className="md:hidden">
-                <BottomNavbar />
+                <BottomNavbar language={lang} />
             </div>
         </>
     );

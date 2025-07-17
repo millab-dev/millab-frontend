@@ -60,7 +60,7 @@ const ScanPage = ({ language = 'id' }: SectionProps) => {
             {!isCameraActive && <ScanDescription language={language} />}
           </div>
 
-            <BottomNavbar />
+            <BottomNavbar language={language}/>
 
         </div>
       </div>
