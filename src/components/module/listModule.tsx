@@ -455,41 +455,27 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
                                                                 {t.difficulty[module.difficulty]}
                                                             </span>
                                                             
-                                                            {/* Language version indicator with ID fallback */}
-                                                            {(() => {
+                                                            {/* Language version indicator */}
+                                                            {/* {(() => {
                                                                 const languageInfo = getLanguageVersionBadge(module, language);
-                                                                
-                                                                // First try to show language version indicator
-                                                                if (languageInfo.badge) {
-                                                                    return (
-                                                                        <span 
-                                                                            className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                                                languageInfo.fallback 
-                                                                                    ? 'bg-orange-100 text-orange-800' 
-                                                                                    : language === 'en' 
-                                                                                        ? 'bg-blue-100 text-blue-800' 
-                                                                                        : 'bg-green-100 text-green-800'
-                                                                            }`}
-                                                                            title={languageInfo.fallback 
-                                                                                ? `Content shown in fallback language` 
-                                                                                : `Content available in ${language === 'en' ? 'English' : 'Indonesian'}`
-                                                                            }
-                                                                        >
-                                                                            {languageInfo.badge}
-                                                                        </span>
-                                                                    );
-                                                                }
-                                                                
-                                                                // Fallback to showing module ID
-                                                                return (
+                                                                return languageInfo.badge && (
                                                                     <span 
-                                                                        className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                                                                        title="Module ID"
+                                                                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                                            languageInfo.fallback 
+                                                                                ? 'bg-orange-100 text-orange-800' 
+                                                                                : language === 'en' 
+                                                                                    ? 'bg-blue-100 text-blue-800' 
+                                                                                    : 'bg-green-100 text-green-800'
+                                                                        }`}
+                                                                        title={languageInfo.fallback 
+                                                                            ? `Content shown in fallback language` 
+                                                                            : `Content available in ${language === 'en' ? 'English' : 'Indonesian'}`
+                                                                        }
                                                                     >
-                                                                        ID: {module.id}
+                                                                        {languageInfo.badge}
                                                                     </span>
                                                                 );
-                                                            })()}
+                                                            })()} */}
                                                         </div>
                                                     </div>
                                                     
