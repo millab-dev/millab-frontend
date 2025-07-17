@@ -30,7 +30,9 @@ import { toast } from "sonner";
 
 const sectionSchema = z.object({
   title: z.string().min(1, "Section title is required"),
+  titleEn: z.string().optional(),
   content: z.string().min(1, "Section content is required"),
+  contentEn: z.string().optional(),
   duration: z.coerce.number().min(1, "Duration must be at least 1 minute"),
   order: z.coerce.number().min(0, "Order must be positive"),
   isActive: z.boolean(),
@@ -38,16 +40,21 @@ const sectionSchema = z.object({
 
 const questionSchema = z.object({
   question: z.string().min(1, "Question is required"),
+  questionEn: z.string().optional(),
   type: z.enum(['multiple-choice', 'true-false']),
   options: z.array(z.string().min(1, "Option cannot be empty")).min(2, "Must have at least 2 options"),
+  optionsEn: z.array(z.string()).optional(),
   correctAnswer: z.coerce.number().min(0, "Must select correct answer"),
   explanation: z.string().optional(),
+  explanationEn: z.string().optional(),
   order: z.coerce.number().min(1, "Question order must be at least 1"),
 });
 
 const quizSchema = z.object({
   title: z.string().min(1, "Quiz title is required"),
+  titleEn: z.string().optional(),
   description: z.string().min(1, "Quiz description is required"),
+  descriptionEn: z.string().optional(),
   duration: z.coerce.number().min(1, "Duration must be at least 1 minute"),
   totalQuestions: z.coerce.number().min(1, "Must have at least 1 question"),
   questions: z.array(questionSchema).min(1, "Must have at least 1 question"),
@@ -56,12 +63,15 @@ const quizSchema = z.object({
 
 const moduleSchema = z.object({
   title: z.string().min(1, "Module title is required"),
+  titleEn: z.string().optional(),
   description: z.string().min(1, "Module description is required"),
+  descriptionEn: z.string().optional(),
   difficulty: z.enum(['Easy', 'Intermediate', 'Advanced'], {
     errorMap: () => ({ message: "Please select a difficulty level" })
   }),
   order: z.coerce.number().min(1, "Order must be positive"),
   pdfUrl: z.string().optional(),
+  pdfUrlEn: z.string().optional(),
   sections: z.array(sectionSchema).min(1, "Must have at least one section"),
   quiz: quizSchema,
   isActive: z.boolean(),
@@ -76,14 +86,19 @@ export default function CreateModuleForm() {
     resolver: zodResolver(moduleSchema),
     defaultValues: {
       title: "",
+      titleEn: "",
       description: "",
+      descriptionEn: "",
       difficulty: "Easy" as const,
       order: 1,
       pdfUrl: "",
+      pdfUrlEn: "",
       sections: [
         {
           title: "",
+          titleEn: "",
           content: "",
+          contentEn: "",
           duration: 5,
           order: 1,
           isActive: true,
@@ -91,16 +106,21 @@ export default function CreateModuleForm() {
       ],
       quiz: {
         title: "",
+        titleEn: "",
         description: "",
+        descriptionEn: "",
         duration: 10,
         totalQuestions: 1,
         questions: [
           {
             question: "",
+            questionEn: "",
             type: 'multiple-choice' as const,
             options: ["", "", "", ""],
+            optionsEn: ["", "", "", ""],
             correctAnswer: 0,
             explanation: "",
+            explanationEn: "",
             order: 1,
           },
         ],
@@ -222,13 +242,27 @@ export default function CreateModuleForm() {
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-900">Basic Information</h2>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-2 gap-6">
                   <FormField
                     control={form.control}
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Module Title*</FormLabel>
+                        <FormLabel>Module Title (Indonesian)*</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g., Pengantar Literasi Media" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="titleEn"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Module Title (English)</FormLabel>
                         <FormControl>
                           <Input placeholder="e.g., Introduction to Media Literacy" {...field} />
                         </FormControl>
@@ -236,6 +270,9 @@ export default function CreateModuleForm() {
                       </FormItem>
                     )}
                   />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                   <FormField
                     control={form.control}
@@ -284,15 +321,63 @@ export default function CreateModuleForm() {
                   />
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="pdfUrl"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>PDF URL (Indonesian)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="https://example.com/module-id.pdf" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="pdfUrlEn"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>PDF URL (English)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="https://example.com/module-en.pdf" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 <FormField
                   control={form.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Module Description*</FormLabel>
+                      <FormLabel>Module Description (Indonesian)*</FormLabel>
                       <FormControl>
                         <RichTextEditor
                           content={field.value}
+                          onChange={field.onChange}
+                          placeholder="Jelaskan apa yang akan dipelajari siswa dalam modul ini..."
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="descriptionEn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Module Description (English)</FormLabel>
+                      <FormControl>
+                        <RichTextEditor
+                          content={field.value || ""}
                           onChange={field.onChange}
                           placeholder="Describe what students will learn in this module..."
                         />
@@ -356,7 +441,21 @@ export default function CreateModuleForm() {
                         name={`sections.${index}.title`}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Section Title*</FormLabel>
+                            <FormLabel>Section Title (Indonesian)*</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., Memahami Literasi Media" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name={`sections.${index}.titleEn`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Section Title (English)</FormLabel>
                             <FormControl>
                               <Input placeholder="e.g., Understanding Media Literacy" {...field} />
                             </FormControl>
@@ -364,7 +463,9 @@ export default function CreateModuleForm() {
                           </FormItem>
                         )}
                       />
+                    </div>
 
+                    <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
                         name={`sections.${index}.duration`}
@@ -395,10 +496,28 @@ export default function CreateModuleForm() {
                       name={`sections.${index}.content`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Section Content*</FormLabel>
+                          <FormLabel>Section Content (Indonesian)*</FormLabel>
                           <FormControl>
                             <RichTextEditor
                               content={field.value}
+                              onChange={field.onChange}
+                              placeholder="Tulis konten bagian di sini... Gunakan toolbar untuk formatting."
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`sections.${index}.contentEn`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Section Content (English)</FormLabel>
+                          <FormControl>
+                            <RichTextEditor
+                              content={field.value || ""}
                               onChange={field.onChange}
                               placeholder="Write the section content here... Use the toolbar for formatting."
                             />
@@ -440,7 +559,21 @@ export default function CreateModuleForm() {
                       name="quiz.title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Quiz Title*</FormLabel>
+                          <FormLabel>Quiz Title (Indonesian)*</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., Kuis Literasi Media" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="quiz.titleEn"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Quiz Title (English)</FormLabel>
                           <FormControl>
                             <Input placeholder="e.g., Media Literacy Quiz" {...field} />
                           </FormControl>
@@ -448,7 +581,9 @@ export default function CreateModuleForm() {
                         </FormItem>
                       )}
                     />
+                  </div>
 
+                  <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
                       name="quiz.duration"
@@ -479,10 +614,28 @@ export default function CreateModuleForm() {
                     name="quiz.description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Quiz Description*</FormLabel>
+                        <FormLabel>Quiz Description (Indonesian)*</FormLabel>
                         <FormControl>
                           <RichTextEditor
                             content={field.value}
+                            onChange={field.onChange}
+                            placeholder="Jelaskan apa yang dicakup oleh kuis ini..."
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="quiz.descriptionEn"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Quiz Description (English)</FormLabel>
+                        <FormControl>
+                          <RichTextEditor
+                            content={field.value || ""}
                             onChange={field.onChange}
                             placeholder="Describe what the quiz covers..."
                           />
@@ -544,10 +697,13 @@ export default function CreateModuleForm() {
                         type="button" 
                         onClick={() => appendQuestion({
                           question: "",
+                          questionEn: "",
                           type: 'multiple-choice' as const,
                           options: ["", "", "", ""],
+                          optionsEn: ["", "", "", ""],
                           correctAnswer: 0,
                           explanation: "",
+                          explanationEn: "",
                           order: questionFields.length + 1,
                         })}
                         variant="outline" 
@@ -579,12 +735,30 @@ export default function CreateModuleForm() {
                           name={`quiz.questions.${questionIndex}.question`}
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Question Text*</FormLabel>
+                              <FormLabel>Question Text (Indonesian)*</FormLabel>
                               <FormControl>
                                 <RichTextEditor
                                   content={field.value}
                                   onChange={field.onChange}
-                                  placeholder="Enter your question here..."
+                                  placeholder="Enter your question here (Indonesian)..."
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name={`quiz.questions.${questionIndex}.questionEn`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Question Text (English)</FormLabel>
+                              <FormControl>
+                                <RichTextEditor
+                                  content={field.value || ""}
+                                  onChange={field.onChange}
+                                  placeholder="Enter your question here (English)..."
                                 />
                               </FormControl>
                               <FormMessage />
@@ -607,9 +781,11 @@ export default function CreateModuleForm() {
                                     // Reset options when changing type
                                     if (e.target.value === 'true-false') {
                                       form.setValue(`quiz.questions.${questionIndex}.options`, ["True", "False"]);
+                                      form.setValue(`quiz.questions.${questionIndex}.optionsEn`, ["True", "False"]);
                                       form.setValue(`quiz.questions.${questionIndex}.correctAnswer`, 0);
                                     } else {
                                       form.setValue(`quiz.questions.${questionIndex}.options`, ["", "", "", ""]);
+                                      form.setValue(`quiz.questions.${questionIndex}.optionsEn`, ["", "", "", ""]);
                                       form.setValue(`quiz.questions.${questionIndex}.correctAnswer`, 0);
                                     }
                                   }}
@@ -694,6 +870,58 @@ export default function CreateModuleForm() {
                             </FormItem>
                           )}
                         />
+
+                        <FormField
+                          control={form.control}
+                          name={`quiz.questions.${questionIndex}.explanationEn`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Explanation (English)</FormLabel>
+                              <FormControl>
+                                <Textarea 
+                                  placeholder="Explain why this is the correct answer (English)..."
+                                  className="min-h-[60px]"
+                                  {...field} 
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <div className="space-y-2">
+                          <FormLabel>Answer Options (English)</FormLabel>
+                          {form.watch(`quiz.questions.${questionIndex}.type`) === 'true-false' ? (
+                            <div className="text-sm text-gray-500">
+                              True/False questions use the same options in both languages
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              {form.watch(`quiz.questions.${questionIndex}.optionsEn`)?.map((option, optionIndex) => (
+                                <div key={optionIndex} className="flex items-center space-x-2">
+                                  <div className="w-4 text-center text-sm text-gray-500">
+                                    {String.fromCharCode(65 + optionIndex)}
+                                  </div>
+                                  <FormField
+                                    control={form.control}
+                                    name={`quiz.questions.${questionIndex}.optionsEn.${optionIndex}`}
+                                    render={({ field }) => (
+                                      <FormItem className="flex-1">
+                                        <FormControl>
+                                          <Input 
+                                            placeholder={`Option ${optionIndex + 1} (English)`}
+                                            {...field} 
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                </div>
+                              )) || []}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>

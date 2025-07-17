@@ -16,10 +16,13 @@ import {
 interface Module {
     id: string;
     title: string;
+    titleEn?: string;
     description: string;
+    descriptionEn?: string;
     difficulty: "Easy" | "Intermediate" | "Advanced";
     order: number;
     pdfUrl?: string;
+    pdfUrlEn?: string;
     sections: ModuleSection[];
     quiz: ModuleQuiz;
     isActive: boolean;
@@ -29,7 +32,9 @@ interface Module {
 interface ModuleSection {
     id: string;
     title: string;
+    titleEn?: string;
     content: string;
+    contentEn?: string;
     duration: string;
     order: number;
     isActive: boolean;
@@ -38,7 +43,9 @@ interface ModuleSection {
 interface ModuleQuiz {
     id: string;
     title: string;
+    titleEn?: string;
     description: string;
+    descriptionEn?: string;
     duration: string;
     totalQuestions: number;
     isActive: boolean;
@@ -165,14 +172,16 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
             fullText += `${t.materials}: `;
             activeSections.forEach((section, idx) => {
                 const status = isSectionCompleted(section.id) ? t.aria.completedSection : t.aria.availableSection;
-                fullText += `${idx + 1}. ${section.title}, ${status}, ${section.duration}. `;
+                const sectionTitle = language === 'en' && section.titleEn ? section.titleEn : section.title;
+                fullText += `${idx + 1}. ${sectionTitle}, ${status}, ${section.duration}. `;
             });
         }
         
         // Add quiz information
         if (module.quiz.isActive) {
             const quizStatus = isQuizCompleted() ? t.aria.completedQuiz : t.aria.availableQuiz;
-            fullText += `${t.quiz}: ${module.quiz.title}, ${quizStatus}, ${module.quiz.duration}, ${module.quiz.totalQuestions} ${t.questions}`;
+            const quizTitle = language === 'en' && module.quiz.titleEn ? module.quiz.titleEn : module.quiz.title;
+            fullText += `${t.quiz}: ${quizTitle}, ${quizStatus}, ${module.quiz.duration}, ${module.quiz.totalQuestions} ${t.questions}`;
             
             if (isQuizCompleted() && getQuizScore() !== undefined) {
                 fullText += `, ${t.score}: ${getQuizScore()}%`;
@@ -492,13 +501,9 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                         
                         <div className="mt-2" id="module-info">
                             <div className="flex items-center gap-2 mb-2">
-                                <h1 
-                                    className="text-md sm:text-xl font-semibold text-primary"
-                                    id="module-title"
-                                >
-                                    {module.title}
-                                </h1>
-                                <span
+                                <div className="text-md sm:text-xl font-semibold text-primary">
+                                    {language === 'en' && module.titleEn ? module.titleEn : module.title}
+                                </div>                                <span
                                     className={`px-2 py-1 rounded-full text-xs font-medium ${
                                         module.difficulty === "Easy"
                                             ? "bg-green-100 text-green-800"
@@ -547,7 +552,7 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                         <div
                             className="text-gray-700 prose prose-sm max-w-none leading-relaxed"
                             dangerouslySetInnerHTML={{
-                                __html: module.description,
+                                __html: language === 'en' && module.descriptionEn ? module.descriptionEn : module.description,
                             }}
                             role="article"
                             aria-labelledby="module-description-title"
@@ -609,14 +614,14 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                                                 navigatingSectionId === section.id ? 'opacity-50 pointer-events-none' : ''
                                             }`}
                                             onClick={() => handleSectionClick(section.id)}
-                                            aria-label={`${t.aria.sectionButton} ${idx + 1}: ${section.title}. ${
+                                            aria-label={`${t.aria.sectionButton} ${idx + 1}: ${language === 'en' && section.titleEn ? section.titleEn : section.title}. ${
                                                 isSectionCompleted(section.id) ? t.aria.completedSection : t.aria.availableSection
                                             }. ${section.duration}`}
                                             disabled={navigatingSectionId === section.id}
                                         >
                                             <div>
                                                 <div className="text-primary font-medium">
-                                                    {idx + 1}. {section.title}
+                                                    {idx + 1}. {language === 'en' && section.titleEn ? section.titleEn : section.title}
                                                 </div>
                                                 <div className="text-xs text-gray-400">
                                                     {section.duration}
@@ -659,7 +664,7 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                                             navigatingToQuiz ? 'opacity-50 pointer-events-none' : ''
                                         }`}
                                         onClick={handleQuizClick}
-                                        aria-label={`${t.aria.quizButton}: ${module.quiz.title}. ${
+                                        aria-label={`${t.aria.quizButton}: ${language === 'en' && module.quiz.titleEn ? module.quiz.titleEn : module.quiz.title}. ${
                                             isQuizCompleted() ? t.aria.completedQuiz : t.aria.availableQuiz
                                         }. ${module.quiz.duration}, ${module.quiz.totalQuestions} ${t.questions}${
                                             isQuizCompleted() && getQuizScore() !== undefined 
@@ -670,9 +675,8 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
                                     >
                                         <div>
                                             <div className="font-semibold">
-                                                {module.quiz.title}
-                                            </div>
-                                            <div className="text-xs">
+                                                {language === 'en' && module.quiz.titleEn ? module.quiz.titleEn : module.quiz.title}
+                                            </div>                                            <div className="text-xs">
                                                 {module.quiz.duration} •{" "}
                                                 {module.quiz.totalQuestions}{" "}
                                                 {t.questions}

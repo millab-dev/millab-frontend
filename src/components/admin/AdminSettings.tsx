@@ -30,6 +30,15 @@ const settingsSchema = z.object({
       return false;
     }
   }, "Must be a valid URL"),
+  downloadAllPdfUrlEn: z.string().optional().refine((val) => {
+    if (!val || val.trim() === "") return true; // Allow empty
+    try {
+      const url = new URL(val);
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch {
+      return false;
+    }
+  }, "Must be a valid URL"),
 });
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
@@ -37,6 +46,7 @@ type SettingsFormData = z.infer<typeof settingsSchema>;
 interface AppSettings {
   id: string;
   downloadAllPdfUrl?: string;
+  downloadAllPdfUrlEn?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -50,6 +60,7 @@ export default function AdminSettings() {
     resolver: zodResolver(settingsSchema),
     defaultValues: {
       downloadAllPdfUrl: "",
+      downloadAllPdfUrlEn: "",
     },
   });
 
@@ -71,6 +82,7 @@ export default function AdminSettings() {
       if (data.success && data.data) {
         form.reset({
           downloadAllPdfUrl: data.data.downloadAllPdfUrl || "",
+          downloadAllPdfUrlEn: data.data.downloadAllPdfUrlEn || "",
         });
       }
     } catch (error) {
@@ -169,14 +181,14 @@ export default function AdminSettings() {
                   name="downloadAllPdfUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Download All PDF URL</FormLabel>
+                      <FormLabel>Download All URL (Indonesian)</FormLabel>
                       <FormDescription>
-                        URL to a PDF that contains all module content. This will be used for the "Download All" feature.
+                        URL for Indonesian users. Can be any link (PDF, zip file, cloud drive, etc.). This will be used for the "Download All" feature.
                       </FormDescription>
                       <div className="flex gap-2">
                         <FormControl>
                           <Input 
-                            placeholder="https://example.com/all-modules.pdf" 
+                            placeholder="https://example.com/all-modules-id.pdf" 
                             {...field} 
                           />
                         </FormControl>
@@ -185,6 +197,44 @@ export default function AdminSettings() {
                           variant="outline"
                           size="icon"
                           onClick={testDownloadUrl}
+                          title="Test URL"
+                        >
+                          <Download size={16} />
+                        </Button>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="downloadAllPdfUrlEn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Download All URL (English)</FormLabel>
+                      <FormDescription>
+                        URL for English users. Can be any link (PDF, zip file, cloud drive, etc.). If not provided, the Indonesian URL will be used as fallback.
+                      </FormDescription>
+                      <div className="flex gap-2">
+                        <FormControl>
+                          <Input 
+                            placeholder="https://example.com/all-modules-en.pdf" 
+                            {...field} 
+                          />
+                        </FormControl>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            const url = form.getValues("downloadAllPdfUrlEn");
+                            if (url) {
+                              window.open(url, "_blank");
+                            } else {
+                              toast.error("Please enter a URL to test");
+                            }
+                          }}
                           title="Test URL"
                         >
                           <Download size={16} />

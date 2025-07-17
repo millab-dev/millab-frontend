@@ -237,10 +237,13 @@ export interface QuizAnswer {
 export interface DatabaseQuizQuestion {
   id: string;
   question: string;
+  questionEn?: string;
   type: 'multiple-choice' | 'true-false';
   options: string[];
+  optionsEn?: string[];
   correctAnswer: number;
   explanation?: string;
+  explanationEn?: string;
   order: number;
 }
 

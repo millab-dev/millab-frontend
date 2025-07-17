@@ -16,6 +16,12 @@ import {
 import { useRouter } from 'next/navigation'
 import owlSad from '/public/owl-sad.png'
 import scrollText from '/public/scroll-text.svg'
+import { 
+  getModuleTitle, 
+  getModuleDescription, 
+  getLanguageVersionBadge,
+  hasEnglishVersion 
+} from '@/utils/moduleLanguageUtils'
 
 
 // Use SectionProps for component props but extend with initialReadingStateData
@@ -52,13 +58,16 @@ const ContinueReadingSection = ({ language = 'id', initialReadingStateData }: Co
         // Transform backend modules to frontend format
         accessedModules = data.data.map((state: any) => ({
           id: state.module.id, // Keep as string to avoid NaN
-          title: `Modul ${state.module.order}: ${state.module.title}`,
+          title: getModuleTitle(state.module, language, t.modulePrefix, state.module.order),
           progress: state.module.progress?.completionPercentage || 0,
           category: state.module.difficulty === 'Easy' ? 'beginner' : 
                   state.module.difficulty === 'Intermediate' ? 'intermediate' : 'advanced',
-          description: state.module.description,
+          description: getModuleDescription(state.module, language),
           sections: state.module.sections,
-          quiz: state.module.quiz
+          quiz: state.module.quiz,
+          // Add language version info
+          hasEnglishVersion: hasEnglishVersion(state.module),
+          languageInfo: getLanguageVersionBadge(state.module, language)
         }));
         setHasStartedReading(true);
       }
@@ -231,8 +240,8 @@ const ContinueReadingSection = ({ language = 'id', initialReadingStateData }: Co
                 {/* Module card content */}
                 <div className="flex flex-col h-full p-4">
                   <div className="space-y-3 flex-shrink-0">
-                    {/* Level badge */}
-                    <div>
+                    {/* Level badge and language version indicator */}
+                    <div className="flex items-center justify-between gap-2">
                       <span 
                         className="text-xs py-1 px-2.5 rounded-md text-white"                        style={{ 
                           backgroundColor: 
@@ -244,6 +253,25 @@ const ContinueReadingSection = ({ language = 'id', initialReadingStateData }: Co
                           module.category === "intermediate" ? "Intermediate" : "Advanced"
                         ]}
                       </span>
+                      
+                      {/* Language version indicator */}
+                      {module.languageInfo && module.languageInfo.badge && (
+                        <span 
+                          className={`text-xs py-1 px-2 rounded-md text-white ${
+                            module.languageInfo.fallback 
+                              ? 'bg-orange-500' 
+                              : language === 'en' 
+                                ? 'bg-blue-500' 
+                                : 'bg-green-600'
+                          }`}
+                          title={module.languageInfo.fallback 
+                            ? `Content shown in fallback language` 
+                            : `Content available in ${language === 'en' ? 'English' : 'Indonesian'}`
+                          }
+                        >
+                          {module.languageInfo.badge}
+                        </span>
+                      )}
                     </div>
                     
                     {/* Icon contained within the card with rounded corners */}

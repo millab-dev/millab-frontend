@@ -408,10 +408,13 @@ export const detailModuleTranslations: DetailModuleTranslationsType = {
 export interface Module {
   id: string;
   title: string;
+  titleEn?: string;
   description: string;
+  descriptionEn?: string;
   difficulty: ModuleDifficulty;
   order: number;
   pdfUrl?: string;
+  pdfUrlEn?: string;
   sections: ModuleSection[];
   quiz: ModuleQuiz;
   isActive: boolean;
@@ -421,7 +424,9 @@ export interface Module {
 export interface ModuleSection {
   id: string;
   title: string;
+  titleEn?: string;
   content: string;
+  contentEn?: string;
   duration: string;
   order: number;
   isActive: boolean;
@@ -430,10 +435,26 @@ export interface ModuleSection {
 export interface ModuleQuiz {
   id: string;
   title: string;
+  titleEn?: string;
   description: string;
+  descriptionEn?: string;
   duration: string;
   totalQuestions: number;
+  questions: QuizQuestion[];
   isActive: boolean;
+}
+
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  questionEn?: string;
+  type: 'multiple-choice' | 'true-false';
+  options: string[];
+  optionsEn?: string[];
+  correctAnswer: number;
+  explanation?: string;
+  explanationEn?: string;
+  order: number;
 }
 
 export interface UserProgress {

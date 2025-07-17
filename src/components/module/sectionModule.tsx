@@ -21,10 +21,13 @@ import {
 interface Module {
     id: string;
     title: string;
+    titleEn?: string;
     description: string;
+    descriptionEn?: string;
     order: number;
     difficulty: "Easy" | "Intermediate" | "Advanced";
     pdfUrl?: string;
+    pdfUrlEn?: string;
     sections: ModuleSection[];
     quiz: ModuleQuiz;
     isActive: boolean;
@@ -34,7 +37,9 @@ interface Module {
 interface ModuleSection {
     id: string;
     title: string;
+    titleEn?: string;
     content: string;
+    contentEn?: string;
     duration: string;
     order: number;
     isActive: boolean;
@@ -43,7 +48,9 @@ interface ModuleSection {
 interface ModuleQuiz {
     id: string;
     title: string;
+    titleEn?: string;
     description: string;
+    descriptionEn?: string;
     duration: string;
     totalQuestions: number;
     isActive: boolean;
@@ -96,24 +103,10 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
 
     const fetchModuleData = async () => {
         try {
-            // More aggressive debugging with alerts and different console methods
-            console.warn("🔍 FETCH MODULE DATA STARTED");
-            console.error("📍 Module ID:", moduleId, "Section ID:", sectionId);
-            
-            // Also show a toast to confirm the function is running
-            toast.info(`Debug: Loading module ${moduleId}, section ${sectionId}`);
-            
             const response = await axiosClient.get(
                 `/api/v1/modules/${moduleId}`
             );
             const data = response.data;
-            
-            console.error("📊 API RESPONSE:", data);
-            console.table({ 
-                success: data.success, 
-                hasProgress: !!data.data?.progress,
-                progressType: typeof data.data?.progress 
-            });
 
             if (data.success) {
                 setModule(data.data);
@@ -125,26 +118,10 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
                 if (section) {
                     setCurrentSection(section);
                     
-                    // More aggressive debugging
-                    console.error("🎯 SECTION COMPLETION CHECK:");
-                    console.warn("Current sectionId:", sectionId);
-                    console.warn("Progress object:", data.data.progress);
-                    console.warn("Completed sections array:", data.data.progress?.completedSections);
-                    console.warn("Array type check:", Array.isArray(data.data.progress?.completedSections));
-                    console.warn("Section in array?", data.data.progress?.completedSections?.includes(sectionId));
-                    
-                    // Show toast with the actual values
-                    toast.info(`Progress check: ${data.data.progress?.completedSections?.includes(sectionId) ? 'COMPLETED' : 'NOT COMPLETED'}`);
-                    
-                    // Use debugger to force a breakpoint
-                    debugger;
-                    
-                    // Check if section is already completed
-                    setIsMarkedAsDone(
-                        data.data.progress?.completedSections?.includes(
-                            sectionId
-                        ) || false
-                    );                } else {
+                    // Check if section is already completed based on server data
+                    const isCompleted = data.data.progress?.completedSections?.includes(sectionId) || false;
+                    setIsMarkedAsDone(isCompleted);
+                } else {
                     toast.error(t.sectionNotFound);
                     router.push(`/module/${moduleId}`);
                 }
@@ -162,42 +139,39 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
     };
 
     const markSectionAsCompleted = async () => {
+        // Prevent duplicate completion attempts
+        if (isMarkedAsDone) {
+            toast.info("This section is already completed");
+            return;
+        }
+
         try {
-            console.log("=== MARKING SECTION COMPLETE DEBUG ===");
-            console.log("Marking section:", sectionId, "in module:", moduleId);
-            
-            // Mark section as completed in existing system
             const response = await axiosClient.post(
                 `/api/v1/modules/${moduleId}/sections/${sectionId}/complete`
             );
             const data = response.data;
-            
-            console.log("=== COMPLETION API RESPONSE DEBUG ===");
-            console.log("Completion response:", data);
 
             if (data.success) {
+                // Update state based on server response
                 setIsMarkedAsDone(true);
 
-                // Update the module progress locally
+                // Update the module progress with fresh server data
                 if (module) {
                     setModule({
                         ...module,
                         progress: data.data,
                     });
-                } // Award XP through progression system
+                }
+
+                // Award XP through progression system
                 if (module?.difficulty) {
-                    console.log(
-                        "Attempting to award XP for section:",
-                        sectionId,
-                        "difficulty:",
-                        module.difficulty
-                    );
                     try {
                         const progressionResult = await awardSectionXP(
                             sectionId,
                             module.difficulty
                         );
-                        console.log("Progression result:", progressionResult);                        if (progressionResult.success) {
+
+                        if (progressionResult.success) {
                             if (progressionResult.message) {
                                 toast.success(progressionResult.message, {
                                     duration: 4000,
@@ -219,19 +193,29 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
                         toast.warning(t.pointsError);
                     }
                 } else {
-                    console.log(
-                        "No module difficulty found, skipping XP award"
-                    );
                     toast.success(t.sectionCompleted);
                 }
             } else {
-                toast.error(
-                    data.error || t.completionError
-                );
+                // Handle server-side validation errors
+                toast.error(data.error || t.completionError);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error marking section as completed:", error);
-            toast.error(t.completionError);
+            
+            // Handle specific error cases from backend validation
+            if (error.response?.status === 400) {
+                const errorMessage = error.response.data?.error;
+                if (errorMessage?.includes("already completed")) {
+                    toast.info("This section is already marked as completed");
+                    setIsMarkedAsDone(true); // Update UI state
+                } else if (errorMessage?.includes("not found")) {
+                    toast.error("Section not found or is not available");
+                } else {
+                    toast.error(errorMessage || t.completionError);
+                }
+            } else {
+                toast.error(t.completionError);
+            }
         }
     };
 
@@ -273,7 +257,8 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
         
         // Extract clean text from HTML
         const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = currentSection.content;
+        const displayContent = language === 'en' && currentSection.contentEn ? currentSection.contentEn : currentSection.content;
+        tempDiv.innerHTML = displayContent;
         return tempDiv.textContent || tempDiv.innerText || '';
     };
 
@@ -453,7 +438,7 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
         <div 
             className="bg-primary min-h-screen font-jakarta sm:px-24 lg:px-50 mx-auto flex flex-col"
             role="main"
-            aria-label={`${t.aria.moduleMain}: ${currentSection.title}`}
+            aria-label={`${t.aria.moduleMain}: ${language === 'en' && currentSection.titleEn ? currentSection.titleEn : currentSection.title}`}
         >
             {/* Skip to content link for keyboard users */}
             <a 
@@ -480,8 +465,8 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
                     >
                         {currentSection.order}
                     </div>
-                    <h1 className="text-xl font-bold" id="section-title">
-                        {currentSection.title}
+                    <h1 className="text-xl font-bold">
+                        {language === 'en' && currentSection.titleEn ? currentSection.titleEn : currentSection.title}
                     </h1>
                 </div>
                 
@@ -574,7 +559,7 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
                         ref={contentRef}
                         className="text-sm mb-4 prose prose-sm max-w-none"
                         dangerouslySetInnerHTML={{
-                            __html: currentSection.content,
+                            __html: language === 'en' && currentSection.contentEn ? currentSection.contentEn : currentSection.content,
                         }}
                         role="article"
                         aria-labelledby="section-title"

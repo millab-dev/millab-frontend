@@ -65,9 +65,8 @@ const Homepage = ({ readingStateData, homepageModulesData, userData, lang }: Hom
                 },
                 {
                     icon: "👋",
-                    title: "Siap uji kemampuanmu?",
-                    content:
-                        "Setelah menyelesaikan modul, ikuti kuis akhir untuk mengukur pemahamanmu dan kumpulkan poin tambahan.",
+                    title: onboardingTranslations[lang || 'id'].steps.finalQuiz.title,
+                    content: onboardingTranslations[lang || 'id'].steps.finalQuiz.content,
                     selector: "#final-quiz",
                     side: "top",
                     showControls: true,
@@ -75,9 +74,8 @@ const Homepage = ({ readingStateData, homepageModulesData, userData, lang }: Hom
                 },
                 {
                     icon: "👋",
-                    title: "Panduan penggunaan versi web",
-                    content:
-                        "Pelajari cara menggunakan MilBoard dari situs web dengan mudah dan efektif.",
+                    title: onboardingTranslations[lang || 'id'].steps.guideWebsite.title,
+                    content: onboardingTranslations[lang || 'id'].steps.guideWebsite.content,
                     selector: "#guide-website",
                     side: "top",
                     showControls: true,
@@ -85,9 +83,8 @@ const Homepage = ({ readingStateData, homepageModulesData, userData, lang }: Hom
                 },
                 {
                     icon: "👋",
-                    title: "Gunakan MilBoard secara offline",
-                    content:
-                        "Ikuti petunjuk penggunaan untuk produk offline seperti board game atau modul cetak agar pengalaman belajarmu tetap maksimal meski tanpa internet.",
+                    title: onboardingTranslations[lang || 'id'].steps.guideOffline.title,
+                    content: onboardingTranslations[lang || 'id'].steps.guideOffline.content,
                     selector: "#guide-offlineProduct",
                     side: "top",
                     showControls: true,
