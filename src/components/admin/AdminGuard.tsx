@@ -28,8 +28,11 @@ export default function AdminGuard({ children }: AdminGuardProps) {
 
       if (response.ok) {
         const data = await response.json();
+        
+        // TEMPORARY BYPASS: Admin checker disabled for debugging
+        // TODO: Re-enable admin checking after production issue is resolved
         // if (data.success && data.data?.isAdmin) {
-        if (true){
+        if (true) {
           setIsAuthorized(true);
         } else {
           // User is not admin, redirect to home
