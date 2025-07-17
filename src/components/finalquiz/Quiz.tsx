@@ -89,13 +89,13 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
         }
     }, [currentQuestionIndex, answers, currentAnswer]);    // Load answers from localStorage on mount
     useEffect(() => {
-        const saved = localStorage.getItem(`quiz-answers-${quiz.id}`);
+        const saved = localStorage.getItem(`quiz-answers-${quiz.difficulty}`);
         if (saved) {
             setAnswers(JSON.parse(saved));
         }
         setHasLoaded(true);
         checkFirstAttemptStatus();
-    }, [quiz.id]);
+    }, [quiz.difficulty]);
 
     const checkFirstAttemptStatus = async () => {
         try {
@@ -114,10 +114,10 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
     useEffect(() => {
         if (!hasLoaded) return; // Don't save until after loading
         localStorage.setItem(
-            `quiz-answers-${quiz.id}`,
+            `quiz-answers-${quiz.difficulty}`,
             JSON.stringify(answers)
         );
-    }, [answers, quiz.id, hasLoaded]);
+    }, [answers, quiz.difficulty, hasLoaded]);
 
     const handleAnswerSelect = (optionId: string) => {
         if (!showResults) {
@@ -166,7 +166,7 @@ export default function Quiz({ quiz, userId, urlBase, isFirstAttempt = true, lan
     const handleFinishQuiz = async () => {
         setShowFinishConfirm(false);
         
-        localStorage.removeItem(`quiz-answers-${quiz.id}`);
+        localStorage.removeItem(`quiz-answers-${quiz.difficulty}`);
         try {
             // Add score to existing system
             addUserScore(userId as string, totalPoints);                // Award XP and points through progression system

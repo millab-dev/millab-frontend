@@ -8,6 +8,7 @@ export interface Quiz {
     moduleId: string | undefined;
     difficulty: string | undefined;
     questions: Question[];
+    language: string;
 }
 
 export interface Question {
@@ -24,6 +25,15 @@ class QuizService {
     async getQuizByDifficulty(difficulty: string) : Promise<Quiz> {
         try {
             const response = await axiosService.get(`/api/v1/quizzes/difficulty/${difficulty}`);
+            return response.data.data[0] as Quiz;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getQuizByDifficultyAndLanguage(difficulty: string, language: string) : Promise<Quiz> {
+        try {
+            const response = await axiosService.get(`/api/v1/quizzes/difficulty/${difficulty}/language/${language}`);
             return response.data.data[0] as Quiz;
         } catch (error) {
             throw error;

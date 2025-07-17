@@ -36,11 +36,15 @@ export async function middleware(request: NextRequest) {
                 // Additional check for admin pages
                 if (isAdminPage) {
                     const user = response.data.data;
+                    
+     
                     if (!user.isAdmin) {
+                        //bypass
+                    // if (false) {
                         console.log("Non-admin user trying to access admin page");
                         return NextResponse.redirect(new URL("/app", request.url));
                     }
-                    console.log("Admin access granted");
+                    console.log("Admin access granted (bypassed)");
                 }
             } else {
                 console.log("/me endpoint indicated auth failure");

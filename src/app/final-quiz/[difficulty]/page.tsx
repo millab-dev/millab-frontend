@@ -16,7 +16,7 @@ export default async function page({
     try {
         const { difficulty } = await params;
         const language = await getLanguage();
-        const quiz = await quizService.getQuizByDifficulty(difficulty);
+        const quiz = await quizService.getQuizByDifficultyAndLanguage(difficulty, language);
         const checkDiff =
             difficulty.toLowerCase() === "beginner" ? "easy" : difficulty;
         const user = (await getProfileData()).data as Partial<User>;
