@@ -48,12 +48,14 @@ export async function middleware(request: NextRequest) {
                 }
             } else {
                 console.log("/me endpoint indicated auth failure");
-                return NextResponse.redirect(new URL("/signin", request.url));
+                const originalPath = request.nextUrl.pathname + request.nextUrl.search;
+                return NextResponse.redirect(new URL(`/signin?redirect=${encodeURIComponent(originalPath)}`, request.url));
             }
         } catch (authError) {
             console.error("Authentication error:", authError);
-            // If auth fails, redirect to signin
-            return NextResponse.redirect(new URL("/signin", request.url));
+            // If auth fails, redirect to signin with the original URL as redirect parameter
+            const originalPath = request.nextUrl.pathname + request.nextUrl.search;
+            return NextResponse.redirect(new URL(`/signin?redirect=${encodeURIComponent(originalPath)}`, request.url));
         }
 
         // Create NextResponse and forward cookies header from API response
@@ -77,9 +79,10 @@ export async function middleware(request: NextRequest) {
         
         return nextResponse;
     } catch (error) {
-        // If there's an error checking auth, redirect to signin
+        // If there's an error checking auth, redirect to signin with the original URL as redirect parameter
         console.error("Auth check error:", error);
-        return NextResponse.redirect(new URL("/signin", request.url));
+        const originalPath = request.nextUrl.pathname + request.nextUrl.search;
+        return NextResponse.redirect(new URL(`/signin?redirect=${encodeURIComponent(originalPath)}`, request.url));
     }
 }
 

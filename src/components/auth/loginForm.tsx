@@ -32,9 +32,10 @@ const formSchema = z.object({
 export interface LoginFormProps {
     errorParam: string | null;
     language?: Language;
+    redirectTo: string | null
 }
 
-export default function LoginForm({ errorParam, language = 'id' }: LoginFormProps) {
+export default function LoginForm({ errorParam, language = 'id', redirectTo }: LoginFormProps) {
     const t = loginTranslations[language];
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -89,7 +90,7 @@ export default function LoginForm({ errorParam, language = 'id' }: LoginFormProp
 
             if (data.success) {
                 toast.success("Login berhasil!");
-                router.push("/app");
+                router.push(redirectTo || "/app");
             } else {
                 toast.error(data.error || "Login gagal");
             }        } catch (error) {

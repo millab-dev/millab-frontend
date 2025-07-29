@@ -11,11 +11,12 @@ export const metadata: Metadata = {
 export default async function Page({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   // Extract error param from searchParams
   const errorParam = searchParams.error ? String(searchParams.error) : null;
+  const redirectTo = searchParams.redirect? String(searchParams.redirect) : null
   // Provide default language as Indonesian
   const language = await getLanguage();
   return (
     <div>
-      <LoginForm errorParam={errorParam} language={language} />
+      <LoginForm errorParam={errorParam} redirectTo={redirectTo} language={language} />
     </div>
   );
 }
