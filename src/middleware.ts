@@ -14,12 +14,13 @@ export async function middleware(request: NextRequest) {
         request.nextUrl.pathname === "/about-us" ||
         request.nextUrl.pathname === "/scan" ||
         request.nextUrl.pathname === "/";
-        request.nextUrl.pathname === "/module";
+    
+    const isModulePage = request.nextUrl.pathname.startsWith("/module");
     
     const isAdminPage = request.nextUrl.pathname.startsWith("/admin");
     
     // Skip middleware for auth pages
-    if (isAuthPage) {
+    if (isAuthPage || isModulePage) {
         return NextResponse.next();
     }
 
