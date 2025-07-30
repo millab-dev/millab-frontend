@@ -57,38 +57,55 @@ export type ListModuleTranslationsType = {
 // Define SectionModule translations structure
 export type SectionModuleTranslationsType = {
   [key in Language]: {
-    sectionNotFound: string;
+    // Navigation and UI elements
     backToModule: string;
     markAsDone: string;
     nextSection: string;
     loading: string;
+    
+    // Status and notifications
+    sectionNotFound: string;
     sectionCompleted: string;
     completionError: string;
     pointsAwarded: string;
     pointsError: string;
     fetchModuleError: string;
     fetchModuleErrorGeneric: string;
+    loginRequired: string;
+    
+    // TTS controls
     readText: string;
     pauseText: string;
     resumeText: string;
     stopText: string;
+    
+    // Accessibility labels
     aria: {
+      // Main structure
       moduleMain: string;
       skipToContent: string;
       sectionNumber: string;
+      navigationMain: string;
+      
+      // TTS related
       playTTS: string;
       pauseTTS: string;
       resumeTTS: string;
       stopTTS: string;
       keyboardInstructions: string;
       contentInstructions: string;
-      decorativeIllustration: string;
-      navigationMain: string;
+      
+      // Buttons and navigation
       nextSectionButton: string;
       markAsDoneButton: string;
       backToModuleButton: string;
       primaryButtonDesc: string;
       primaryButtonDescNext: string;
+      
+      // Decorative elements
+      decorativeIllustration: string;
+      
+      // Error messages
       audioPlaybackError: string;
       browserNotSupported: string;
       navigationInstructions: string;
@@ -239,76 +256,110 @@ export const listModuleTranslations: ListModuleTranslationsType = {
 // SectionModule translations
 export const sectionModuleTranslations: SectionModuleTranslationsType = {
   id: {
-    sectionNotFound: "Bagian tidak ditemukan",
+    // Navigation and UI elements
     backToModule: "Kembali ke Modul",
     markAsDone: "Tandai Selesai",
     nextSection: "Lanjut",
     loading: "Memuat...",
+    
+    // Status and notifications
+    sectionNotFound: "Bagian tidak ditemukan",
     sectionCompleted: "Bagian berhasil diselesaikan!",
     completionError: "Gagal menandai bagian sebagai selesai",
     pointsAwarded: "Kamu mendapatkan poin!",
     pointsError: "Bagian selesai, tetapi pemberian poin gagal",
     fetchModuleError: "Gagal memuat modul",
     fetchModuleErrorGeneric: "Gagal memuat modul",
+    loginRequired: "Silakan masuk untuk menandai bagian sebagai selesai",
+    
+    // TTS controls
     readText: "Baca",
     pauseText: "Jeda",
     resumeText: "Lanjutkan",
     stopText: "Berhenti",
+    
+    // Accessibility labels
     aria: {
+      // Main structure
       moduleMain: "Modul pembelajaran",
       skipToContent: "Langsung ke konten",
       sectionNumber: "Bagian nomor",
+      navigationMain: "Navigasi pembelajaran",
+      
+      // TTS related
       playTTS: "Mulai membaca konten",
       pauseTTS: "Jeda membaca",
       resumeTTS: "Lanjutkan membaca",
       stopTTS: "Berhenti membaca",
       keyboardInstructions: "Gunakan Alt+P untuk toggle audio, Alt+S untuk stop audio, Alt+M untuk tandai selesai, Alt+N untuk bagian selanjutnya",
       contentInstructions: "Konten pembelajaran dapat dibaca menggunakan tombol baca di atas atau dengan menekan Alt+P",
-      decorativeIllustration: "Ilustrasi dekoratif dengan karakter burung hantu dalam berbagai pose",
-      navigationMain: "Navigasi pembelajaran",
+      
+      // Buttons and navigation
       nextSectionButton: "Lanjut ke bagian selanjutnya (Alt+N)",
       markAsDoneButton: "Tandai bagian ini sebagai selesai (Alt+M)",
       backToModuleButton: "Kembali ke halaman modul",
       primaryButtonDesc: "Tombol untuk menandai bagian pembelajaran ini sebagai telah diselesaikan",
       primaryButtonDescNext: "Tombol untuk melanjutkan ke bagian pembelajaran selanjutnya",
+      
+      // Decorative elements
+      decorativeIllustration: "Ilustrasi dekoratif dengan karakter burung hantu dalam berbagai pose",
+      
+      // Error messages
       audioPlaybackError: "Gagal memutar audio",
       browserNotSupported: "Browser tidak mendukung text-to-speech",
       navigationInstructions: "Gunakan tombol navigasi untuk berpindah antar bagian"
     }
   },
   en: {
-    sectionNotFound: "Section not found",
+    // Navigation and UI elements
     backToModule: "Back to Module",
     markAsDone: "Mark as Done",
     nextSection: "Next",
     loading: "Loading...",
+    
+    // Status and notifications
+    sectionNotFound: "Section not found",
     sectionCompleted: "Section completed successfully!",
     completionError: "Failed to mark section as completed",
     pointsAwarded: "You earned points!",
     pointsError: "Section completed, but points award failed",
     fetchModuleError: "Failed to fetch module",
     fetchModuleErrorGeneric: "Failed to fetch module",
+    loginRequired: "Please log in to mark sections as completed",
+    
+    // TTS controls
     readText: "Read",
     pauseText: "Pause",
     resumeText: "Resume",
     stopText: "Stop",
+    
+    // Accessibility labels
     aria: {
+      // Main structure
       moduleMain: "Learning module",
       skipToContent: "Skip to content",
       sectionNumber: "Section number",
+      navigationMain: "Learning navigation",
+      
+      // TTS related
       playTTS: "Start reading content",
       pauseTTS: "Pause reading",
       resumeTTS: "Resume reading",
       stopTTS: "Stop reading",
       keyboardInstructions: "Use Alt+P to toggle audio, Alt+S to stop audio, Alt+M to mark as done, Alt+N for next section",
       contentInstructions: "Learning content can be read using the read button above or by pressing Alt+P",
-      decorativeIllustration: "Decorative illustration with owl characters in various poses",
-      navigationMain: "Learning navigation",
+      
+      // Buttons and navigation
       nextSectionButton: "Go to next section (Alt+N)",
       markAsDoneButton: "Mark this section as completed (Alt+M)",
       backToModuleButton: "Back to module page",
       primaryButtonDesc: "Button to mark this learning section as completed",
       primaryButtonDescNext: "Button to continue to the next learning section",
+      
+      // Decorative elements
+      decorativeIllustration: "Decorative illustration with owl characters in various poses",
+      
+      // Error messages
       audioPlaybackError: "Failed to play audio",
       browserNotSupported: "Browser does not support text-to-speech",
       navigationInstructions: "Use navigation buttons to move between sections"

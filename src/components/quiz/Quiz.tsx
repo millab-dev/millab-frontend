@@ -27,9 +27,11 @@ import {
     UserProgress
 } from "../module/types";
 
-interface QuizProps extends SectionProps {}
+interface QuizProps extends SectionProps {
+    isLoggedIn?: boolean
+}
 
-export default function Quiz({ language }: QuizProps) {
+export default function Quiz({ language, isLoggedIn }: QuizProps) {
     const router = useRouter();
     const params = useParams();
     const moduleId = params.id as string;    // Get translations based on language with fallback to Indonesian
@@ -512,6 +514,7 @@ export default function Quiz({ language }: QuizProps) {
                 language={language || 'id'}
                 isFirstAttempt={isFirstAttempt}
                 quizMessages={qm}
+                isLoggedIn={isLoggedIn}
             />
         </>
     );

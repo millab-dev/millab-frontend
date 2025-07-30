@@ -24,6 +24,7 @@ interface QuizQuestionProps {
     language: Language;
     isFirstAttempt?: boolean | null;
     quizMessages?: QuizMessagesTranslations;
+    isLoggedIn?: boolean
 }
 
 export default function QuizQuestion({
@@ -42,6 +43,7 @@ export default function QuizQuestion({
     language,
     isFirstAttempt,
     quizMessages,
+    isLoggedIn
 }: QuizQuestionProps) {
     const [hoveredOption, setHoveredOption] = useState<string | null>(null);
     const t = quizQuestionTranslations[language || 'id'];
@@ -211,8 +213,10 @@ export default function QuizQuestion({
                             <Button
                                 onClick={onNextQuestion}
                                 className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium"
-                            >                                {currentQuestionNumber === totalQuestions
-                                    ? t.finishQuiz
+                                title={currentQuestionNumber === totalQuestions && !isLoggedIn ? t.loginRequired : ""}
+                            >
+                                {currentQuestionNumber === totalQuestions
+                                    ? (isLoggedIn ? t.finishQuiz : t.loginToFinish)
                                     : t.nextQuestion}{" "}
                                 →
                             </Button>

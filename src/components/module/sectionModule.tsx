@@ -15,7 +15,7 @@ import axiosClient from "@/lib/axios.client";
 import { awardSectionXP } from "@/utils/progressionApi";
 import { 
     SectionProps, 
-    sectionModuleTranslations,  
+    sectionModuleTranslations
 } from "./types";
 
 interface Module {
@@ -68,9 +68,11 @@ interface UserProgress {
     lastAccessedAt: string;
 }
 
-interface SectionModuleProps extends SectionProps {}
+interface SectionModuleProps extends SectionProps {
+    isLoggedIn?: boolean
+}
 
-export default function SectionModule({ language = 'id' }: SectionModuleProps) {
+export default function SectionModule({ language = 'id', isLoggedIn }: SectionModuleProps) {
     const router = useRouter();
     const params = useParams();
     const moduleId = params.id as string;
@@ -142,6 +144,12 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
         // Prevent duplicate completion attempts
         if (isMarkedAsDone) {
             toast.info("This section is already completed");
+            return;
+        }
+
+        // Check if user is logged in
+        if (!isLoggedIn) {
+            toast.error(t.loginRequired);
             return;
         }
 
@@ -585,13 +593,14 @@ export default function SectionModule({ language = 'id' }: SectionModuleProps) {
                                 : "bg-primary hover:bg-primary/90 text-white"
                         } ${isNavigating ? 'opacity-50' : ''}`}
                         onClick={isMarkedAsDone ? handleNext : handleMarkAsDone}
-                        disabled={(!isMarkedAsDone && loading) || isNavigating}
+                        disabled={(!isMarkedAsDone && loading) || isNavigating || !isLoggedIn}
                         aria-label={
                             isMarkedAsDone 
                                 ? t.aria.nextSectionButton
                                 : t.aria.markAsDoneButton
                         }
                         aria-describedby="primary-button-desc"
+                        title={!isLoggedIn && !isMarkedAsDone ? t.loginRequired : ""}
                     >
                         <span>{isNavigating ? t.loading : (isMarkedAsDone ? t.nextSection : t.markAsDone)}</span>
                         {!isNavigating && (isMarkedAsDone ? (

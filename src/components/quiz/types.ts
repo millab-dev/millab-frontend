@@ -43,6 +43,8 @@ export type QuizQuestionTranslationsType = {
     finishQuiz: string;
     backToModule: string;
     showNavigation: string;
+    loginToFinish: string;
+    loginRequired: string;
   };
 };
 
@@ -135,20 +137,24 @@ export const quizQuestionTranslations: QuizQuestionTranslationsType = {
     of: "dari",
     checkAnswer: "Periksa Jawaban",
     nextQuestion: "Pertanyaan Berikutnya",
-    previousQuestion: "Sebelumnya",
+    previousQuestion: "Pertanyaan Sebelumnya",
     finishQuiz: "Selesaikan Kuis",
     backToModule: "Kembali ke Modul",
-    showNavigation: "Tampilkan Navigasi"
+    showNavigation: "Tampilkan Navigasi",
+    loginToFinish: "Login untuk Menyelesaikan Kuis",
+    loginRequired: "Silakan masuk untuk menyelesaikan kuis dan menyimpan skor"
   },
   en: {
     question: "Question",
     of: "of",
     checkAnswer: "Check Answer",
     nextQuestion: "Next Question",
-    previousQuestion: "Previous",
+    previousQuestion: "Previous Question",
     finishQuiz: "Finish Quiz",
     backToModule: "Back to Module",
-    showNavigation: "Show Navigation"
+    showNavigation: "Show Navigation",
+    loginToFinish: "Login to Complete Quiz",
+    loginRequired: "Please log in to complete the quiz and save your score"
   }
 };
 

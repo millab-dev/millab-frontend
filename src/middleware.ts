@@ -14,6 +14,7 @@ export async function middleware(request: NextRequest) {
         request.nextUrl.pathname === "/about-us" ||
         request.nextUrl.pathname === "/scan" ||
         request.nextUrl.pathname === "/";
+        request.nextUrl.pathname === "/module";
     
     const isAdminPage = request.nextUrl.pathname.startsWith("/admin");
     
