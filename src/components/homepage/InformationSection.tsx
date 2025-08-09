@@ -1,9 +1,11 @@
 "use client"
-import { Zap, Gem } from 'lucide-react'
+import { Zap, Gem, Volume2, Pause, Play } from 'lucide-react'
+import { Button } from "@/components/ui/button"
 import { motion } from 'framer-motion'
 import { SectionProps, informationTranslations } from './types'
 import { useState, useEffect } from 'react'
 import { UserData } from './types'
+import { TTSContextType } from './index'
 
 interface UserProgression {
   // Backend response format
@@ -27,9 +29,10 @@ interface User {
 
 type InformationSectionProps = SectionProps & {
     userData?: UserData;
+    ttsContext: TTSContextType;
 };
 
-const InformationSection = ({ language = 'id', userData }: InformationSectionProps) => {
+const InformationSection = ({ language = 'id', userData, ttsContext }: InformationSectionProps) => {
     // Get translations based on language
     const t = informationTranslations[language];
     
@@ -168,6 +171,23 @@ const InformationSection = ({ language = 'id', userData }: InformationSectionPro
 
     const progressData = getProgressData()
 
+    // Use centralized TTS context
+    const { isSpeaking, isPaused, currentSpeakingId, toggleSpeech, stopSpeaking } = ttsContext;
+
+    // Single TTS for entire InformationSection
+    const handleSectionTTS = () => {
+        const userName = getUserDisplayName();
+        const streakText = `${progressData.dayStreak} ${t.dayStreak}`;
+        const levelText = `Level ${progressData.level}`;
+        const pointsText = `${progressData.currentPoints} dari ${progressData.totalPointsForNextLevel} poin`;
+        
+        const sectionText = language === 'id' ? 
+            `${t.welcomeBack} ${userName}. ${streakText}. ${levelText}. ${pointsText}.` :
+            `${t.welcomeBack} ${userName}. ${streakText}. ${levelText}. ${pointsText}.`;
+            
+        toggleSpeech(sectionText, 'information-section');
+    };
+
     return (
         <motion.div 
             className="px-4 pt-6 w-full mx-auto max-w-6xl"
@@ -205,13 +225,32 @@ const InformationSection = ({ language = 'id', userData }: InformationSectionPro
                     </motion.div>
                     
                     <motion.div 
-                        className="text-white"
+                        className="text-white relative"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.5 }}
                     >
-                        <p className="text-base md:text-3xl font-semibold">{t.welcomeBack}</p>
-                        <h2 className="text-2xl md:text-5xl font-bold">{getUserDisplayName()}</h2>
+                        <div className="flex items-center gap-2">
+                            <div>
+                                <p className="text-base md:text-3xl font-semibold">{t.welcomeBack}</p>
+                                <h2 className="text-2xl md:text-5xl font-bold">{getUserDisplayName()}</h2>
+                            </div>
+                            
+                            {/* TTS button - minimal design impact */}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleSectionTTS}
+                                aria-label={language === 'id' ? 'Baca informasi profil' : 'Read profile information'}
+                                className="text-white/70 hover:text-white ml-2 self-start mt-1"
+                            >
+                                {currentSpeakingId === 'information-section' && isSpeaking ? (
+                                    isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />
+                                ) : (
+                                    <Volume2 className="h-4 w-4" />
+                                )}
+                            </Button>
+                        </div>
                     </motion.div>
                 </motion.div>
 

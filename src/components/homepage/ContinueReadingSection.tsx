@@ -1,10 +1,11 @@
 "use client"
 
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Volume2, Pause, Play } from 'lucide-react'
 import {
   Card,
   CardContent,
 } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
 import {
@@ -13,6 +14,7 @@ import {
   continueReadingTranslations,
   Module
 } from './types'
+import { TTSContextType } from './index'
 import { useRouter } from 'next/navigation'
 import owlSad from '/public/owl-sad.png'
 import scrollText from '/public/scroll-text.svg'
@@ -29,9 +31,10 @@ import { ReadingStateData } from './types';
 
 interface ContinueReadingSectionProps extends SectionProps {
   initialReadingStateData?: ReadingStateData;
+  ttsContext: TTSContextType;
 }
 
-const ContinueReadingSection = ({ language = 'id', initialReadingStateData }: ContinueReadingSectionProps) => {
+const ContinueReadingSection = ({ language = 'id', initialReadingStateData, ttsContext }: ContinueReadingSectionProps) => {
   const router = useRouter();
   
   // Get translations based on language
@@ -41,6 +44,23 @@ const ContinueReadingSection = ({ language = 'id', initialReadingStateData }: Co
   const [loading, setLoading] = useState(true);
   const [hasStartedReading, setHasStartedReading] = useState(false);
   const [expectedModuleCount, setExpectedModuleCount] = useState(3); // Track expected number of modules
+
+  // Use centralized TTS context
+  const { isSpeaking, isPaused, currentSpeakingId, toggleSpeech, stopSpeaking } = ttsContext;
+
+  // Single TTS for entire ContinueReadingSection - read all module titles
+  const handleSectionTTS = () => {
+    if (modules.length === 0) {
+      const noModuleText = language === 'id' ? 'Lanjutkan Belajar. Belum ada modul yang dimulai.' : 'Continue Learning. No modules started yet.';
+      toggleSpeech(noModuleText, 'continue-reading-section');
+    } else {
+      const moduleTitles = modules.map(module => getModuleTitle(module, language) || module.title).join(', ');
+      const sectionText = `${t.title}. ${language === 'id' ? 'Modul yang sedang dipelajari:' : 'Modules in progress:'} ${moduleTitles}.`;
+      toggleSpeech(sectionText, 'continue-reading-section');
+    }
+  };
+
+  // Keyboard navigation removed per user request
   
   // Process initial data or fetch if not provided
   useEffect(() => {
@@ -199,13 +219,35 @@ const ContinueReadingSection = ({ language = 'id', initialReadingStateData }: Co
 
   return (
     <div className="w-full" ref={sectionRef}>
+      {/* Keyboard help overlay removed per user request */}
+
       <motion.div 
         className="flex justify-between items-start mb-4 px-1 gap-2"
         initial={{ opacity: 0, y: -10 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="text-xl md:text-2xl font-bold text-primary">{t.title}</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl md:text-2xl font-bold text-primary">{t.title}</h2>
+          
+          {/* Single TTS button for entire section */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSectionTTS}
+            aria-label={language === 'id' ? 'Baca section lanjutkan belajar' : 'Read continue learning section'}
+            className="text-gray-500 hover:text-primary"
+          >
+            {currentSpeakingId === 'continue-reading-section' && isSpeaking ? (
+              isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />
+            ) : (
+              <Volume2 className="h-4 w-4" />
+            )}
+          </Button>
+          
+          {/* Keyboard button removed per user request */}
+        </div>
+        
         <motion.a 
           href="/module" 
           className="text-gray-500 flex items-center pl-4 hover:text-primary transition-colors whitespace-nowrap flex-shrink-0"

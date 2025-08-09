@@ -2,6 +2,8 @@
 
 import { NextStep, NextStepProvider, Tour } from "nextstepjs";
 import { ReadingStateData, UserData, HomepageModulesData, onboardingTranslations } from "./types";
+import { useState, useRef, useEffect } from 'react';
+import { toast } from "sonner";
 
 import HomepageContent from "./OnboardingOverlay";
 
@@ -12,7 +14,112 @@ interface HomepageProps {
   lang?: 'id' | 'en';
 }
 
+// TTS context interface for sharing across components
+export interface TTSContextType {
+  isSpeaking: boolean;
+  isPaused: boolean;
+  currentSpeakingId: string | null;
+  speakText: (text: string, id: string) => void;
+  pauseSpeaking: () => void;
+  resumeSpeaking: () => void;
+  stopSpeaking: () => void;
+  toggleSpeech: (text: string, id: string) => void;
+}
+
 const Homepage = ({ readingStateData, homepageModulesData, userData, lang }: HomepageProps) => {
+    // Centralized TTS State Management
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
+    const [currentSpeakingId, setCurrentSpeakingId] = useState<string | null>(null);
+    const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+    // TTS Functions
+    const speakText = (text: string, id: string) => {
+        if ('speechSynthesis' in window) {
+            // Stop any ongoing speech
+            window.speechSynthesis.cancel();
+            
+            speechRef.current = new SpeechSynthesisUtterance(text);
+            speechRef.current.lang = lang === 'en' ? 'en-US' : 'id-ID';
+            speechRef.current.rate = 0.9;
+            speechRef.current.pitch = 1;
+            
+            speechRef.current.onstart = () => {
+                setIsSpeaking(true);
+                setIsPaused(false);
+                setCurrentSpeakingId(id);
+            };
+            
+            speechRef.current.onend = () => {
+                setIsSpeaking(false);
+                setIsPaused(false);
+                setCurrentSpeakingId(null);
+            };
+            
+            speechRef.current.onerror = () => {
+                setIsSpeaking(false);
+                setIsPaused(false);
+                setCurrentSpeakingId(null);
+                toast.error(lang === 'en' ? 'Browser does not support text-to-speech' : 'Browser tidak mendukung text-to-speech');
+            };
+            
+            window.speechSynthesis.speak(speechRef.current);
+        } else {
+            toast.error(lang === 'en' ? 'Browser does not support text-to-speech' : 'Browser tidak mendukung text-to-speech');
+        }
+    };
+
+    const pauseSpeaking = () => {
+        if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+            window.speechSynthesis.pause();
+            setIsPaused(true);
+        }
+    };
+
+    const resumeSpeaking = () => {
+        if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+            setIsPaused(false);
+        }
+    };
+
+    const stopSpeaking = () => {
+        window.speechSynthesis.cancel();
+        setIsSpeaking(false);
+        setIsPaused(false);
+        setCurrentSpeakingId(null);
+    };
+
+    const toggleSpeech = (text: string, id: string) => {
+        if (currentSpeakingId === id && isSpeaking && !isPaused) {
+            pauseSpeaking();
+        } else if (currentSpeakingId === id && isPaused) {
+            resumeSpeaking();
+        } else {
+            speakText(text, id);
+        }
+    };
+
+    // TTS Context object
+    const ttsContext: TTSContextType = {
+        isSpeaking,
+        isPaused,
+        currentSpeakingId,
+        speakText,
+        pauseSpeaking,
+        resumeSpeaking,
+        stopSpeaking,
+        toggleSpeech
+    };
+
+    // Cleanup speech on unmount
+    useEffect(() => {
+        return () => {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+        };
+    }, []);
 
     const steps: Tour[] = [
         {
@@ -109,6 +216,7 @@ const Homepage = ({ readingStateData, homepageModulesData, userData, lang }: Hom
                         readingStateData={readingStateData}
                         homepageModulesData={homepageModulesData}
                         userData={userData}
+                        ttsContext={ttsContext}
                     />
                 </NextStep>
             </NextStepProvider>

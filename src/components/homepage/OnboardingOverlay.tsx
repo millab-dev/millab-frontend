@@ -6,15 +6,17 @@ import { useNextStep } from "nextstepjs";
 import { HomepageModulesData } from "./types";
 import { UserData } from "./types";
 import { ReadingStateData } from "./types";
+import { TTSContextType } from "./index";
 
 interface HomepageContentProps {
     readingStateData: ReadingStateData;
     homepageModulesData: HomepageModulesData;
     userData: UserData;
     lang?: 'id' | 'en';
+    ttsContext: TTSContextType;
 }
 
-const HomepageContent = ({ readingStateData, homepageModulesData, userData, lang }: HomepageContentProps) => {
+const HomepageContent = ({ readingStateData, homepageModulesData, userData, lang, ttsContext }: HomepageContentProps) => {
 
     const { startNextStep } = useNextStep();
 
@@ -63,7 +65,7 @@ const HomepageContent = ({ readingStateData, homepageModulesData, userData, lang
                     {/* Top section with information */}
                     <div className="h-[14.43rem] md:h-[16.43rem] w-full">
                         <div className="h-full flex items-center">
-                            <InformationSection language={lang} userData={userData} />
+                            <InformationSection language={lang} userData={userData} ttsContext={ttsContext} />
                         </div>
                     </div>
 
@@ -72,6 +74,7 @@ const HomepageContent = ({ readingStateData, homepageModulesData, userData, lang
                         language={lang}
                         readingStateData={readingStateData}
                         homepageModulesData={homepageModulesData}
+                        ttsContext={ttsContext}
                     />
                 </div>
             </div>

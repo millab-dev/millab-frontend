@@ -8,14 +8,16 @@ import GuidelinesSection from './GuidelinesSection'
 import FinalTestSection from './FinalTestSection'
 import { HomepageModulesData } from './types'
 import { ReadingStateData } from './types'
+import { TTSContextType } from './index'
 
 interface BottomSheetSectionProps {
   readingStateData: ReadingStateData;
   homepageModulesData: HomepageModulesData;
   language?: 'id' | 'en';
+  ttsContext: TTSContextType;
 }
 
-const BottomSheetSection = ({ readingStateData, homepageModulesData, language }: BottomSheetSectionProps) => {
+const BottomSheetSection = ({ readingStateData, homepageModulesData, language, ttsContext }: BottomSheetSectionProps) => {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.1 })
   
@@ -35,18 +37,18 @@ const BottomSheetSection = ({ readingStateData, homepageModulesData, language }:
         <FeaturedImageSection language={language} />
        
         {/* Discover Modules section */}
-        <DiscoverSection initialModulesData={homepageModulesData} language={language} />
+        <DiscoverSection initialModulesData={homepageModulesData} language={language} ttsContext={ttsContext} />
 
          {/* Continue Reading section */}
          <div id="continue-reading">
-           <ContinueReadingSection initialReadingStateData={readingStateData} language={language} />
+           <ContinueReadingSection ttsContext={ttsContext} initialReadingStateData={readingStateData} language={language} />
          </div>
 
           {/* Final Test section */}
-        <FinalTestSection language={language} />
+        <FinalTestSection language={language} ttsContext={ttsContext} />
         
         {/* Guidelines section */}
-        <GuidelinesSection language={language} />
+        <GuidelinesSection language={language} ttsContext={ttsContext} />
         
        
       </div>

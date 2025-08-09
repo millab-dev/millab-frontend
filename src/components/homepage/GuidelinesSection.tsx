@@ -1,12 +1,14 @@
 "use client"
-import { Globe, Package } from 'lucide-react'
+import { Globe, Package, Volume2, Pause, Play } from 'lucide-react'
 import {
   Card,
   CardContent,
 } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { SectionProps, guidelinesTranslations } from './types'
+import { TTSContextType } from './index'
 
 // Define type for guideline item keys - must match keys in translations
 type GuidelineItemKey = 'website' | 'offlineProduct';
@@ -17,11 +19,22 @@ type GuidelineItem = {
   icon: React.ReactNode;
 };
 
-type GuidelinesSectionProps = SectionProps;
+type GuidelinesSectionProps = SectionProps & {
+  ttsContext: TTSContextType;
+};
 
-const GuidelinesSection = ({ language = 'id' }: GuidelinesSectionProps) => {
+const GuidelinesSection = ({ language = 'id', ttsContext }: GuidelinesSectionProps) => {
   // Get translations based on language
   const t = guidelinesTranslations[language];
+
+  // Use centralized TTS context
+  const { isSpeaking, isPaused, currentSpeakingId, toggleSpeech, stopSpeaking } = ttsContext;
+
+  // Single TTS for entire GuidelinesSection
+  const handleSectionTTS = () => {
+    const sectionText = `${t.title}. ${language === 'id' ? 'Terdapat panduan website dan produk offline.' : 'Website and offline product guidelines available.'}`;
+    toggleSpeech(sectionText, 'guidelines-section');
+  };
 
   const onClick = (key: GuidelineItemKey) => {
     const url = t.urls[key];
@@ -47,14 +60,29 @@ const GuidelinesSection = ({ language = 'id' }: GuidelinesSectionProps) => {
 
   return (
     <div className="w-full " ref={sectionRef}>
-      <motion.h2 
-        className="text-xl md:text-2xl font-bold mb-4 px-1 text-primary"
+      <motion.div 
+        className="flex items-center gap-2 mb-4 px-1"
         initial={{ opacity: 0, y: -10 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
         transition={{ duration: 0.5 }}
       >
-        {t.title}
-      </motion.h2>
+        <h2 className="text-xl md:text-2xl font-bold text-primary">{t.title}</h2>
+        
+        {/* Single TTS button for entire section */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleSectionTTS}
+          aria-label={language === 'id' ? 'Baca section panduan' : 'Read guidelines section'}
+          className="text-gray-500 hover:text-primary"
+        >
+          {currentSpeakingId === 'guidelines-section' && isSpeaking ? (
+            isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />
+          ) : (
+            <Volume2 className="h-4 w-4" />
+          )}
+        </Button>
+      </motion.div>
       
       <motion.div 
         className="grid grid-cols-2 md:grid-cols-4 gap-4"
