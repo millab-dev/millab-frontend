@@ -60,12 +60,12 @@ const Homepage = ({ readingStateData, homepageModulesData, userData, lang }: Hom
                 setIsSpeaking(false);
                 setIsPaused(false);
                 setCurrentSpeakingId(null);
-                toast.error(lang === 'en' ? 'Browser does not support text-to-speech' : 'Browser tidak mendukung text-to-speech');
+                // toast.error(lang === 'en' ? 'Browser does not support text-to-speech' : 'Browser tidak mendukung text-to-speech');
             };
             
             window.speechSynthesis.speak(speechRef.current);
         } else {
-            toast.error(lang === 'en' ? 'Browser does not support text-to-speech' : 'Browser tidak mendukung text-to-speech');
+            // toast.error(lang === 'en' ? 'Browser does not support text-to-speech' : 'Browser tidak mendukung text-to-speech');
         }
     };
 
