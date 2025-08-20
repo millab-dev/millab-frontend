@@ -45,14 +45,16 @@ const Leaderboard: React.FC<ProfileComponentProps> = ({ language = 'id' }) => {
         const leaderboardResult = await leaderboardResponse.json();
         const userProgressionResult = await userProgressionResponse.json();
 
+
         if (leaderboardResult.success && userProgressionResult.success) {          // Transform leaderboard data
           const transformedLeaderboard = leaderboardResult.data.map((entry: any, index: number) => ({
             rank: index + 1,
-            name: entry.name || `No Username`,
+            name: entry.userId === userProgressionResult.data.user.id ? t.youLabel : entry.name || `No Username`,
             score: entry.score,
             userId: entry.userId,
-            isCurrentUser: false
+            isCurrentUser: entry.userId === userProgressionResult.data.user.id
           }));
+
 
           setLeaderboardData(transformedLeaderboard);
 
@@ -86,7 +88,7 @@ const Leaderboard: React.FC<ProfileComponentProps> = ({ language = 'id' }) => {
         case 3:
           return <img src="/third-place.png" alt="3rd" className="h-8 w-8" />;
         default:
-          return <span className="text-gray-600 text-base font-medium w-8 text-center">{entry.rank}</span>;
+          return <span className={`text-gray-600 text-base font-medium w-8 text-center`}>{entry.rank}</span>;
       }
     };
 
@@ -207,7 +209,7 @@ const Leaderboard: React.FC<ProfileComponentProps> = ({ language = 'id' }) => {
               )}
 
               {/* Current user row */}
-              {currentUser && (() => {
+              {currentUser && currentUser.rank > 10 && (() => {
                 const CurrentUserRowAnimated = () => {
                   const currentUserRef = React.useRef(null);
                   const isCurrentUserInView = useInView(currentUserRef, { once: true, amount: 0.5 });
