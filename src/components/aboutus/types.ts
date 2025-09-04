@@ -257,3 +257,20 @@ export const videoSectionTranslations: VideoSectionTranslationsType = {
     videoTitle: "MILBoard - Innovative Solution for Media and Information Literacy"
   }
 };
+
+// Define Sponsor Section translations structure
+export type SponsorSectionTranslationsType = {
+  [key: string]: {
+    title: string;
+  };
+};
+
+// Sponsor Section translations
+export const sponsorSectionTranslations: SponsorSectionTranslationsType = {
+  id: {
+    title: "Didukung oleh",
+  },
+  en: {
+    title: "Supported by",
+  }
+};
