@@ -67,7 +67,7 @@ const BottomNavbar = ({ language = 'id' }: SectionProps) => {
   const navItems = [
     {
       name: t.navItems[0].name, // Home
-      path: "/app",
+      path: "/",
       icon: "/book-half.svg",
       activeIcon: "/book-half-active.svg"
     },

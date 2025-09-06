@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
     
     // Get parameters from query
     const { searchParams } = new URL(request.url);
-    const destination = searchParams.get('destination') || '/app';
+    const destination = searchParams.get('destination') || '/';
     const accessToken = searchParams.get('access_token');
     const refreshToken = searchParams.get('refresh_token');
     

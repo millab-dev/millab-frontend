@@ -90,7 +90,7 @@ export default function LoginForm({ errorParam, language = 'id', redirectTo }: L
 
             if (data.success) {
                 toast.success("Login berhasil!");
-                router.push(redirectTo || "/app");
+                router.push(redirectTo || "/");
             } else {
                 toast.error(data.error || "Login gagal");
             }        } catch (error) {

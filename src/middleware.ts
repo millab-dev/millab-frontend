@@ -45,7 +45,7 @@ export async function middleware(request: NextRequest) {
                         //bypass
                     // if (false) {
                         console.log("Non-admin user trying to access admin page");
-                        return NextResponse.redirect(new URL("/app", request.url));
+                        return NextResponse.redirect(new URL("/", request.url));
                     }
                     console.log("Admin access granted (bypassed)");
                 }

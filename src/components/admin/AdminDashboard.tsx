@@ -88,7 +88,7 @@ export default function AdminDashboard() {
       title: "View Public Site",
       description: "See how students view the site",
       icon: Eye,
-      action: () => router.push("/app"),
+      action: () => router.push("/"),
       color: "bg-purple-500",
     },
   ];

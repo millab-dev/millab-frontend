@@ -112,7 +112,7 @@ export default function CompleteProfileForm({ language = 'id' }: CompleteProfile
 
                 // Redirect to home page after 1.5 seconds
                 setTimeout(() => {
-                    router.push("/app");
+                    router.push("/");
                 }, 1500);
             } else {
                 // Profile completion failed - use a new unique ID for error toast

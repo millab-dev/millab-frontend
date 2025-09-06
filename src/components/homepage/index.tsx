@@ -3,7 +3,6 @@
 import { NextStep, NextStepProvider, Tour } from "nextstepjs";
 import { ReadingStateData, UserData, HomepageModulesData, onboardingTranslations } from "./types";
 import { useState, useRef, useEffect } from 'react';
-import { toast } from "sonner";
 
 import HomepageContent from "./OnboardingOverlay";
 

@@ -6,6 +6,7 @@ import { SectionProps, informationTranslations } from './types'
 import { useState, useEffect } from 'react'
 import { UserData } from './types'
 import { TTSContextType } from './index'
+import Image from 'next/image'
 
 interface UserProgression {
   // Backend response format
@@ -67,7 +68,7 @@ const InformationSection = ({ language = 'id', userData, ttsContext }: Informati
         }
     }    // Set default values for demo purposes or when data is not available
     const setDefaultUserData = () => {
-        setUser({ name: 'Mimi', username: 'Mimi' })
+        setUser({ name: 'Guest', username: 'Guest' })
         setProgression({
             currentPoints: 235,
             level: 1,
@@ -131,7 +132,7 @@ const InformationSection = ({ language = 'id', userData, ttsContext }: Informati
 
     const getUserDisplayName = () => {
         if (loading) return 'Loading...'
-        if (!user || !user.username) return 'Mimi!'
+        if (!user || !user.username) return 'Guest!'
         return user.username
     }
 
@@ -172,7 +173,7 @@ const InformationSection = ({ language = 'id', userData, ttsContext }: Informati
     const progressData = getProgressData()
 
     // Use centralized TTS context
-    const { isSpeaking, isPaused, currentSpeakingId, toggleSpeech, stopSpeaking } = ttsContext;
+    const { isSpeaking, isPaused, currentSpeakingId, toggleSpeech } = ttsContext;
 
     // Single TTS for entire InformationSection
     const handleSectionTTS = () => {
@@ -216,10 +217,12 @@ const InformationSection = ({ language = 'id', userData, ttsContext }: Informati
                         transition={{ duration: 0.5, delay: 0.4 }}
                     >
                         <div className="w-full h-full rounded-full flex items-center justify-center overflow-hidden">
-                            <img 
+                            <Image 
                                 src="/owl-profile.png" 
                                 alt="Profile" 
                                 className="w-full h-full object-cover"
+                                width={200}
+                                height={200}
                             />
                         </div>
                     </motion.div>
