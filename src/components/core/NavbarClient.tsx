@@ -23,7 +23,7 @@ const NavbarClient = ({ isLoggedIn, lang = 'en' }: NavbarClientProps) => {
   // Get translations based on current language
   const t = navbarTranslations[lang];
   
-  const isAboutUsPage = pathname === "/" || pathname === "/about-us";
+  const isAboutUsPage = pathname === "/about-us";
   const [isMilboardMenuOpen, setIsMilboardMenuOpen] = useState(false);
   const [isMilboardMobileMenuOpen, setIsMilboardMobileMenuOpen] = useState(false);
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
@@ -63,7 +63,8 @@ const NavbarClient = ({ isLoggedIn, lang = 'en' }: NavbarClientProps) => {
           { name: t.navItems[3].name, path: t.navItems[3].path }, // Profile
         ]
       : [
-          { name: t.navItems[4].name, path: "/" }, // About Us
+          { name: t.navItems[0].name, path: t.navItems[0].path }, // Home
+          { name: t.navItems[1].name, path: t.navItems[1].path }, // Module
           { name: t.navItems[5].name, path: t.navItems[5].path }, // Sign In
           { name: t.navItems[6].name, path: t.navItems[6].path }, // Sign Up
         ];
@@ -233,15 +234,21 @@ const NavbarClient = ({ isLoggedIn, lang = 'en' }: NavbarClientProps) => {
                 </>
               ) : (
                 /* Regular navigation items for non-about-us pages */
-                navItems.map((item) => (
-                  <Link
-                    href={item.path}
-                    key={item.name}
-                    className={`text-sm font-medium ${pathname.includes(item.path) ? "text-primary" : "text-gray-700 hover:text-primary"} transition-colors duration-200`}
-                  >
-                    {item.name}
-                  </Link>
-                ))
+                navItems.map((item) => {
+                  const isActive = item.path === "/" 
+                    ? pathname === "/" 
+                    : pathname.startsWith(item.path);
+                  
+                  return (
+                    <Link
+                      href={item.path}
+                      key={item.name}
+                      className={`text-sm font-medium ${isActive ? "text-primary" : "text-gray-700 hover:text-primary"} transition-colors duration-200`}
+                    >
+                      {item.name}
+                    </Link>
+                  );
+                })
               )}
               
               {/* Language Dropdown - Desktop (inline with navigation) */}

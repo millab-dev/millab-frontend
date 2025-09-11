@@ -8,6 +8,11 @@ export async function middleware(request: NextRequest) {
 
     console.log("middleware")
     
+    // Redirect /app to root
+    if (request.nextUrl.pathname === "/app") {
+        return NextResponse.redirect(new URL("/", request.url));
+    }
+    
     const isAuthPage =
         request.nextUrl.pathname === "/signin" ||
         request.nextUrl.pathname === "/signup" ||
