@@ -217,6 +217,7 @@ const Homepage = ({ readingStateData, homepageModulesData, userData, lang }: Hom
                         userData={userData}
                         ttsContext={ttsContext}
                     />
+                    
                 </NextStep>
             </NextStepProvider>
         </>
