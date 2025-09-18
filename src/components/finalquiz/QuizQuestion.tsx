@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, List, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuizQuestionData, QuizOption } from "./Quiz";
-import cloud from "@/assets/cloudPatternBlue.svg";
+import cloud from "@/assets/cloudPattern.svg";
 import { Language, quizMessagesTranslations, QuizMessagesTranslations } from "./types";
 
 interface QuizQuestionProps {
@@ -82,7 +82,7 @@ export default function QuizQuestion({
 
     return (
         <div
-            className="min-h-screen bg-[#F8F8F8] sm:p-4 font-jakarta bg-repeat bg-[length:600px] lg:bg-[length:800px]"
+            className="min-h-screen bg-[#F8F8F8] sm:p-4 font-jakarta bg-repeat bg-[length:600px] lg:bg-[length:1536px]"
             style={{
                 backgroundImage: `url(${cloud.src})`,
             }}
