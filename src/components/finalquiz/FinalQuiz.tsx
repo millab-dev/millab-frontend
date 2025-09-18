@@ -6,7 +6,7 @@ import intermediateIcon from "@/assets/intermediateIcon.svg";
 import advancedIcon from "@/assets/advancedIcon.svg";
 import Image from "next/image";
 import star from "@/assets/star.svg";
-import cloud from "@/assets/cloudPatternBlue.svg";
+import cloud from "@/assets/cloudPattern.svg";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { UserScore } from "@/actions/userScore.get-score";
@@ -92,7 +92,7 @@ export default function FinalQuiz({ userScore, language = 'id' } : FinalQuizProp
     };
 
     return (
-        <div className="min-h-screen p-4 font-jakarta py-12 bg-[#F8F8F8] bg-repeat bg-[length:600px] lg:bg-[length:800px]"
+        <div className="min-h-screen p-4 font-jakarta py-12 bg-[#F8F8F8] bg-repeat bg-[length:600px] lg:bg-[length:1536px]"
              style={{
                  backgroundImage: `url(${cloud.src})`,
              }}>

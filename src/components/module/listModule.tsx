@@ -309,7 +309,7 @@ export default function ListModule({ language = 'id' }: ListModuleProps) {
                 role="main"
                 aria-label={t.aria.moduleMain}
                 className="mx-auto font-jakarta bg-primary sm:px-24 lg:px-40 min-h-screen flex flex-col 
-                bg-repeat bg-[length:600px] lg:bg-[length:900px]"
+                bg-repeat bg-[length:600px] lg:bg-[length:1536px]"
                 style={{
                     backgroundImage: `url(${cloud.src})`,
                 }}

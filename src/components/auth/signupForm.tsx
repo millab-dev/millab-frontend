@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import cloud from "@/assets/cloudPatternBlue.svg";
+import cloud from "@/assets/cloudPattern.svg";
 import { Language, signupTranslations } from "./types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -182,7 +182,7 @@ export default function SignupForm({ language = 'id' }: SignupFormProps) {
 
     return (
         <div 
-            className="flex min-h-screen pb-12 pt-8 items-center justify-center font-jakarta overflow-x-hidden bg-[#F8F8F8] bg-repeat bg-[length:600px] lg:bg-[length:800px]"
+            className="flex min-h-screen pb-12 pt-8 items-center justify-center font-jakarta overflow-x-hidden bg-[#F8F8F8] bg-repeat bg-[length:600px] lg:bg-[length:1536px]"
             style={{
                 backgroundImage: `url(${cloud.src})`,
             }}

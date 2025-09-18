@@ -4,6 +4,7 @@ import DesktopCardContent from "./DesktopCardContent"
 import Navbar from "../core/Navbar"
 import AboutUsHeader from "./AboutUsHeader"
 import { aboutUsTranslations, SectionProps } from "./types"
+import cloud from "@/assets/cloudPattern.svg";
 
 interface AboutUsProps {
     language?: 'id' | 'en';
@@ -20,12 +21,9 @@ const AboutUs = ({ language = 'id' }: AboutUsProps) => {
             
             <div className="flex flex-col min-h-screen bg-background relative overflow-x-hidden">
                 {/* Mobile background */}
-                <div className="fixed inset-0 z-0 bg-primary md:hidden"
+                <div className="fixed inset-0 z-0 bg-primary md:hidden bg-repeat bg-[length:600px] lg:bg-[length:1536px]"
                     style={{
-                        backgroundImage: "url('/batik-bg-4.svg')",
-                        backgroundRepeat: "repeat",
-                        backgroundSize: "auto auto",
-                        backgroundPosition: "top left"
+                        backgroundImage: `url(${cloud.src})`,
                     }}
                 />
                 
@@ -33,12 +31,9 @@ const AboutUs = ({ language = 'id' }: AboutUsProps) => {
                 <div className="fixed inset-0 z-0 bg-primary hidden md:block">
                     <div className="absolute inset-0 w-full h-full overflow-hidden">
                         <div 
-                            className="w-[1536px] h-full mx-auto"
+                            className="w-[1536px] h-full mx-auto bg-repeat bg-[length:600px] lg:bg-[length:1536px]"
                             style={{
-                                backgroundImage: "url('/batik-bg-4.svg')",
-                                backgroundRepeat: "repeat",
-                                backgroundSize: "cover",
-                                backgroundPosition: "center"
+                                backgroundImage: `url(${cloud.src})`,
                             }}
                         />
                     </div>

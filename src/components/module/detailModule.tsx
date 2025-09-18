@@ -295,7 +295,7 @@ export default function DetailModule({ language = 'id' }: DetailModuleProps) {
     if (loading) {
         return (
             <div
-                className="mx-auto font-jakarta bg-primary min-h-screen sm:px-24 lg:px-40 flex flex-col bg-repeat bg-[length:600px] lg:bg-[length:900px]"
+                className="mx-auto font-jakarta bg-primary min-h-screen sm:px-24 lg:px-40 flex flex-col bg-repeat bg-[length:600px] lg:bg-[length:1536px]"
                 style={{
                     backgroundImage: `url(${cloud.src})`,
                 }}

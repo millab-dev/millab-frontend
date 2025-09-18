@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import authLogo from "@/assets/authLogo.svg";
-import cloud from "@/assets/cloudPatternBlue.svg";
+import cloud from "@/assets/cloudPattern.svg";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Language, loginTranslations } from "./types";
@@ -115,7 +115,7 @@ export default function LoginForm({ errorParam, language = 'id', redirectTo }: L
 
     return (
         <div 
-            className="flex min-h-screen items-center justify-center font-jakarta overflow-x-hidden bg-[#F8F8F8] bg-repeat bg-[length:600px] lg:bg-[length:800px]"
+            className="flex min-h-screen items-center justify-center font-jakarta overflow-x-hidden bg-[#F8F8F8] bg-repeat bg-[length:600px] lg:bg-[length:1536px]"
             style={{
                 backgroundImage: `url(${cloud.src})`,
             }}>
