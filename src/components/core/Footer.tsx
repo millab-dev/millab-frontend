@@ -1,7 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import { SectionProps, footerTranslations } from "./types";
 
-export default function Footer() {
+export default function Footer({ language = 'en' }: SectionProps) {
+    const t = footerTranslations[language];
+
     return (
         <footer className="bg-[#0077D4] text-white py-12 px-6 md:px-12">
             <div className="max-w-6xl mx-auto">
@@ -12,7 +15,7 @@ export default function Footer() {
                         <div className="mb-6">
                             <Image
                                 src="/footerLogo/millabfooterlogo.svg"
-                                alt="MilLab Logo"
+                                alt={t.altTexts.logo}
                                 width={120}
                                 height={40}
                                 className="h-10 w-auto"
@@ -29,7 +32,7 @@ export default function Footer() {
                             >
                                 <Image
                                     src="/footerLogo/logoinstagram.svg"
-                                    alt="Instagram"
+                                    alt={t.altTexts.instagram}
                                     width={24}
                                     height={24}
                                 />
@@ -42,7 +45,7 @@ export default function Footer() {
                             >
                                 <Image
                                     src="/footerLogo/logoyouTube.svg"
-                                    alt="YouTube"
+                                    alt={t.altTexts.youtube}
                                     width={24}
                                     height={24}
                                 />
@@ -55,7 +58,7 @@ export default function Footer() {
                             >
                                 <Image
                                     src="/footerLogo/linkedin.svg"
-                                    alt="LinkedIn"
+                                    alt={t.altTexts.linkedin}
                                     width={24}
                                     height={24}
                                 />
@@ -65,14 +68,14 @@ export default function Footer() {
 
                     {/* MilBoard Section */}
                     <div>
-                        <h3 className="text-lg font-semibold mb-4">MilBoard</h3>
+                        <h3 className="text-lg font-semibold mb-4">{t.sections.milboard.title}</h3>
                         <ul className="space-y-2">
                             <li>
                                 <Link
                                     href="/module"
                                     className="text-white/90 hover:text-white transition-colors"
                                 >
-                                    Modules
+                                    {t.sections.milboard.links.modules}
                                 </Link>
                             </li>
                             <li>
@@ -80,7 +83,7 @@ export default function Footer() {
                                     href="/final-quiz"
                                     className="text-white/90 hover:text-white transition-colors"
                                 >
-                                    Final Quiz
+                                    {t.sections.milboard.links.finalQuiz}
                                 </Link>
                             </li>
                             <li>
@@ -88,7 +91,7 @@ export default function Footer() {
                                     href="/scan"
                                     className="text-white/90 hover:text-white transition-colors"
                                 >
-                                    Scan and Read
+                                    {t.sections.milboard.links.scanAndRead}
                                 </Link>
                             </li>
                         </ul>
@@ -97,7 +100,7 @@ export default function Footer() {
                     {/* Connect with Us Section */}
                     <div className="md:col-span-2">
                         <h3 className="text-lg font-semibold mb-4">
-                            Connect with Us
+                            {t.sections.connectWithUs.title}
                         </h3>
                         <ul className="grid grid-cols-1 gap-2">
                             <li>
@@ -105,7 +108,7 @@ export default function Footer() {
                                     href="mailto:contact@millabindonesia@gmail.com"
                                     className="text-white/90 hover:text-white transition-colors"
                                 >
-                                    Email
+                                    {t.sections.connectWithUs.links.email}
                                 </Link>
                             </li>
                             <li>
@@ -115,7 +118,7 @@ export default function Footer() {
                                     rel="noopener noreferrer"
                                     className="text-white/90 hover:text-white transition-colors"
                                 >
-                                    Instagram
+                                    {t.sections.connectWithUs.links.instagram}
                                 </Link>
                             </li>
                             <li>
@@ -125,7 +128,7 @@ export default function Footer() {
                                     rel="noopener noreferrer"
                                     className="text-white/90 hover:text-white transition-colors"
                                 >
-                                    Youtube
+                                    {t.sections.connectWithUs.links.youtube}
                                 </Link>
                             </li>
                             <li>
@@ -135,7 +138,7 @@ export default function Footer() {
                                     rel="noopener noreferrer"
                                     className="text-white/90 hover:text-white transition-colors"
                                 >
-                                    LinkedIn
+                                    {t.sections.connectWithUs.links.linkedin}
                                 </Link>
                             </li>
                         </ul>

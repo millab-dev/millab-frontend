@@ -23,6 +23,37 @@ export type BottomNavbarTranslationsType = {
   };
 };
 
+// Define Footer translations structure
+export type FooterTranslationsType = {
+  [key: string]: {
+    sections: {
+      milboard: {
+        title: string;
+        links: {
+          modules: string;
+          finalQuiz: string;
+          scanAndRead: string;
+        };
+      };
+      connectWithUs: {
+        title: string;
+        links: {
+          email: string;
+          instagram: string;
+          youtube: string;
+          linkedin: string;
+        };
+      };
+    };
+    altTexts: {
+      logo: string;
+      instagram: string;
+      youtube: string;
+      linkedin: string;
+    };
+  };
+};
+
 // Navbar translations
 export const navbarTranslations: NavbarTranslationsType = {
   id: {
@@ -64,5 +95,63 @@ export const bottomNavbarTranslations: BottomNavbarTranslationsType = {
       { name: "Scan", path: "/scan" },
       { name: "Profile", path: "/profile" },
     ]
+  }
+};
+
+// Footer translations
+export const footerTranslations: FooterTranslationsType = {
+  id: {
+    sections: {
+      milboard: {
+        title: "MilBoard",
+        links: {
+          modules: "Modul",
+          finalQuiz: "Kuis Akhir",
+          scanAndRead: "Pindai dan Baca"
+        }
+      },
+      connectWithUs: {
+        title: "Hubungi Kami",
+        links: {
+          email: "Email",
+          instagram: "Instagram", 
+          youtube: "Youtube",
+          linkedin: "LinkedIn"
+        }
+      }
+    },
+    altTexts: {
+      logo: "Logo MilLab",
+      instagram: "Instagram",
+      youtube: "YouTube", 
+      linkedin: "LinkedIn"
+    }
+  },
+  en: {
+    sections: {
+      milboard: {
+        title: "MilBoard",
+        links: {
+          modules: "Modules",
+          finalQuiz: "Final Quiz",
+          scanAndRead: "Scan and Read"
+        }
+      },
+      connectWithUs: {
+        title: "Connect with Us",
+        links: {
+          email: "Email",
+          instagram: "Instagram",
+          youtube: "Youtube", 
+          linkedin: "LinkedIn"
+        }
+      }
+    },
+    altTexts: {
+      logo: "MilLab Logo",
+      instagram: "Instagram",
+      youtube: "YouTube",
+      linkedin: "LinkedIn"
+    }
   }
 };
