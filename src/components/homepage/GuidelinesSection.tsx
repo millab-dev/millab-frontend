@@ -1,5 +1,6 @@
 "use client"
-import { Globe, Package, Volume2, Pause, Play } from 'lucide-react'
+import { Globe, Package, Volume2, Pause, Play, Info } from 'lucide-react'
+import Link from 'next/link'
 import {
   Card,
   CardContent,
@@ -11,7 +12,7 @@ import { SectionProps, guidelinesTranslations } from './types'
 import { TTSContextType } from './index'
 
 // Define type for guideline item keys - must match keys in translations
-type GuidelineItemKey = 'website' | 'offlineProduct';
+type GuidelineItemKey = 'website' | 'offlineProduct' | 'videoTutorial';
 
 type GuidelineItem = {
   id: number;
@@ -28,18 +29,13 @@ const GuidelinesSection = ({ language = 'id', ttsContext }: GuidelinesSectionPro
   const t = guidelinesTranslations[language];
 
   // Use centralized TTS context
-  const { isSpeaking, isPaused, currentSpeakingId, toggleSpeech, stopSpeaking } = ttsContext;
+  const { isSpeaking, isPaused, currentSpeakingId, toggleSpeech } = ttsContext;
 
   // Single TTS for entire GuidelinesSection
   const handleSectionTTS = () => {
     const sectionText = `${t.title}. ${language === 'id' ? 'Terdapat panduan website dan produk offline.' : 'Website and offline product guidelines available.'}`;
     toggleSpeech(sectionText, 'guidelines-section');
   };
-
-  const onClick = (key: GuidelineItemKey) => {
-    const url = t.urls[key];
-    window.open(url, '_blank');
-  }
   
   // Define guidelines with properly typed keys
   const guidelines: GuidelineItem[] = [
@@ -52,6 +48,11 @@ const GuidelinesSection = ({ language = 'id', ttsContext }: GuidelinesSectionPro
       id: 2,
       key: 'offlineProduct',
       icon: <Package className="text-white w-6 h-6" />
+    },
+    {
+      id: 3,
+      key: 'videoTutorial',
+        icon: <Info className="text-white w-6 h-6" />
     }
   ]
 
@@ -59,7 +60,7 @@ const GuidelinesSection = ({ language = 'id', ttsContext }: GuidelinesSectionPro
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 })
 
   return (
-    <div className="w-full " ref={sectionRef}>
+    <div className="w-full cursor-pointer" ref={sectionRef}>
       <motion.div 
         className="flex items-center gap-2 mb-4 px-1"
         initial={{ opacity: 0, y: -10 }}
@@ -91,9 +92,9 @@ const GuidelinesSection = ({ language = 'id', ttsContext }: GuidelinesSectionPro
         transition={{ duration: 0.6, delay: 0.1 }}
       >
         {guidelines.map((item, index) => (
+          <Link href={t.urls[item.key]} key={item.id} target="_blank">
           <motion.div
             key={item.id}
-            onClick={() => onClick(item.key)}
             id={`guide-${item.key}`}
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
@@ -117,8 +118,9 @@ const GuidelinesSection = ({ language = 'id', ttsContext }: GuidelinesSectionPro
                 </div>
                 <span className="font-bold text-primary">{t.items[item.key]}</span>
               </CardContent>
-            </Card>
-          </motion.div>
+              </Card>
+            </motion.div>
+          </Link>
         ))}
       </motion.div>
     </div>

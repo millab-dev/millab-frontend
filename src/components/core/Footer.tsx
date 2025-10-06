@@ -38,7 +38,7 @@ export default function Footer({ language = 'en' }: SectionProps) {
                                 />
                             </Link>
                             <Link
-                                href="https://youtu.be/prUruw1eHbQ?si=Vda7IwvMio8lqf8m"
+                                href="https://youtube.com/@millabindonesia?si=RWu4g6hKEB1zU4ec"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:opacity-80 transition-opacity"
