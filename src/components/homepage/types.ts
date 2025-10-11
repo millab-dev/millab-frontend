@@ -321,7 +321,7 @@ export const continueReadingTranslations: ContinueReadingTranslationsType = {
   }
 };
 
-// Guidelines section translations
+// Guidelines section translations (URLs now fetched dynamically from API)
 export const guidelinesTranslations: GuidelinesTranslationsType = {
   id: {
     title: "Panduan MILBoard",
@@ -331,6 +331,7 @@ export const guidelinesTranslations: GuidelinesTranslationsType = {
       videoTutorial: "Video Tutorial",
     },
     urls: {
+      // Fallback URLs - these will be used if API fails or during loading
       website: "https://drive.google.com/file/d/17pMw11sbHFbNbcTq0r62T8UHFWIyv39R/view?usp=drive_link",
       offlineProduct: "https://drive.google.com/file/d/1A0aDpKVLRZu6GnwtEaMJLSq3rs_Y5_ty/view?usp=drive_link",
       videoTutorial: "https://youtu.be/YahkSAMCGdk?si=CjpLMBRQ_E1fYf3P"
@@ -344,6 +345,7 @@ export const guidelinesTranslations: GuidelinesTranslationsType = {
       videoTutorial: "Tutorial Video"
     },
     urls: {
+      // Fallback URLs - these will be used if API fails or during loading
       website: "https://drive.google.com/file/d/18_DiyKxtolJS9LQ8ZyWMta6xQNrReuwY/view?usp=sharing",
       offlineProduct: "https://drive.google.com/file/d/1OYL-dCW1yrOLgwZNtFy6o2L5LjhldLlx/view?usp=sharing",
       videoTutorial: "https://youtu.be/YahkSAMCGdk?si=CjpLMBRQ_E1fYf3P"
