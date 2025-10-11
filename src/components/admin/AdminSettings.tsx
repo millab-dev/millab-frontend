@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { ArrowLeft, Save, Download } from "lucide-react";
+import { ArrowLeft, Save, Download, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,25 +20,27 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 
+const urlValidator = (val: string | undefined) => {
+  if (!val || val.trim() === "") return true; // Allow empty
+  try {
+    const url = new URL(val);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
 const settingsSchema = z.object({
-  downloadAllPdfUrl: z.string().optional().refine((val) => {
-    if (!val || val.trim() === "") return true; // Allow empty
-    try {
-      const url = new URL(val);
-      return url.protocol === "http:" || url.protocol === "https:";
-    } catch {
-      return false;
-    }
-  }, "Must be a valid URL"),
-  downloadAllPdfUrlEn: z.string().optional().refine((val) => {
-    if (!val || val.trim() === "") return true; // Allow empty
-    try {
-      const url = new URL(val);
-      return url.protocol === "http:" || url.protocol === "https:";
-    } catch {
-      return false;
-    }
-  }, "Must be a valid URL"),
+  downloadAllPdfUrl: z.string().optional().refine(urlValidator, "Must be a valid URL"),
+  downloadAllPdfUrlEn: z.string().optional().refine(urlValidator, "Must be a valid URL"),
+  // Guidelines URLs - Indonesian
+  guidelinesWebsiteUrlId: z.string().optional().refine(urlValidator, "Must be a valid URL"),
+  guidelinesOfflineProductUrlId: z.string().optional().refine(urlValidator, "Must be a valid URL"),
+  guidelinesVideoTutorialUrlId: z.string().optional().refine(urlValidator, "Must be a valid URL"),
+  // Guidelines URLs - English
+  guidelinesWebsiteUrlEn: z.string().optional().refine(urlValidator, "Must be a valid URL"),
+  guidelinesOfflineProductUrlEn: z.string().optional().refine(urlValidator, "Must be a valid URL"),
+  guidelinesVideoTutorialUrlEn: z.string().optional().refine(urlValidator, "Must be a valid URL"),
 });
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
@@ -47,6 +49,14 @@ interface AppSettings {
   id: string;
   downloadAllPdfUrl?: string;
   downloadAllPdfUrlEn?: string;
+  // Guidelines URLs - Indonesian
+  guidelinesWebsiteUrlId?: string;
+  guidelinesOfflineProductUrlId?: string;
+  guidelinesVideoTutorialUrlId?: string;
+  // Guidelines URLs - English
+  guidelinesWebsiteUrlEn?: string;
+  guidelinesOfflineProductUrlEn?: string;
+  guidelinesVideoTutorialUrlEn?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -61,6 +71,14 @@ export default function AdminSettings() {
     defaultValues: {
       downloadAllPdfUrl: "",
       downloadAllPdfUrlEn: "",
+      // Guidelines URLs - Indonesian  
+      guidelinesWebsiteUrlId: "",
+      guidelinesOfflineProductUrlId: "",
+      guidelinesVideoTutorialUrlId: "",
+      // Guidelines URLs - English
+      guidelinesWebsiteUrlEn: "",
+      guidelinesOfflineProductUrlEn: "",
+      guidelinesVideoTutorialUrlEn: "",
     },
   });
 
@@ -83,6 +101,14 @@ export default function AdminSettings() {
         form.reset({
           downloadAllPdfUrl: data.data.downloadAllPdfUrl || "",
           downloadAllPdfUrlEn: data.data.downloadAllPdfUrlEn || "",
+          // Guidelines URLs - Indonesian
+          guidelinesWebsiteUrlId: data.data.guidelinesWebsiteUrlId || "",
+          guidelinesOfflineProductUrlId: data.data.guidelinesOfflineProductUrlId || "",
+          guidelinesVideoTutorialUrlId: data.data.guidelinesVideoTutorialUrlId || "",
+          // Guidelines URLs - English
+          guidelinesWebsiteUrlEn: data.data.guidelinesWebsiteUrlEn || "",
+          guidelinesOfflineProductUrlEn: data.data.guidelinesOfflineProductUrlEn || "",
+          guidelinesVideoTutorialUrlEn: data.data.guidelinesVideoTutorialUrlEn || "",
         });
       }
     } catch (error) {
@@ -244,6 +270,257 @@ export default function AdminSettings() {
                     </FormItem>
                   )}
                 />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Info size={20} />
+                  Guidelines Settings
+                </CardTitle>
+                <CardDescription>
+                  Configure guidelines URLs for students. Leave empty to use default values.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Indonesian Guidelines */}
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-gray-700">Indonesian Guidelines</h4>
+                  
+                  <FormField
+                    control={form.control}
+                    name="guidelinesWebsiteUrlId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Website Guide URL (Indonesian)</FormLabel>
+                        <FormDescription>
+                          Default: https://drive.google.com/file/d/17pMw11sbHFbNbcTq0r62T8UHFWIyv39R/view?usp=drive_link
+                        </FormDescription>
+                        <div className="flex gap-2">
+                          <FormControl>
+                            <Input 
+                              placeholder="https://example.com/website-guide-id.pdf" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => {
+                              const url = field.value;
+                              if (url && url.trim()) {
+                                window.open(url, "_blank");
+                              } else {
+                                toast.info("Please enter a URL first");
+                              }
+                            }}
+                            title="Test URL"
+                          >
+                            <Download size={16} />
+                          </Button>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="guidelinesOfflineProductUrlId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Offline Product Guide URL (Indonesian)</FormLabel>
+                        <FormDescription>
+                          Default: https://drive.google.com/file/d/1A0aDpKVLRZu6GnwtEaMJLSq3rs_Y5_ty/view?usp=drive_link
+                        </FormDescription>
+                        <div className="flex gap-2">
+                          <FormControl>
+                            <Input 
+                              placeholder="https://example.com/offline-guide-id.pdf" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => {
+                              const url = field.value;
+                              if (url && url.trim()) {
+                                window.open(url, "_blank");
+                              } else {
+                                toast.info("Please enter a URL first");
+                              }
+                            }}
+                            title="Test URL"
+                          >
+                            <Download size={16} />
+                          </Button>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="guidelinesVideoTutorialUrlId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Video Tutorial URL (Indonesian)</FormLabel>
+                        <FormDescription>
+                          Default: https://youtu.be/YahkSAMCGdk?si=CjpLMBRQ_E1fYf3P
+                        </FormDescription>
+                        <div className="flex gap-2">
+                          <FormControl>
+                            <Input 
+                              placeholder="https://youtu.be/example" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => {
+                              const url = field.value;
+                              if (url && url.trim()) {
+                                window.open(url, "_blank");
+                              } else {
+                                toast.info("Please enter a URL first");
+                              }
+                            }}
+                            title="Test URL"
+                          >
+                            <Download size={16} />
+                          </Button>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* English Guidelines */}
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-gray-700">English Guidelines</h4>
+                  
+                  <FormField
+                    control={form.control}
+                    name="guidelinesWebsiteUrlEn"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Website Guide URL (English)</FormLabel>
+                        <FormDescription>
+                          Default: https://drive.google.com/file/d/18_DiyKxtolJS9LQ8ZyWMta6xQNrReuwY/view?usp=sharing
+                        </FormDescription>
+                        <div className="flex gap-2">
+                          <FormControl>
+                            <Input 
+                              placeholder="https://example.com/website-guide-en.pdf" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => {
+                              const url = field.value;
+                              if (url && url.trim()) {
+                                window.open(url, "_blank");
+                              } else {
+                                toast.info("Please enter a URL first");
+                              }
+                            }}
+                            title="Test URL"
+                          >
+                            <Download size={16} />
+                          </Button>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="guidelinesOfflineProductUrlEn"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Offline Product Guide URL (English)</FormLabel>
+                        <FormDescription>
+                          Default: https://drive.google.com/file/d/1OYL-dCW1yrOLgwZNtFy6o2L5LjhldLlx/view?usp=sharing
+                        </FormDescription>
+                        <div className="flex gap-2">
+                          <FormControl>
+                            <Input 
+                              placeholder="https://example.com/offline-guide-en.pdf" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => {
+                              const url = field.value;
+                              if (url && url.trim()) {
+                                window.open(url, "_blank");
+                              } else {
+                                toast.info("Please enter a URL first");
+                              }
+                            }}
+                            title="Test URL"
+                          >
+                            <Download size={16} />
+                          </Button>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="guidelinesVideoTutorialUrlEn"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Video Tutorial URL (English)</FormLabel>
+                        <FormDescription>
+                          Default: https://youtu.be/YahkSAMCGdk?si=CjpLMBRQ_E1fYf3P
+                        </FormDescription>
+                        <div className="flex gap-2">
+                          <FormControl>
+                            <Input 
+                              placeholder="https://youtu.be/example" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => {
+                              const url = field.value;
+                              if (url && url.trim()) {
+                                window.open(url, "_blank");
+                              } else {
+                                toast.info("Please enter a URL first");
+                              }
+                            }}
+                            title="Test URL"
+                          >
+                            <Download size={16} />
+                          </Button>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </CardContent>
             </Card>
 

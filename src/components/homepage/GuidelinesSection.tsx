@@ -10,6 +10,7 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { SectionProps, guidelinesTranslations } from './types'
 import { TTSContextType } from './index'
+import { useGuidelinesUrls } from '@/hooks/useGuidelinesUrls'
 
 // Define type for guideline item keys - must match keys in translations
 type GuidelineItemKey = 'website' | 'offlineProduct' | 'videoTutorial';
@@ -27,6 +28,9 @@ type GuidelinesSectionProps = SectionProps & {
 const GuidelinesSection = ({ language = 'id', ttsContext }: GuidelinesSectionProps) => {
   // Get translations based on language
   const t = guidelinesTranslations[language];
+
+  // Fetch dynamic guidelines URLs from API
+  const { urls: guidelinesUrls, loading: urlsLoading } = useGuidelinesUrls(language);
 
   // Use centralized TTS context
   const { isSpeaking, isPaused, currentSpeakingId, toggleSpeech } = ttsContext;
@@ -55,6 +59,26 @@ const GuidelinesSection = ({ language = 'id', ttsContext }: GuidelinesSectionPro
         icon: <Info className="text-white w-6 h-6" />
     }
   ]
+
+  // Create dynamic URLs mapping, falling back to static translations if API data is not loaded
+  const getGuidelineUrl = (key: GuidelineItemKey): string => {
+    if (!guidelinesUrls || urlsLoading) {
+      // Fallback to static translations while loading
+      return t.urls[key];
+    }
+
+    // Map API response to guideline keys
+    switch (key) {
+      case 'website':
+        return guidelinesUrls.website;
+      case 'offlineProduct':
+        return guidelinesUrls.offlineProduct;
+      case 'videoTutorial':
+        return guidelinesUrls.videoTutorial;
+      default:
+        return t.urls[key];
+    }
+  };
 
   const sectionRef = useRef(null)
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 })
@@ -92,7 +116,7 @@ const GuidelinesSection = ({ language = 'id', ttsContext }: GuidelinesSectionPro
         transition={{ duration: 0.6, delay: 0.1 }}
       >
         {guidelines.map((item, index) => (
-          <Link href={t.urls[item.key]} key={item.id} target="_blank">
+          <Link href={getGuidelineUrl(item.key)} key={item.id} target="_blank">
           <motion.div
             key={item.id}
             id={`guide-${item.key}`}
