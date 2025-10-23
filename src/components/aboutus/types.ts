@@ -180,11 +180,11 @@ export type AwardSectionTranslationsType = {
 export const awardSectionTranslations: AwardSectionTranslationsType = {
   id: {
     title: "Rekognisi MIL Lab Indonesia",
-    description: "MIL Lab Indonesia dengan bangga meraih kemenangan dalam UNESCO Youth Hackathon 2024 melalui inovasi kami, 'MILBoard', dan telah mendapatkan peliputan lebih dari 40 media nasional dan internasional."
+    description: "MIL Lab Indonesia dengan bangga meraih kemenangan dalam UNESCO Youth Hackathon 2024 melalui inovasi kami, MILBoard, yang dipresentasikan di Amman, Yordania. Sebagai organisasi, MIL Lab Indonesia turut berkontribusi dalam sesi panel pada The 10th International Conference on Global Citizenship Education di Seoul, Korea Selatan, dan telah memperoleh peliputan dari lebih dari 40 media nasional dan internasional."
   },
   en: {
     title: "MIL Lab Indonesia Recognition",
-    description: "MIL Lab Indonesia proudly won the UNESCO Youth Hackathon 2024 with our innovation, 'MILBoard', and has received coverage from more than 40 national and international media outlets."
+    description: "MIL Lab Indonesia proudly won the UNESCO Youth Hackathon 2024 with our innovation, MILBoard, presented in Amman, Jordan. As an organization, MIL Lab Indonesia also contributed to a panel session at The 10th International Conference on Global Citizenship Education in Seoul, South Korea, and has received coverage from more than 40 national and international media outlets."
   }
 };
 

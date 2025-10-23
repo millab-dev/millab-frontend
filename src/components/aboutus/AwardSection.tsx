@@ -16,6 +16,11 @@ const recognitionMedia = [
     imageUrl: '/doc-2.png', 
     alt: 'UNESCO Youth Hackathon 2024 Award'
   },
+  {
+    imageUrl: '/foto_salma_di_korea.jpeg', 
+    alt: 'Korean Conference 2025'
+  },
+
 ]
 
 const AwardSection: React.FC<SectionProps> = ({ language = 'id' }) => {
