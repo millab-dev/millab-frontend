@@ -20,6 +20,11 @@ export type BottomNavbarTranslationsType = {
       name: string;
       path: string;
     }[];
+    popup: {
+      title: string;
+      profile: string;
+      languageSwitch: string;
+    };
   };
 };
 
@@ -87,14 +92,24 @@ export const bottomNavbarTranslations: BottomNavbarTranslationsType = {
       { name: "Beranda", path: "/" },
       { name: "Pindai", path: "/scan" },
       { name: "Profil", path: "/profile" },
-    ]
+    ],
+    popup: {
+      title: "Lainnya",
+      profile: "Profil",
+      languageSwitch: "Ganti ke Bahasa Inggris"
+    }
   },
   en: {
     navItems: [
       { name: "Home", path: "/" },
       { name: "Scan", path: "/scan" },
       { name: "Profile", path: "/profile" },
-    ]
+    ],
+    popup: {
+      title: "Others",
+      profile: "Profile",
+      languageSwitch: "Change to Bahasa Indonesia"
+    }
   }
 };
 
