@@ -11,7 +11,7 @@ const VideoSection: React.FC<SectionProps> = ({ language = 'id' }) => {
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
   // YouTube video ID extracted from https://youtu.be/prUruw1eHbQ
-  const videoId = "prUruw1eHbQ";
+  const videoId = "YahkSAMCGdk";
 
   return (
     <div className="py-12 px-4 md:px-8 max-w-7xl mx-auto" ref={sectionRef}>
