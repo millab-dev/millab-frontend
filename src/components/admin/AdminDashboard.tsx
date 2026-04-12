@@ -99,7 +99,7 @@ export default function AdminDashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600 mt-2">Welcome to the MILLAB administration panel</p>
+          <p className="text-gray-600 mt-2">Welcome to the Gemalar Indonesia administration panel</p>
         </div>
 
         {/* Stats Cards */}
@@ -171,7 +171,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader>
             <CardTitle>System Information</CardTitle>
-            <CardDescription>Important information about the MILLAB system</CardDescription>
+            <CardDescription>Important information about the Gemalar Indonesia system</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">

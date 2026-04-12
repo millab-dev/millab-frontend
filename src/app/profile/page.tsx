@@ -4,8 +4,8 @@ import { Metadata } from 'next';
 import { getLanguage } from '@/actions/core.get-lang';
 
 export const metadata: Metadata = {
-  title: 'Profile - Millab',
-  description: 'View and manage your Millab profile',
+  title: 'Profile - Gemalar Indonesia',
+  description: 'View and manage your Gemalar Indonesia profile',
 };
 
 export default async function Page(props: {

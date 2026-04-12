@@ -3,8 +3,8 @@ import SignupForm from "@/components/auth/signupForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sign Up - MILBoard",
-  description: "Create a new MILBoard account",
+  title: "Sign Up - Gemar Board",
+  description: "Create a new Gemar Board account",
 };
 
 export default async function SignupPage() {

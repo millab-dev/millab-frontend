@@ -3,8 +3,8 @@ import LoginForm from "@/components/auth/loginForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sign In - MILBoard",
-  description: "Sign in to your MILBoard account",
+  title: "Sign In - Gemar Board",
+  description: "Sign in to your Gemar Board account",
 };
 
 // Server Component that handles search params

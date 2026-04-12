@@ -20,8 +20,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-    title: "MILBoard",
-    description: "Created by MILLab for Media Literacy",
+    title: "Gemar Board",
+        description: "Created by Gemalar Indonesia for Media Literacy",
   icons: {
     icon: '/icon.png',
   },

@@ -20,7 +20,7 @@ const BottomSheetSection = ({ language = 'id' }: SectionProps) => {
       }}
     >
       <div className="flex flex-col px-4 pt-4 pb-24 lg:pt-12 lg:pb-12 max-w-6xl mx-auto">
-        {/* MIL Lab section */}
+        {/* Gemalar Indonesia section */}
         <MillabSection language={language} />
         
         <hr className="my-4 border-t-2 border-gray-300" />

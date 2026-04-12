@@ -105,8 +105,8 @@ export type OnboardingTranslationsType = {
 export const onboardingTranslations: OnboardingTranslationsType = {
   id: {
     tour: {
-      title: "Tour MILBoard",
-      content: "Mari kita jelajahi fitur-fitur MILBoard bersama!",
+      title: "Tour Gemar Board",
+      content: "Mari kita jelajahi fitur-fitur Gemar Board bersama!",
       skip: "Lewati",
       next: "Lanjut",
       prev: "Kembali",
@@ -140,18 +140,18 @@ export const onboardingTranslations: OnboardingTranslationsType = {
       },
       guideWebsite: {
         title: "Panduan penggunaan versi web",
-        content: "Pelajari cara menggunakan MilBoard dari situs web dengan mudah dan efektif."
+        content: "Pelajari cara menggunakan Gemar Board dari situs web dengan mudah dan efektif."
       },
       guideOffline: {
-        title: "Gunakan MilBoard secara offline",
+        title: "Gunakan Gemar Board secara offline",
         content: "Ikuti petunjuk penggunaan untuk produk offline seperti board game atau modul cetak agar pengalaman belajarmu tetap maksimal meski tanpa internet."
       }
     }
   },
   en: {
     tour: {
-      title: "MILBoard Tour",
-      content: "Let's explore MILBoard features together!",
+      title: "Gemar Board Tour",
+      content: "Let's explore Gemar Board features together!",
       skip: "Skip",
       next: "Next",
       prev: "Previous",
@@ -185,10 +185,10 @@ export const onboardingTranslations: OnboardingTranslationsType = {
       },
       guideWebsite: {
         title: "Web version user guide",
-        content: "Learn how to use MilBoard from the website easily and effectively."
+        content: "Learn how to use Gemar Board from the website easily and effectively."
       },
       guideOffline: {
-        title: "Use MilBoard offline",
+        title: "Use Gemar Board offline",
         content: "Follow the usage instructions for offline products like board games or printed modules to ensure your learning experience remains optimal even without internet."
       }
     }
@@ -324,7 +324,7 @@ export const continueReadingTranslations: ContinueReadingTranslationsType = {
 // Guidelines section translations (URLs now fetched dynamically from API)
 export const guidelinesTranslations: GuidelinesTranslationsType = {
   id: {
-    title: "Panduan MILBoard",
+    title: "Panduan Gemar Board",
     items: {
       website: "Website",
       offlineProduct: "Produk Offline",
@@ -338,7 +338,7 @@ export const guidelinesTranslations: GuidelinesTranslationsType = {
     }
   },
   en: {
-    title: "MILBoard Guidelines",
+    title: "Gemar Board Guidelines",
     items: {
       website: "Website",
       offlineProduct: "Offline Product",
@@ -400,7 +400,7 @@ export const carouselTranslations: CarouselTranslationsType = {
     slides: [
       {
         title: "Anisa - Guru SMA",
-        description: "MILBoard sangat membantu saya dalam mengajarkan literasi media kepada siswa dengan cara yang interaktif dan menarik."
+        description: "Gemar Board sangat membantu saya dalam mengajarkan literasi media kepada siswa dengan cara yang interaktif dan menarik."
       },
       {
         title: "Budi - Mahasiswa",
@@ -417,7 +417,7 @@ export const carouselTranslations: CarouselTranslationsType = {
     slides: [
       {
         title: "Anisa - High School Teacher",
-        description: "MILBoard has been incredibly helpful in teaching media literacy to my students in an interactive and engaging way."
+        description: "Gemar Board has been incredibly helpful in teaching media literacy to my students in an interactive and engaging way."
       },
       {
         title: "Budi - College Student",

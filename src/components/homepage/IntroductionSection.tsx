@@ -10,13 +10,13 @@ interface IntroductionSectionProps {
 const introductionTranslations = {
     id: {
         title: "Tentang Kami",
-        description: "MIL Lab (Media and Information Literacy Lab) adalah ruang belajar yang dipimpin pemuda sejak 2024, tempat anak muda berekspresi, bertumbuh, dan menjadi bagian dari generasi cerdas serta kreatif. Sebagai laboratorium ide dan pusat kolaborasi, kami mendorong literasi media partisipatif dan inovatif untuk melawan disinformasi, kekerasan digital, dan bias informasi.",
+        description: "Gemalar Indonesia (formerly MIL Lab Indonesia) adalah ruang belajar yang dipimpin pemuda sejak 2024, tempat anak muda berekspresi, bertumbuh, dan menjadi bagian dari generasi cerdas serta kreatif. Sebagai laboratorium ide dan pusat kolaborasi, kami mendorong literasi media partisipatif dan inovatif untuk melawan disinformasi, kekerasan digital, dan bias informasi.",
         supportedBy: "Didukung Oleh",
         moreInfo: "Info Lengkap"
     },
     en: {
         title: "About Us",
-        description: "MIL Lab (Media and Information Literacy Lab) is a youth-led learning space since 2024, where young people express themselves, grow, and become part of a smart and creative generation. As an idea laboratory and collaboration center, we encourage participatory and innovative media literacy to combat disinformation, digital violence, and information bias.",
+        description: "Gemalar Indonesia (formerly MIL Lab Indonesia) is a youth-led learning space since 2024, where young people express themselves, grow, and become part of a smart and creative generation. As an idea laboratory and collaboration center, we encourage participatory and innovative media literacy to combat disinformation, digital violence, and information bias.",
         supportedBy: "Supported By",
         moreInfo: "More Info"
     }

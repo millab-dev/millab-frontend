@@ -190,11 +190,11 @@ export default function SignupForm({ language = 'id' }: SignupFormProps) {
             <div className="w-full max-w-md px-4">
                 <div className="flex items-center justify-center gap-2 mb-4">
                     <Image
-                        src="/millab-logo.svg"
+                        src="/gemalar_logo.png"
                         alt="MIL Logo"
                         className="object-contain"
-                        height={200}
-                        width={200}
+                        height={170}
+                        width={170}
                     />
                 </div>
 

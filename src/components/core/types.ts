@@ -118,7 +118,7 @@ export const footerTranslations: FooterTranslationsType = {
   id: {
     sections: {
       milboard: {
-        title: "MilBoard",
+        title: "Gemar Board",
         links: {
           modules: "Modul",
           finalQuiz: "Kuis Akhir",
@@ -136,7 +136,7 @@ export const footerTranslations: FooterTranslationsType = {
       }
     },
     altTexts: {
-      logo: "Logo MilLab",
+      logo: "Logo Gemalar Indonesia",
       instagram: "Instagram",
       youtube: "YouTube", 
       linkedin: "LinkedIn"
@@ -145,7 +145,7 @@ export const footerTranslations: FooterTranslationsType = {
   en: {
     sections: {
       milboard: {
-        title: "MilBoard",
+        title: "Gemar Board",
         links: {
           modules: "Modules",
           finalQuiz: "Final Quiz",
@@ -163,7 +163,7 @@ export const footerTranslations: FooterTranslationsType = {
       }
     },
     altTexts: {
-      logo: "MilLab Logo",
+      logo: "Gemalar Indonesia Logo",
       instagram: "Instagram",
       youtube: "YouTube",
       linkedin: "LinkedIn"

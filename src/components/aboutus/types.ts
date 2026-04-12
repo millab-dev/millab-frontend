@@ -20,7 +20,7 @@ export const aboutUsTranslations: AboutUsTranslationType = {
   }
 };
 
-// Define Millab Section translations structure
+// Define Gemalar Indonesia section translations structure
 export type MillabSectionTranslationsType = {
   [key: string]: {
     title: string;
@@ -31,21 +31,21 @@ export type MillabSectionTranslationsType = {
   };
 };
 
-// Millab Section translations
+// Gemalar Indonesia section translations
 export const millabSectionTranslations: MillabSectionTranslationsType = {
   id: {
-    title: "MIL Lab Indonesia",
-    description1: "<b>MIL Lab</b> atau <b>Media and Information Literacy Lab</b> adalah ruang belajar yang dipimpin oleh pemuda, dibangun pada tahun 2024 sebagai tempat bagi setiap anak muda untuk berekspresi, bertumbuh, dan mengikuti generasi yang cerdas dan kreatif mengembangkan dunia! Kami percaya bahwa kesempatan untuk mencerdaskan dan membuat kesetaraan adalah bobot penting dari proses pembelajaran yang bermakna. Sebagai laboratorium ide dari pusat kolaborasi, <b>MIL Lab</b> mendorong pendidikan literasi media yang partisipatif dan inovatif untuk melawan disinformasi, kekerasan digital, dan bias informasi. Di sinilah perjalanan menuju masa depan yang lebih cerdas dan melek media dimulai bersama.",
-    description2: "Dipandu oleh nilai-nilai inti kami yang terangkum dalam akronim <b>MIL</b>, kami secara aktif <b>Mobilize Change</b> dengan menyatukan masyarakat untuk mengkoordinasikan aksi dan menginspirasi kesadaran. Kami berkomitmen pada <b>Inklusivitas</b> dengan menciptakan lingkungan yang aman dan suportif di mana setiap individu memiliki kesempatan yang setara untuk berkembang. Seluruh upaya kami digerakkan oleh <b>Love of Learning</b>, semangat untuk menumbuhkan rasa ingin tahu, merayakan eksplorasi intelektual, dan membangun pengetahuan bersama.",
-    logoAlt: "MIL Lab Logo",
-    imageAlt: "MIL Lab Logo",
+    title: "Gemalar Indonesia",
+    description1: "<b>Gemalar Indonesia</b> (formerly MIL Lab Indonesia) adalah ruang belajar yang dipimpin oleh anak muda dan didirikan pada tahun 2024 sebagai wadah bagi generasi muda untuk belajar, berkolaborasi, dan bertumbuh menjadi generasi yang cerdas serta kritis dalam menghadapi dunia digital.",
+    description2: "Sebagai identitas baru dengan visi yang lebih luas, <b>Gemalar Indonesia</b> berkomitmen menumbuhkan nalar kritis, literasi digital, dan pertumbuhan kolektif di kalangan anak muda. Kami percaya bahwa keberanian untuk berpikir, bertanya, dan bertindak adalah bagian penting dari proses belajar yang bermakna.<br /><br />Semangat misi kami, <b>Ge-Ma-Lar</b>, mencerminkan visi untuk menumbuhkan generasi yang menikmati proses belajar dan berpikir kritis, lalu menyebarkannya untuk menginspirasi komunitas yang lebih luas. Melalui visi ini, kami ingin membangun ruang kolaboratif, inklusif, dan kreatif yang dipimpin anak muda, tempat literasi digital mendorong aksi nyata, refleksi, dan dampak sosial.",
+    logoAlt: "Gemalar Indonesia Logo",
+    imageAlt: "Gemalar Indonesia Logo",
   },
   en: {
-    title: "MIL Lab Indonesia",
-    description1: "<b>MIL Lab</b> or <b>Media and Information Literacy Lab</b> is a youth-led learning space, established in 2024 as a place for every young person to express, grow, and join a smart and creative generation developing the world! We believe that opportunities for education and creating equality are essential weights in meaningful learning processes. As an idea laboratory and collaboration hub, <b>MIL Lab</b> promotes participatory and innovative media literacy education to combat disinformation, digital violence, and information bias. This is where the journey toward a smarter and more media-literate future begins together.",
-    description2: "Guided by our core values summarized in the acronym <b>MIL</b>, we actively <b>Mobilize Change</b> by bringing communities together to coordinate action and inspire awareness. We are committed to <b>Inclusivity</b> by creating a safe and supportive environment where every individual has equal opportunity to develop. All our efforts are driven by the <b>Love of Learning</b>, a spirit to nurture curiosity, celebrate intellectual exploration, and build knowledge together.",
-    logoAlt: "MIL Lab Logo",
-    imageAlt: "MIL Lab Logo",
+    title: "Gemalar Indonesia",
+    description1: "<b>Gemalar Indonesia</b> (formerly MIL Lab Indonesia) is a youth-led learning space founded in 2024 as a platform for young people to learn, collaborate, and grow into a smart and critical generation in navigating the digital world.",
+    description2: "As a renewed identity with a broader vision, <b>Gemalar Indonesia</b> is committed to fostering critical thinking, digital literacy, and collective growth among youth. We believe that the courage to think, question, and take action is an essential part of meaningful learning.<br /><br />The spirit of our mission, <b>Ge-Ma-Lar</b>, reflects our vision to cultivate a generation that enjoys the process of learning and critical thinking, and amplifies it to inspire wider communities. Through this vision, we aim to create a collaborative, inclusive, and creative youth-led space where digital literacy leads to meaningful action, reflection, and social impact.",
+    logoAlt: "Gemalar Indonesia Logo",
+    imageAlt: "Gemalar Indonesia Logo",
   }
 };
 
@@ -65,7 +65,7 @@ export type TeamSectionTranslationsType = {
 // Our Team Section translations
 export const teamSectionTranslations: TeamSectionTranslationsType = {
   id: {
-    title: "Tim MIL Lab Indonesia",
+    title: "Tim Gemalar Indonesia",
     teamMembers: [
       {
         imageUrl: "/member/rafi.png",
@@ -77,7 +77,7 @@ export const teamSectionTranslations: TeamSectionTranslationsType = {
         imageUrl: "/member/salma.png",
         name: "Salma Noorfitria Ningrum",
         role: "Co-Founder & Vice President",
-        description: "Salma berlatar belakang Ilmu Administrasi Negara dengan fokus pada komunikasi publik, pemberdayaan pemuda, dan pembangunan yang inklusif. Ia memimpin organisasi Dreamity Indonesia dan MIL Lab Indonesia untuk mendorong akses seni serta literasi digital bagi generasi muda rentan."
+        description: "Salma berlatar belakang Ilmu Administrasi Negara dengan fokus pada komunikasi publik, pemberdayaan pemuda, dan pembangunan yang inklusif. Ia memimpin organisasi Dreamity Indonesia dan Gemalar Indonesia untuk mendorong akses seni serta literasi digital bagi generasi muda rentan."
       },
       {
         imageUrl: "/member/dien.png",
@@ -106,7 +106,7 @@ export const teamSectionTranslations: TeamSectionTranslationsType = {
     ]
   },
   en: {
-    title: "MIL Lab Indonesia Team",
+    title: "Gemalar Indonesia Team",
     teamMembers: [
       {
         imageUrl: "/member/rafi.png",
@@ -118,7 +118,7 @@ export const teamSectionTranslations: TeamSectionTranslationsType = {
         imageUrl: "/member/salma.png",
         name: "Salma Noorfitria Ningrum",
         role: "Co-Founder & Vice President",
-        description: "Salma has a background in Public Administration focusing on public communication, youth empowerment, and inclusive development. She leads Dreamity Indonesia and MIL Lab Indonesia to promote art access and digital literacy for vulnerable young generations."
+        description: "Salma has a background in Public Administration focusing on public communication, youth empowerment, and inclusive development. She leads Dreamity Indonesia and Gemalar Indonesia to promote art access and digital literacy for vulnerable young generations."
       },
       {
         imageUrl: "/member/dien.png",
@@ -179,12 +179,12 @@ export type AwardSectionTranslationsType = {
 // Award Section translations
 export const awardSectionTranslations: AwardSectionTranslationsType = {
   id: {
-    title: "Rekognisi MIL Lab Indonesia",
-    description: "MIL Lab Indonesia dengan bangga meraih kemenangan dalam UNESCO Youth Hackathon 2024 melalui inovasi kami, MILBoard, yang dipresentasikan di Amman, Yordania. Sebagai organisasi, MIL Lab Indonesia turut berkontribusi dalam sesi panel pada The 10th International Conference on Global Citizenship Education di Seoul, Korea Selatan, dan telah memperoleh peliputan dari lebih dari 40 media nasional dan internasional."
+    title: "Rekognisi Gemalar Indonesia",
+    description: "Gemalar Indonesia dengan bangga meraih kemenangan dalam UNESCO Youth Hackathon 2024 melalui inovasi kami, Gemar Board, yang dipresentasikan di Amman, Yordania. Sebagai organisasi, Gemalar Indonesia turut berkontribusi dalam sesi panel pada The 10th International Conference on Global Citizenship Education di Seoul, Korea Selatan, dan telah memperoleh peliputan dari lebih dari 40 media nasional dan internasional."
   },
   en: {
-    title: "MIL Lab Indonesia Recognition",
-    description: "MIL Lab Indonesia proudly won the UNESCO Youth Hackathon 2024 with our innovation, MILBoard, presented in Amman, Jordan. As an organization, MIL Lab Indonesia also contributed to a panel session at The 10th International Conference on Global Citizenship Education in Seoul, South Korea, and has received coverage from more than 40 national and international media outlets."
+    title: "Gemalar Indonesia Recognition",
+    description: "Gemalar Indonesia proudly won the UNESCO Youth Hackathon 2024 with our innovation, Gemar Board, presented in Amman, Jordan. As an organization, Gemalar Indonesia also contributed to a panel session at The 10th International Conference on Global Citizenship Education in Seoul, South Korea, and has received coverage from more than 40 national and international media outlets."
   }
 };
 
@@ -211,7 +211,7 @@ export const connectWithUsSectionTranslations: ConnectWithUsSectionTranslationsT
     title: "Terhubung dengan Kami",
     contactInfo: {
       instagram: "@millabindonesia",
-      linkedin: "MIL Lab Indonesia",
+      linkedin: "Gemalar Indonesia",
       email: "millabindonesia@gmail.com"
     },
     labels: {
@@ -224,7 +224,7 @@ export const connectWithUsSectionTranslations: ConnectWithUsSectionTranslationsT
     title: "Connect with Us",
     contactInfo: {
       instagram: "@millabindonesia",
-      linkedin: "MIL Lab Indonesia",
+      linkedin: "Gemalar Indonesia",
       email: "millabindonesia@gmail.com"
     },
     labels: {
@@ -247,14 +247,14 @@ export type VideoSectionTranslationsType = {
 // Video Section translations
 export const videoSectionTranslations: VideoSectionTranslationsType = {
   id: {
-    title: "Kenali MILBoard Lebih Dekat",
-    description: "Video singkat tentang MILBoard, produk unggulan kami dalam meningkatkan literasi digital untuk generasi muda Indonesia.",
-    videoTitle: "MILBoard - Solusi Inovatif untuk Literasi Media dan Informasi"
+    title: "Kenali Gemar Board Lebih Dekat",
+    description: "Video singkat tentang Gemar Board, produk unggulan kami dalam meningkatkan literasi digital untuk generasi muda Indonesia.",
+    videoTitle: "Gemar Board - Solusi Inovatif untuk Literasi Media dan Informasi"
   },
   en: {
-    title: "Get to Know MILBoard",
-    description: "A brief video about MILBoard, our flagship product in advancing digital literacy for Indonesian youth.",
-    videoTitle: "MILBoard - Innovative Solution for Media and Information Literacy"
+    title: "Get to Know Gemar Board",
+    description: "A brief video about Gemar Board, our flagship product in advancing digital literacy for Indonesian youth.",
+    videoTitle: "Gemar Board - Innovative Solution for Media and Information Literacy"
   }
 };
 

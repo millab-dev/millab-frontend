@@ -5,11 +5,11 @@ import { Language } from '@/components/scan/types';
 import { getLanguage } from '@/actions/core.get-lang';
 
 export const metadata: Metadata = {
-  title: 'Scan QR Code - Millab',
-  description: 'Scan QR codes quickly and easily to access Millab content',
+  title: 'Scan QR Code - Gemalar Indonesia',
+  description: 'Scan QR codes quickly and easily to access Gemalar Indonesia content',
   openGraph: {
-    title: 'Scan QR Code - Millab',
-    description: 'Scan QR codes quickly and easily to access Millab content',
+    title: 'Scan QR Code - Gemalar Indonesia',
+    description: 'Scan QR codes quickly and easily to access Gemalar Indonesia content',
   },
 };
 

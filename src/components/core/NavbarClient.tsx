@@ -39,7 +39,7 @@ const NavbarClient = ({ isLoggedIn, lang = 'en' }: NavbarClientProps) => {
     { code: 'id', label: 'Indonesia' }
   ];
 
-  // Dropdown items for MilBoard based on login status
+  // Dropdown items for Gemar Board based on login status
   const milboardItems = isLoggedIn
     ? [
         { name: t.navItems[0].name, path: t.navItems[0].path }, // Home
@@ -175,11 +175,11 @@ const NavbarClient = ({ isLoggedIn, lang = 'en' }: NavbarClientProps) => {
           <div className="flex-shrink-0 transition-all duration-300">
             <Link href="/">
               <Image 
-                src="/millab-logo.svg" 
+                src="/gemalar_logo.png" 
                 alt="Mill Lab Logo" 
-                width={150} 
-                height={50} 
-                className={`transition-all duration-300 ${scrolled ? 'h-10' : 'h-12'} w-auto`} 
+                width={130} 
+                height={44} 
+                className={`transition-all duration-300 ${scrolled ? 'h-9' : 'h-11'} w-auto`} 
               />
             </Link>
           </div>
@@ -190,7 +190,7 @@ const NavbarClient = ({ isLoggedIn, lang = 'en' }: NavbarClientProps) => {
               {/* Either show regular navigation OR about-us specific navigation */}
               {isAboutUsPage ? (
                 <>
-                  {/* Only "Tentang Kami" and "MilBoard" on about-us page */}
+                  {/* Only "Tentang Kami" and "Gemar Board" on about-us page */}
                   <Link
                     href="/about-us"
                     className="text-sm font-medium text-primary transition-colors duration-200"
@@ -198,13 +198,13 @@ const NavbarClient = ({ isLoggedIn, lang = 'en' }: NavbarClientProps) => {
                     {t.navItems[4].name}
                   </Link>
                   
-                  {/* MilBoard dropdown */}
+                  {/* Gemar Board dropdown */}
                   <div className="relative" ref={milboardMenuRef}>
                     <button 
                       onClick={toggleMilboardMenu}
                       className="flex items-center space-x-1 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
                     >
-                      <span>MILBoard</span>
+                      <span>Gemar Board</span>
                       <ChevronDown size={14} className={`transition-transform duration-200 ${isMilboardMenuOpen ? 'rotate-180' : ''}`} />
                     </button>
                     
@@ -321,7 +321,7 @@ const NavbarClient = ({ isLoggedIn, lang = 'en' }: NavbarClientProps) => {
             {/* Navigation links - different content based on current page */}
             <div className="flex flex-col space-y-2 py-2">
               {isAboutUsPage ? (
-                // About-us page: show only "Tentang Kami" and MilBoard options
+                // About-us page: show only "Tentang Kami" and Gemar Board options
                 <>
                   <Link
                     href="/about-us"
@@ -331,13 +331,13 @@ const NavbarClient = ({ isLoggedIn, lang = 'en' }: NavbarClientProps) => {
                     {t.navItems[4].name}
                   </Link>
                   
-                  {/* MilBoard dropdown for mobile */}
+                  {/* Gemar Board dropdown for mobile */}
                   <div className="relative" ref={milboardMobileMenuRef}>
                     <button 
                       onClick={toggleMilboardMobileMenu}
                       className="flex items-center justify-between w-full px-4 py-3 rounded-md text-base font-medium text-gray-700 hover:text-primary transition-colors duration-200 mt-2"
                     >
-                      <span>MILBoard</span>
+                      <span>Gemar Board</span>
                       <ChevronDown 
                         size={16} 
                         className={`transition-transform duration-200 ${isMilboardMobileMenuOpen ? 'rotate-180' : ''}`} 

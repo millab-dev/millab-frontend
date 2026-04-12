@@ -62,7 +62,7 @@ export interface CompleteProfileFormTranslations {
 export const loginTranslations: Record<Language, LoginFormTranslations> = {
   id: {
     title: 'Masuk',
-    welcome: 'Selamat datang di MILBoard, silakan masukkan\ndata login Anda untuk melanjutkan belajar.',
+    welcome: 'Selamat datang di Gemar Board, silakan masukkan\ndata login Anda untuk melanjutkan belajar.',
     email: 'Username atau Email',
     password: 'Kata Sandi',
     signIn: 'Masuk',
@@ -75,7 +75,7 @@ export const loginTranslations: Record<Language, LoginFormTranslations> = {
   },
   en: {
     title: 'Sign In',
-    welcome: 'Welcome to MILBoard, please enter\nyour login details to continue learning.',
+    welcome: 'Welcome to Gemar Board, please enter\nyour login details to continue learning.',
     email: 'Username atau Email',
     password: 'Password',
     signIn: 'Sign In',
@@ -92,7 +92,7 @@ export const loginTranslations: Record<Language, LoginFormTranslations> = {
 export const signupTranslations: Record<Language, SignupFormTranslations> = {
   id: {
     title: 'Daftar',
-    welcome: 'Selamat datang di MILBoard, silakan isi formulir pendaftaran untuk bergabung.',
+    welcome: 'Selamat datang di Gemar Board, silakan isi formulir pendaftaran untuk bergabung.',
     name: 'Nama Lengkap',
     username: 'Username',
     password: 'Kata Sandi',
@@ -114,7 +114,7 @@ export const signupTranslations: Record<Language, SignupFormTranslations> = {
   },
   en: {
     title: 'Sign Up',
-    welcome: 'Welcome to MILBoard, please fill out the registration form to join.',
+    welcome: 'Welcome to Gemar Board, please fill out the registration form to join.',
     name: 'Full Name',
     username: 'Username',
     password: 'Password',
@@ -140,7 +140,7 @@ export const signupTranslations: Record<Language, SignupFormTranslations> = {
 export const completeProfileTranslations: Record<Language, CompleteProfileFormTranslations> = {
   id: {
     title: 'Lengkapi Profil Anda',
-    welcome: 'Silakan lengkapi informasi profil Anda untuk melanjutkan menggunakan MILBoard.',
+    welcome: 'Silakan lengkapi informasi profil Anda untuk melanjutkan menggunakan Gemar Board.',
     name: 'Nama Lengkap',
     username: 'Username',
     gender: 'Jenis Kelamin',
@@ -156,7 +156,7 @@ export const completeProfileTranslations: Record<Language, CompleteProfileFormTr
   },
   en: {
     title: 'Complete Your Profile',
-    welcome: 'Please complete your profile information to continue using MILBoard.',
+    welcome: 'Please complete your profile information to continue using Gemar Board.',
     name: 'Full Name',
     username: 'Username',
     gender: 'Gender',

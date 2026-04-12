@@ -66,7 +66,7 @@ export default function Footer({ language = 'en' }: SectionProps) {
                         </div>
                     </div>
 
-                    {/* MilBoard Section */}
+                    {/* Gemar Board Section */}
                     <div>
                         <h3 className="text-lg font-semibold mb-4">{t.sections.milboard.title}</h3>
                         <ul className="space-y-2">

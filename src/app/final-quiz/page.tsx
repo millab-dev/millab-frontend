@@ -7,8 +7,8 @@ import { User } from "@/types/user";
 import { getLanguage } from "@/actions/core.get-lang";
 
 export const metadata: Metadata = {
-  title: "Final Quiz - Millab",
-  description: "Final Quiz - Millab",
+  title: "Final Quiz - Gemalar Indonesia",
+  description: "Final Quiz - Gemalar Indonesia",
 };
 
 export const dynamic = "force-dynamic";

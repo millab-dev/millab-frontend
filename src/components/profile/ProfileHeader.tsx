@@ -97,10 +97,10 @@ const ProfileHeader = ({user, language = 'id'}: Props) => {
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               <Image 
-                src={"/millab-logo.svg"} 
+                src={"/gemalar_logo.png"} 
                 alt="" 
-                width={80} 
-                height={80} 
+                width={70} 
+                height={70} 
                 className='hidden md:flex'
                 priority
               />
@@ -110,10 +110,10 @@ const ProfileHeader = ({user, language = 'id'}: Props) => {
               whileTap={{ scale: 0.95 }}
             >
               <Image 
-                src={"/millab-logo.svg"} 
+                src={"/gemalar_logo.png"} 
                 alt="" 
-                width={60} 
-                height={60} 
+                width={52} 
+                height={52} 
                 className='flex md:hidden'
                 priority
               />
