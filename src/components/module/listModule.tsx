@@ -9,7 +9,7 @@ import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import axiosClient from "@/lib/axios.client";
 import { downloadAllPdf } from "@/utils/settingsApi";
-import owlComputer from "/public/owl-computer.png";
+import owlComputer from "/public/owl-computer-gemalar.png";
 import { 
     Module, 
     SectionProps, 
