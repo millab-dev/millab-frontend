@@ -1,11 +1,11 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { headers } from 'next/headers';
+import { headers, cookies } from 'next/headers';
 
 const getAxiosServerInstance = async () => {
     // Get all headers from the incoming request
     const requestHeaders = await headers();
     const headerObj: Record<string, string> = {};
-    
+
     // Copy all headers from the request
     requestHeaders.forEach((value, key) => {
         // Avoid setting certain headers that axios will set automatically
@@ -13,13 +13,18 @@ const getAxiosServerInstance = async () => {
             headerObj[key] = value;
         }
     });
-    
+
     // Cookie sudah termasuk dalam headers yang diambil dari request
     // Tidak perlu menambahkan cookie secara manual
-    
-        // Gunakan absolute URL untuk bypass Next.js rewrites
+    const cookieStore = await cookies();
+    const cookieString = cookieStore.toString();
+    if (cookieString) {
+        headerObj['cookie'] = cookieString;
+    }
+
+    // Gunakan absolute URL untuk bypass Next.js rewrites
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-    
+
     return axios.create({
         baseURL: apiBaseUrl, // Gunakan URL API langsung seperti di middleware
         withCredentials: true,
