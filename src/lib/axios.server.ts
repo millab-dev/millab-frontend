@@ -22,7 +22,7 @@ const getAxiosServerInstance = async () => {
     } catch {
         // Aman: abaikan jika dipanggil dari context middleware
     }
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const apiBaseUrl = process.env.INTERNAL_API_URL || 'http://127.0.0.1:8080';
     return axios.create({
         baseURL: apiBaseUrl,
         withCredentials: true,
