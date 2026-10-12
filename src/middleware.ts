@@ -7,23 +7,23 @@ import axiosServer from "./lib/axios.server";
 export async function middleware(request: NextRequest) {
 
     console.log("middleware")
-    
+
     // Redirect /app to root
     if (request.nextUrl.pathname === "/app") {
         return NextResponse.redirect(new URL("/", request.url));
     }
-    
+
     const isAuthPage =
         request.nextUrl.pathname === "/signin" ||
         request.nextUrl.pathname === "/signup" ||
         request.nextUrl.pathname === "/about-us" ||
         request.nextUrl.pathname === "/scan" ||
         request.nextUrl.pathname === "/";
-    
+
     const isModulePage = request.nextUrl.pathname.startsWith("/module");
-    
+
     const isAdminPage = request.nextUrl.pathname.startsWith("/admin");
-    
+
     // Skip middleware for auth pages
     if (isAuthPage || isModulePage) {
         return NextResponse.next();
@@ -34,21 +34,25 @@ export async function middleware(request: NextRequest) {
         console.log("Checking authentication via /me endpoint...");
         let response;
         try {
-            response = await axiosServer.get("/api/v1/auth/me");
+            response = await axiosServer.get("/api/v1/auth/me", {
+                headers: {
+                    cookie: request.headers.get("cookie") || "",
+                },
+            });
             console.log("Auth check status:", response.status);
-            
+
             // If /me is successful, we're authenticated
             if (response.data && response.data.success) {
                 console.log("Authentication successful via /me endpoint");
-                
+
                 // Additional check for admin pages
                 if (isAdminPage) {
                     const user = response.data.data;
-                    
-     
+
+
                     if (!user.isAdmin) {
                         //bypass
-                    // if (false) {
+                        // if (false) {
                         console.log("Non-admin user trying to access admin page");
                         return NextResponse.redirect(new URL("/", request.url));
                     }
@@ -68,12 +72,12 @@ export async function middleware(request: NextRequest) {
 
         // Create NextResponse and forward cookies header from API response
         const nextResponse = NextResponse.next();
-        
+
         // Get cookies directly from the /me response (in case backend refreshes tokens)
         const cookies = response.headers?.['set-cookie'];
         console.log("Response headers: ", response.headers);
         console.log("Cookies exists:", !!cookies);
-        
+
         if (cookies) {
             // Handle cookies correctly whether it's a string or array
             if (Array.isArray(cookies)) {
@@ -84,7 +88,7 @@ export async function middleware(request: NextRequest) {
                 nextResponse.headers.set('set-cookie', cookies);
             }
         }
-        
+
         return nextResponse;
     } catch (error) {
         // If there's an error checking auth, redirect to signin with the original URL as redirect parameter
@@ -100,7 +104,7 @@ export const config = {
         /*
          * Match root path explicitly
          */
-        
+
         /*
          * Match all other request paths except for the ones starting with:
          * - api (API routes)
