@@ -1,12 +1,22 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { headers, cookies } from 'next/headers';
 
+const ignoredHeaders = [
+    'content-length',
+    'host',
+    'connection',
+    'upgrade',
+    'keep-alive',
+    'transfer-encoding',
+    'expect'
+];
+
 const getAxiosServerInstance = async () => {
     const headerObj: Record<string, string> = {};
     try {
         const requestHeaders = await headers();
         requestHeaders.forEach((value, key) => {
-            if (!['content-length', 'host'].includes(key.toLowerCase())) {
+            if (!ignoredHeaders.includes(key.toLowerCase())) {
                 headerObj[key] = value;
             }
         });
